@@ -108,7 +108,7 @@
                                             }
                                         </div>
 
-                                        <!-- Hidden select for form submission - SAME AS VENUE PAGE -->
+                                        <!-- Hidden select for form submission -->
                                         <select asp-for="Category"
                                                 asp-items="Html.GetEnumSelectList<EventCategory>()"
                                                 class="d-none"
@@ -137,41 +137,70 @@
                                 <span asp-validation-for="Description" class="text-danger d-block mt-1"></span>
                             </div>
 
-                            <!-- Date & Time Section -->
-                            <div class="row">
-                                <!-- Start Date -->
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="StartDate" class="form-label text-white fw-medium mb-1">
-                                        <i class="bi bi-clock me-2"></i>Start Date & Time
-                                    </label>
-                                    <div class="position-relative">
-                                        <i class="bi bi-calendar position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
-                                        <input asp-for="StartDate"
-                                               type="datetime-local"
-                                               class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
-                                               style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
-                                               aria-required="true"
-                                               step="300" /> <!-- 5-minute steps for better time selection -->
+                            <!-- Start Date & Time Section with DateTime Picker -->
+                            <div class="mb-4">
+                                <label asp-for="StartDate" class="form-label text-white fw-medium mb-2 d-block">
+                                    <i class="bi bi-clock me-2"></i>Start Date & Time
+                                </label>
+
+                                <!-- Hidden input for form submission -->
+                                <input type="hidden" asp-for="StartDate" id="startDateTimeInput" />
+
+                                <!-- DateTime Picker Container with Glassmorphism -->
+                                <div class="datetimepicker-container rounded-4 p-3 mb-2"
+                                     style="background: rgba(255,255,255,0.05);
+                                            backdrop-filter: blur(10px);
+                                            border: 1px solid rgba(255,255,255,0.15);">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div id="startDateTimePicker"></div>
+                                        </div>
                                     </div>
-                                    <span asp-validation-for="StartDate" class="text-danger d-block mt-1"></span>
                                 </div>
 
-                                <!-- End Date -->
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="EndDate" class="form-label text-white fw-medium mb-1">
-                                        <i class="bi bi-clock-history me-2"></i>End Date & Time
-                                    </label>
-                                    <div class="position-relative">
-                                        <i class="bi bi-calendar-check position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
-                                        <input asp-for="EndDate"
-                                               type="datetime-local"
-                                               class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
-                                               style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
-                                               aria-required="true"
-                                               step="300" /> <!-- 5-minute steps for better time selection -->
-                                    </div>
-                                    <span asp-validation-for="EndDate" class="text-danger d-block mt-1"></span>
+                                <!-- Display selected date -->
+                                <div class="mt-2 mb-1">
+                                    <small class="text-white-50">
+                                        <i class="bi bi-calendar2-check me-1"></i>
+                                        Selected: <span id="startDateTimeDisplay" class="fw-medium text-white">Not selected</span>
+                                    </small>
                                 </div>
+
+                                <!-- Error container for start date -->
+                                <div id="startDateError" class="text-danger d-block mt-1 small"></div>
+                            </div>
+
+                            <!-- End Date & Time Section with DateTime Picker -->
+                            <div class="mb-4">
+                                <label asp-for="EndDate" class="form-label text-white fw-medium mb-2 d-block">
+                                    <i class="bi bi-clock-history me-2"></i>End Date & Time
+                                </label>
+
+                                <!-- Hidden input for form submission -->
+                                <input type="hidden" asp-for="EndDate" id="endDateTimeInput" />
+
+                                <!-- DateTime Picker Container with Glassmorphism -->
+                                <div class="datetimepicker-container rounded-4 p-3 mb-2"
+                                     style="background: rgba(255,255,255,0.05);
+                                            backdrop-filter: blur(10px);
+                                            border: 1px solid rgba(255,255,255,0.15);">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div id="endDateTimePicker"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Display selected date -->
+                                <div class="mt-2 mb-1">
+                                    <small class="text-white-50">
+                                        <i class="bi bi-calendar2-check me-1"></i>
+                                        Selected: <span id="endDateTimeDisplay" class="fw-medium text-white">Not selected</span>
+                                    </small>
+                                </div>
+
+                                <!-- Error container for end date -->
+                                <div id="endDateError" class="text-danger d-block mt-1 small"></div>
                             </div>
 
                             <!-- Venue Selection -->
@@ -235,7 +264,7 @@
                                             }
                                         </div>
 
-                                        <!-- Hidden select for form submission - SAME AS VENUE PAGE -->
+                                        <!-- Hidden select for form submission -->
                                         <select asp-for="VenueId"
                                                 asp-items="ViewBag.VenueId"
                                                 class="d-none"
@@ -372,36 +401,171 @@
             background: rgba(138, 43, 226, 0.7);
         }
 
-    /* Enhanced Datetime input styling for better time picker */
-    input[type="datetime-local"] {
-        /* Ensure consistent styling */
-        color-scheme: dark;
+    /* DateTime Picker Custom Glassmorphism Styling */
+    .datetimepicker-container .bootstrap-datetimepicker-widget {
+        width: 100%;
     }
 
-        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-            filter: invert(1) brightness(0.7);
-            cursor: pointer;
-            margin-right: 0.5rem;
-            padding: 0.25rem;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            transition: all 0.2s ease;
+    .datetimepicker-container .table-condensed {
+        width: 100%;
+        color: white;
+    }
+
+        .datetimepicker-container .table-condensed th,
+        .datetimepicker-container .table-condensed td {
+            padding: 8px;
+            text-align: center;
         }
 
-            input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
-                background: rgba(138, 43, 226, 0.3);
-                transform: scale(1.05);
-            }
-
-    /* For Firefox */
-    input[type="datetime-local"] {
-        color-scheme: dark;
+    .datetimepicker-container .picker-switch {
+        font-weight: bold;
+        color: white;
+        text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
     }
 
-    /* Time input specific styling */
-    input[type="time"]::-webkit-calendar-picker-indicator {
-        filter: invert(1) brightness(0.7);
+    .datetimepicker-container .prev,
+    .datetimepicker-container .next {
+        cursor: pointer;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
     }
+
+        .datetimepicker-container .prev:hover,
+        .datetimepicker-container .next:hover {
+            background: rgba(138, 43, 226, 0.3);
+            transform: scale(1.1);
+        }
+
+    .datetimepicker-container .day,
+    .datetimepicker-container .hour,
+    .datetimepicker-container .minute,
+    .datetimepicker-container .month,
+    .datetimepicker-container .year,
+    .datetimepicker-container .decade {
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        margin: 2px;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+    }
+
+        .datetimepicker-container .day:hover,
+        .datetimepicker-container .hour:hover,
+        .datetimepicker-container .minute:hover,
+        .datetimepicker-container .month:hover,
+        .datetimepicker-container .year:hover,
+        .datetimepicker-container .decade:hover {
+            background: rgba(138, 43, 226, 0.3);
+            cursor: pointer;
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+
+    .datetimepicker-container .active {
+        background: linear-gradient(135deg, #6a0dad, #8a2be2) !important;
+        color: white !important;
+        border-radius: 8px;
+        /* border: 1px solid rgba(255,255,255,0.3) !important; */
+        box-shadow: 0 4px 15px rgba(106,13,173,0.4) !important;
+    }
+
+    .datetimepicker-container .today {
+        background: rgba(138, 43, 226, 0.2);
+        border-radius: 8px;
+        border: 1px solid rgba(138, 43, 226, 0.4);
+    }
+
+    .datetimepicker-container .timepicker-hour,
+    .datetimepicker-container .timepicker-minute {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .datetimepicker-container .btn-primary {
+        background: linear-gradient(135deg, #6a0dad, #8a2be2);
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        transition: all 0.2s ease;
+    }
+
+        .datetimepicker-container .btn-primary:hover {
+            background: linear-gradient(135deg, #5a0c9d, #7a1bd2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(106,13,173,0.4);
+        }
+
+    .datetimepicker-container .separator {
+        width: 10px;
+    }
+
+    /* Custom styling for the datetime picker widget with glassmorphism */
+    .datetimepicker-container .bootstrap-datetimepicker-widget.dropdown-menu {
+        background: rgba(30, 30, 46, 0.95);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 16px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .datetimepicker-container .glyphicon {
+        color: white;
+    }
+
+    .datetimepicker-container .glyphicon-chevron-up,
+    .datetimepicker-container .glyphicon-chevron-down {
+        color: #8a2be2;
+        filter: drop-shadow(0 0 5px rgba(138, 43, 226, 0.5));
+    }
+
+    .datetimepicker-container .dow {
+        color: rgba(255,255,255,0.8);
+        font-weight: 600;
+        text-shadow: 0 0 5px rgba(255,255,255,0.2);
+    }
+
+    .datetimepicker-container .old,
+    .datetimepicker-container .new {
+        color: rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.02) !important;
+    }
+
+        .datetimepicker-container .old:hover,
+        .datetimepicker-container .new:hover {
+            background: rgba(220, 53, 69, 0.3) !important;
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(220, 53, 69, 0.5) !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+    /* Disabled past dates */
+    .datetimepicker-container .disabled {
+        background: rgba(220, 53, 69, 0.1) !important;
+        color: rgba(255,255,255,0.3) !important;
+        cursor: not-allowed !important;
+        border: 1px solid rgba(220, 53, 69, 0.2) !important;
+    }
+
+        .datetimepicker-container .disabled:hover {
+            background: rgba(220, 53, 69, 0.2) !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
 
     /* List styling */
     ul {
@@ -422,381 +586,495 @@
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
         }
 
-    /* Time input helper */
-    .time-input-helper {
-        color: rgba(255,255,255,0.6);
-        font-size: 0.75rem;
+    /* Error message styling */
+    .error-message {
+        display: none;
         margin-top: 0.25rem;
+        padding: 0.5rem;
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        border-radius: 8px;
+        color: #ff6b6b;
+        font-size: 0.85rem;
     }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+
+    /* Time picker specific styling */
+    .datetimepicker-container .timepicker-picker {
+        background: rgba(255,255,255,0.05);
+        border-radius: 12px;
+        padding: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .datetimepicker-container .timepicker-hours table,
+    .datetimepicker-container .timepicker-minutes table {
+        background: rgba(255,255,255,0.05);
+        border-radius: 12px;
+        padding: 10px;
+    }
+
+
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Category dropdown functionality
-        const categoryTrigger = document.getElementById('categoryTrigger');
-        const categoryOptions = document.getElementById('categoryOptions');
-        const categoryDropdownArrow = document.getElementById('categoryDropdownArrow');
-        const selectedCategory = document.getElementById('selectedCategory');
-        const hiddenCategorySelect = document.getElementById('hiddenCategorySelect');
-        const categoryCustomOptions = document.querySelectorAll('#categoryOptions .custom-option');
-        const categoryError = document.getElementById('categoryError');
-
-        if (categoryTrigger) {
-            categoryTrigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-
-                if (categoryOptions.style.display === 'block') {
-                    categoryOptions.style.display = 'none';
-                    categoryDropdownArrow.classList.remove('bi-chevron-up');
-                    categoryDropdownArrow.classList.add('bi-chevron-down');
-                } else {
-                    categoryOptions.style.display = 'block';
-                    categoryDropdownArrow.classList.remove('bi-chevron-down');
-                    categoryDropdownArrow.classList.add('bi-chevron-up');
-                }
-            });
-
-            categoryCustomOptions.forEach(option => {
-                option.addEventListener('click', function(e) {
-                    e.stopPropagation();
-
-                    const value = this.getAttribute('data-value');
-                    const text = this.querySelector('span').textContent;
-                    selectedCategory.textContent = text;
-                    hiddenCategorySelect.value = value;
-                    categoryOptions.style.display = 'none';
-                    categoryDropdownArrow.classList.remove('bi-chevron-up');
-                    categoryDropdownArrow.classList.add('bi-chevron-down');
-                    categoryTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
-                    categoryTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
-                    categoryTrigger.classList.remove('error');
-
-                    // Clear error
-                    if (categoryError) {
-                        categoryError.textContent = '';
-                    }
-
-                    hiddenCategorySelect.dispatchEvent(new Event('change'));
-                });
-            });
-
-            document.addEventListener('click', function() {
-                categoryOptions.style.display = 'none';
-                categoryDropdownArrow.classList.remove('bi-chevron-up');
-                categoryDropdownArrow.classList.add('bi-chevron-down');
-            });
-
-            categoryOptions.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        }
-
-        // Venue dropdown functionality
-        const venueTrigger = document.getElementById('venueTrigger');
-        const venueOptions = document.getElementById('venueOptions');
-        const venueDropdownArrow = document.getElementById('venueDropdownArrow');
-        const selectedVenue = document.getElementById('selectedVenue');
-        const hiddenVenueSelect = document.getElementById('hiddenVenueSelect');
-        const venueCustomOptions = document.querySelectorAll('#venueOptions .custom-option');
-        const venueError = document.getElementById('venueError');
-
-        if (venueTrigger) {
-            venueTrigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-
-                if (venueOptions.style.display === 'block') {
-                    venueOptions.style.display = 'none';
-                    venueDropdownArrow.classList.remove('bi-chevron-up');
-                    venueDropdownArrow.classList.add('bi-chevron-down');
-                } else {
-                    venueOptions.style.display = 'block';
-                    venueDropdownArrow.classList.remove('bi-chevron-down');
-                    venueDropdownArrow.classList.add('bi-chevron-up');
-                }
-            });
-
-            venueCustomOptions.forEach(option => {
-                option.addEventListener('click', function(e) {
-                    e.stopPropagation();
-
-                    const value = this.getAttribute('data-value');
-                    const text = this.querySelector('.fw-medium').textContent;
-                    selectedVenue.textContent = text;
-                    hiddenVenueSelect.value = value;
-                    venueOptions.style.display = 'none';
-                    venueDropdownArrow.classList.remove('bi-chevron-up');
-                    venueDropdownArrow.classList.add('bi-chevron-down');
-                    venueTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
-                    venueTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
-                    venueTrigger.classList.remove('error');
-
-                    // Clear error
-                    if (venueError) {
-                        venueError.textContent = '';
-                    }
-
-                    hiddenVenueSelect.dispatchEvent(new Event('change'));
-                });
-            });
-
-            document.addEventListener('click', function() {
-                venueOptions.style.display = 'none';
-                venueDropdownArrow.classList.remove('bi-chevron-up');
-                venueDropdownArrow.classList.add('bi-chevron-down');
-            });
-
-            venueOptions.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        }
-
-        // Fix for datetime-local input to ensure time is selectable
-        const startDateInput = document.querySelector('input[name="StartDate"]');
-        const endDateInput = document.querySelector('input[name="EndDate"]');
-
-        function formatDateTimeLocal(date) {
-            // Format date to YYYY-MM-DDTHH:MM
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
-        }
-
-        function validateDates() {
-            if (startDateInput.value && endDateInput.value) {
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-
-                if (endDate <= startDate) {
-                    endDateInput.style.borderColor = '#dc3545';
-                    endDateInput.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
-
-                    // Set end date to 1 hour after start date
-                    const oneHourLater = new Date(startDate.getTime() + 60 * 60 * 1000);
-                    endDateInput.value = formatDateTimeLocal(oneHourLater);
-
-                    return false;
-                } else {
-                    endDateInput.style.borderColor = 'rgba(255,255,255,0.3)';
-                    endDateInput.style.boxShadow = 'none';
-                    return true;
-                }
-            }
-            return true;
-        }
-
-        // Initialize datetime inputs with proper time
-        const now = new Date();
-
-        // Round minutes to nearest 5
-        const roundedMinutes = Math.ceil(now.getMinutes() / 5) * 5;
-        now.setMinutes(roundedMinutes);
-
-        // Format for datetime-local
-        const formattedNow = formatDateTimeLocal(now);
-
-        // Set default start date to now (rounded to nearest 5 minutes)
-        if (startDateInput && !startDateInput.value) {
-            startDateInput.min = formattedNow;
-            startDateInput.value = formattedNow;
-        }
-
-        // Set default end date to 1 hour from now (rounded to nearest 5 minutes)
-        if (endDateInput && !endDateInput.value) {
-            const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
-            const formattedOneHourLater = formatDateTimeLocal(oneHourLater);
-            endDateInput.min = formattedOneHourLater;
-            endDateInput.value = formattedOneHourLater;
-        }
-
-        // Add event listeners for date validation
-        if (startDateInput && endDateInput) {
-            startDateInput.addEventListener('change', function() {
-                // When start date changes, update end date minimum
-                const startDate = new Date(this.value);
-                const minEndDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour later
-                endDateInput.min = formatDateTimeLocal(minEndDate);
-
-                // If current end date is before new start date, update it
-                const currentEndDate = new Date(endDateInput.value);
-                if (currentEndDate <= startDate) {
-                    endDateInput.value = formatDateTimeLocal(minEndDate);
-                }
-
-                validateDates();
-            });
-
-            endDateInput.addEventListener('change', validateDates);
-        }
-
-        // Helper function to show time selection hint
-        function showTimeHint(inputElement) {
-            // Remove existing hint
-            const existingHint = inputElement.nextElementSibling;
-            if (existingHint && existingHint.classList.contains('time-input-helper')) {
-                existingHint.remove();
-            }
-
-            // Add hint for time selection
-            const hint = document.createElement('small');
-            hint.className = 'time-input-helper';
-            hint.textContent = 'Click calendar icon or type to set time (HH:MM)';
-            hint.style.display = 'block';
-            inputElement.parentNode.appendChild(hint);
-
-            // Remove hint after 5 seconds
-            setTimeout(() => {
-                if (hint.parentNode) {
-                    hint.style.opacity = '0';
-                    hint.style.transition = 'opacity 0.5s ease';
-                    setTimeout(() => {
-                        if (hint.parentNode) {
-                            hint.remove();
-                        }
-                    }, 500);
-                }
-            }, 5000);
-        }
-
-        // Add click event to show time selection hint
-        if (startDateInput) {
-            startDateInput.addEventListener('focus', function() {
-                showTimeHint(this);
-            });
-        }
-
-        if (endDateInput) {
-            endDateInput.addEventListener('focus', function() {
-                showTimeHint(this);
-            });
-        }
-
-        // Form validation before submission
-        const form = document.getElementById('eventForm');
-        const submitBtn = document.getElementById('submitBtn');
-
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                let isValid = true;
-                let errorMessages = [];
-
-                // Validate category
-                const categoryValue = hiddenCategorySelect ? hiddenCategorySelect.value : '';
-                if (!categoryValue) {
-                    isValid = false;
-                    if (categoryTrigger) {
-                        categoryTrigger.classList.add('error');
-                    }
-                    if (categoryError) {
-                        categoryError.textContent = 'Please select a category';
-                    }
-                    errorMessages.push('Category is required');
-                } else {
-                    if (categoryTrigger) {
-                        categoryTrigger.classList.remove('error');
-                    }
-                    if (categoryError) {
-                        categoryError.textContent = '';
-                    }
-                }
-
-                // Validate venue
-                const venueValue = hiddenVenueSelect ? hiddenVenueSelect.value : '';
-                if (!venueValue) {
-                    isValid = false;
-                    if (venueTrigger) {
-                        venueTrigger.classList.add('error');
-                    }
-                    if (venueError) {
-                        venueError.textContent = 'Please select a venue';
-                    }
-                    errorMessages.push('Venue is required');
-                } else {
-                    if (venueTrigger) {
-                        venueTrigger.classList.remove('error');
-                    }
-                    if (venueError) {
-                        venueError.textContent = '';
-                    }
-                }
-
-                // Validate dates
-                if (!validateDates()) {
-                    isValid = false;
-                    errorMessages.push('End date must be after start date');
-                }
-
-                // Check if there are any venues available
-                const venueOptions = document.querySelectorAll('#venueOptions .custom-option');
-                if (venueOptions.length === 0) {
-                    isValid = false;
-                    if (venueError) {
-                        venueError.textContent = 'No venues available. Please create a venue first.';
-                    }
-                    errorMessages.push('No venues available');
-                }
-
-                if (!isValid) {
-                    e.preventDefault();
-
-                    // Show error summary
-                    const validationSummary = document.querySelector('[asp-validation-summary="ModelOnly"]');
-                    if (validationSummary && errorMessages.length > 0) {
-                        validationSummary.innerHTML = '<strong>Please fix the following errors:</strong><ul class="mb-0 mt-1" style="padding-left: 1rem;">' +
-                            errorMessages.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
-                        validationSummary.style.display = 'block';
-
-                        // Scroll to top of form
-                        validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-
-                    // Reset button state
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Create Event';
-                        submitBtn.disabled = false;
-                    }
-                } else {
-                    // Show loading spinner
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
-                        submitBtn.disabled = true;
-                    }
-                }
-            });
-        }
-
-        // Clear validation errors on input
-        const inputs = form.querySelectorAll('input, textarea, select');
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const errorSpan = this.nextElementSibling;
-                if (errorSpan && errorSpan.classList.contains('text-danger')) {
-                    errorSpan.textContent = '';
-                }
-
-                // Clear custom select errors
-                if (this === hiddenCategorySelect) {
-                    categoryTrigger.classList.remove('error');
-                    if (categoryError) {
-                        categoryError.textContent = '';
-                    }
-                }
-                if (this === hiddenVenueSelect) {
-                    venueTrigger.classList.remove('error');
-                    if (venueError) {
-                        venueError.textContent = '';
-                    }
-                }
-            });
-        });
-    });
-</script>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <!-- Required libraries for Bootstrap DateTimePicker -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category dropdown functionality
+            const categoryTrigger = document.getElementById('categoryTrigger');
+            const categoryOptions = document.getElementById('categoryOptions');
+            const categoryDropdownArrow = document.getElementById('categoryDropdownArrow');
+            const selectedCategory = document.getElementById('selectedCategory');
+            const hiddenCategorySelect = document.getElementById('hiddenCategorySelect');
+            const categoryCustomOptions = document.querySelectorAll('#categoryOptions .custom-option');
+            const categoryError = document.getElementById('categoryError');
+
+            if (categoryTrigger) {
+                categoryTrigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+
+                    if (categoryOptions.style.display === 'block') {
+                        categoryOptions.style.display = 'none';
+                        categoryDropdownArrow.classList.remove('bi-chevron-up');
+                        categoryDropdownArrow.classList.add('bi-chevron-down');
+                    } else {
+                        categoryOptions.style.display = 'block';
+                        categoryDropdownArrow.classList.remove('bi-chevron-down');
+                        categoryDropdownArrow.classList.add('bi-chevron-up');
+                    }
+                });
+
+                categoryCustomOptions.forEach(option => {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
+
+                        const value = this.getAttribute('data-value');
+                        const text = this.querySelector('span').textContent;
+                        selectedCategory.textContent = text;
+                        hiddenCategorySelect.value = value;
+                        categoryOptions.style.display = 'none';
+                        categoryDropdownArrow.classList.remove('bi-chevron-up');
+                        categoryDropdownArrow.classList.add('bi-chevron-down');
+                        categoryTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
+                        categoryTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
+                        categoryTrigger.classList.remove('error');
+
+                        // Clear error
+                        if (categoryError) {
+                            categoryError.textContent = '';
+                        }
+
+                        hiddenCategorySelect.dispatchEvent(new Event('change'));
+                    });
+                });
+
+                document.addEventListener('click', function() {
+                    categoryOptions.style.display = 'none';
+                    categoryDropdownArrow.classList.remove('bi-chevron-up');
+                    categoryDropdownArrow.classList.add('bi-chevron-down');
+                });
+
+                categoryOptions.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // Venue dropdown functionality
+            const venueTrigger = document.getElementById('venueTrigger');
+            const venueOptions = document.getElementById('venueOptions');
+            const venueDropdownArrow = document.getElementById('venueDropdownArrow');
+            const selectedVenue = document.getElementById('selectedVenue');
+            const hiddenVenueSelect = document.getElementById('hiddenVenueSelect');
+            const venueCustomOptions = document.querySelectorAll('#venueOptions .custom-option');
+            const venueError = document.getElementById('venueError');
+
+            if (venueTrigger) {
+                venueTrigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+
+                    if (venueOptions.style.display === 'block') {
+                        venueOptions.style.display = 'none';
+                        venueDropdownArrow.classList.remove('bi-chevron-up');
+                        venueDropdownArrow.classList.add('bi-chevron-down');
+                    } else {
+                        venueOptions.style.display = 'block';
+                        venueDropdownArrow.classList.remove('bi-chevron-down');
+                        venueDropdownArrow.classList.add('bi-chevron-up');
+                    }
+                });
+
+                venueCustomOptions.forEach(option => {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
+
+                        const value = this.getAttribute('data-value');
+                        const text = this.querySelector('.fw-medium').textContent;
+                        selectedVenue.textContent = text;
+                        hiddenVenueSelect.value = value;
+                        venueOptions.style.display = 'none';
+                        venueDropdownArrow.classList.remove('bi-chevron-up');
+                        venueDropdownArrow.classList.add('bi-chevron-down');
+                        venueTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
+                        venueTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
+                        venueTrigger.classList.remove('error');
+
+                        // Clear error
+                        if (venueError) {
+                            venueError.textContent = '';
+                        }
+
+                        hiddenVenueSelect.dispatchEvent(new Event('change'));
+                    });
+                });
+
+                document.addEventListener('click', function() {
+                    venueOptions.style.display = 'none';
+                    venueDropdownArrow.classList.remove('bi-chevron-up');
+                    venueDropdownArrow.classList.add('bi-chevron-down');
+                });
+
+                venueOptions.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // Format date for display
+            function formatDateForDisplay(date) {
+                if (!date) return 'Not selected';
+                return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+            }
+
+            // Show error message below a field
+            function showError(fieldId, message) {
+                const errorElement = document.getElementById(fieldId);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+
+            // Clear error message
+            function clearError(fieldId) {
+                const errorElement = document.getElementById(fieldId);
+                if (errorElement) {
+                    errorElement.textContent = '';
+                    errorElement.style.display = 'none';
+                }
+            }
+
+            // Function to disable past dates in the picker
+            function disablePastDates(widget) {
+                const today = moment().startOf('day');
+                const days = widget.find('.day');
+
+                days.each(function() {
+                    const dayElement = $(this);
+                    const dayDate = moment(dayElement.data('day'), 'MM/DD/YYYY');
+
+                    if (dayDate.isBefore(today)) {
+                        dayElement.addClass('disabled');
+                        dayElement.css({
+                            'cursor': 'not-allowed',
+                            'opacity': '0.5'
+                        });
+                    }
+                });
+            }
+
+            // Set initial date (rounded to nearest 5 minutes, but not in the past)
+            const now = moment();
+            const roundedMinutes = Math.ceil(now.minutes() / 5) * 5;
+            now.minutes(roundedMinutes);
+
+            // Ensure the date is not in the past
+            const currentTime = moment();
+            const initialStartDate = now.isBefore(currentTime) ? currentTime : now;
+
+            // Initialize Start Date DateTime Picker
+            const startDateTimePicker = $('#startDateTimePicker');
+            const startDateTimeInput = $('#startDateTimeInput');
+            const startDateTimeDisplay = $('#startDateTimeDisplay');
+
+            startDateTimePicker.datetimepicker({
+                inline: true,
+                sideBySide: true,
+                format: 'YYYY-MM-DD HH:mm:ss',
+                defaultDate: initialStartDate,
+                minDate: currentTime, // Prevent past dates
+                icons: {
+                    time: 'bi bi-clock',
+                    date: 'bi bi-calendar',
+                    up: 'bi bi-chevron-up',
+                    down: 'bi bi-chevron-down',
+                    previous: 'bi bi-chevron-left',
+                    next: 'bi bi-chevron-right',
+                    today: 'bi bi-calendar-check',
+                    clear: 'bi bi-trash',
+                    close: 'bi bi-x'
+                }
+            });
+
+            // Update hidden input and display when date is changed
+            startDateTimePicker.on('change.datetimepicker', function(e) {
+                if (e.date) {
+                    const formattedDate = e.date.format('YYYY-MM-DDTHH:mm:ss');
+                    startDateTimeInput.val(formattedDate);
+                    startDateTimeDisplay.text(formatDateForDisplay(e.date));
+
+                    // Update end date picker minimum date (1 hour after start)
+                    const minEndDate = moment(e.date).add(1, 'hour');
+                    endDateTimePicker.datetimepicker('minDate', minEndDate);
+
+                    // If current end date is before new start date or its minimum, update it
+                    const currentEndDate = endDateTimePicker.datetimepicker('date');
+                    if (!currentEndDate || currentEndDate.isSameOrBefore(e.date) || currentEndDate.isBefore(minEndDate)) {
+                        endDateTimePicker.datetimepicker('date', minEndDate);
+                    }
+
+                    // Clear any previous errors
+                    clearError('startDateError');
+                }
+            });
+
+            // Also validate on show event
+            startDateTimePicker.on('show.datetimepicker', function(e) {
+                // Disable past dates in the current view
+                setTimeout(() => {
+                    disablePastDates(startDateTimePicker);
+                }, 50);
+            });
+
+            // Set initial values
+            startDateTimePicker.datetimepicker('date', initialStartDate);
+
+            // Initialize End Date DateTime Picker
+            const endDateTimePicker = $('#endDateTimePicker');
+            const endDateTimeInput = $('#endDateTimeInput');
+            const endDateTimeDisplay = $('#endDateTimeDisplay');
+
+            // Set initial date (1 hour from start, rounded to nearest 5 minutes)
+            const initialEndDate = moment(initialStartDate).add(1, 'hour');
+
+            endDateTimePicker.datetimepicker({
+                inline: true,
+                sideBySide: true,
+                format: 'YYYY-MM-DD HH:mm:ss',
+                defaultDate: initialEndDate,
+                minDate: initialEndDate, // Minimum 1 hour from start
+                icons: {
+                    time: 'bi bi-clock',
+                    date: 'bi bi-calendar',
+                    up: 'bi bi-chevron-up',
+                    down: 'bi bi-chevron-down',
+                    previous: 'bi bi-chevron-left',
+                    next: 'bi bi-chevron-right',
+                    today: 'bi bi-calendar-check',
+                    clear: 'bi bi-trash',
+                    close: 'bi bi-x'
+                }
+            });
+
+            // Update hidden input and display when date is changed
+            endDateTimePicker.on('change.datetimepicker', function(e) {
+                if (e.date) {
+                    const formattedDate = e.date.format('YYYY-MM-DDTHH:mm:ss');
+                    endDateTimeInput.val(formattedDate);
+                    endDateTimeDisplay.text(formatDateForDisplay(e.date));
+
+                    // Clear any previous errors
+                    clearError('endDateError');
+                }
+            });
+
+            // Also validate on show event
+            endDateTimePicker.on('show.datetimepicker', function(e) {
+                // Disable past dates in the current view
+                setTimeout(() => {
+                    disablePastDates(endDateTimePicker);
+                }, 50);
+            });
+
+            // Set initial values
+            endDateTimePicker.datetimepicker('date', initialEndDate);
+
+            // Validate date ranges in real-time
+            function validateDateRanges() {
+                const startDate = startDateTimePicker.datetimepicker('date');
+                const endDate = endDateTimePicker.datetimepicker('date');
+                let isValid = true;
+
+                // Clear previous errors
+                clearError('startDateError');
+                clearError('endDateError');
+
+                // Validate start date
+                if (!startDate || !startDateTimeInput.val()) {
+                    showError('startDateError', 'Please select a start date and time');
+                    isValid = false;
+                } else if (startDate.isBefore(moment())) {
+                    showError('startDateError', 'Start date cannot be in the past');
+                    isValid = false;
+                }
+
+                // Validate end date
+                if (!endDate || !endDateTimeInput.val()) {
+                    showError('endDateError', 'Please select an end date and time');
+                    isValid = false;
+                } else if (endDate.isBefore(moment())) {
+                    showError('endDateError', 'End date cannot be in the past');
+                    isValid = false;
+                }
+
+                // Validate that end date is after start date
+                if (startDate && endDate && endDate.isSameOrBefore(startDate)) {
+                    showError('endDateError', 'End date must be after start date');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            // Add change events for date validation
+            startDateTimePicker.on('change.datetimepicker', validateDateRanges);
+            endDateTimePicker.on('change.datetimepicker', validateDateRanges);
+
+            // Form validation before submission
+            const form = document.getElementById('eventForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    let isValid = true;
+                    let errorMessages = [];
+
+                    // Validate category
+                    const categoryValue = hiddenCategorySelect ? hiddenCategorySelect.value : '';
+                    if (!categoryValue) {
+                        isValid = false;
+                        if (categoryTrigger) {
+                            categoryTrigger.classList.add('error');
+                        }
+                        if (categoryError) {
+                            categoryError.textContent = 'Please select a category';
+                        }
+                        errorMessages.push('Category is required');
+                    } else {
+                        if (categoryTrigger) {
+                            categoryTrigger.classList.remove('error');
+                        }
+                        if (categoryError) {
+                            categoryError.textContent = '';
+                        }
+                    }
+
+                    // Validate venue
+                    const venueValue = hiddenVenueSelect ? hiddenVenueSelect.value : '';
+                    if (!venueValue) {
+                        isValid = false;
+                        if (venueTrigger) {
+                            venueTrigger.classList.add('error');
+                        }
+                        if (venueError) {
+                            venueError.textContent = 'Please select a venue';
+                        }
+                        errorMessages.push('Venue is required');
+                    } else {
+                        if (venueTrigger) {
+                            venueTrigger.classList.remove('error');
+                        }
+                        if (venueError) {
+                            venueError.textContent = '';
+                        }
+                    }
+
+                    // Validate dates
+                    if (!validateDateRanges()) {
+                        isValid = false;
+                        errorMessages.push('Please fix date and time errors');
+                    }
+
+                    // Check if there are any venues available
+                    const venueOptions = document.querySelectorAll('#venueOptions .custom-option');
+                    if (venueOptions.length === 0) {
+                        isValid = false;
+                        if (venueError) {
+                            venueError.textContent = 'No venues available. Please create a venue first.';
+                        }
+                        errorMessages.push('No venues available');
+                    }
+
+                    if (!isValid) {
+                        e.preventDefault();
+
+                        // Show error summary
+                        const validationSummary = document.querySelector('[asp-validation-summary="ModelOnly"]');
+                        if (validationSummary && errorMessages.length > 0) {
+                            validationSummary.innerHTML = '<strong>Please fix the following errors:</strong><ul class="mb-0 mt-1" style="padding-left: 1rem;">' +
+                                errorMessages.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
+                            validationSummary.style.display = 'block';
+
+                            // Scroll to first error
+                            const firstError = document.querySelector('.text-danger:not(:empty)');
+                            if (firstError) {
+                                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            } else {
+                                validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+
+                        // Reset button state
+                        if (submitBtn) {
+                            submitBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Create Event';
+                            submitBtn.disabled = false;
+                        }
+                    } else {
+                        // Show loading spinner
+                        if (submitBtn) {
+                            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+                            submitBtn.disabled = true;
+                        }
+                    }
+                });
+            }
+
+            // Clear validation errors on input
+            const inputs = form.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const errorSpan = this.nextElementSibling;
+                    if (errorSpan && errorSpan.classList.contains('text-danger')) {
+                        errorSpan.textContent = '';
+                    }
+
+                    // Clear custom select errors
+                    if (this === hiddenCategorySelect) {
+                        categoryTrigger.classList.remove('error');
+                        if (categoryError) {
+                            categoryError.textContent = '';
+                        }
+                    }
+                    if (this === hiddenVenueSelect) {
+                        venueTrigger.classList.remove('error');
+                        if (venueError) {
+                            venueError.textContent = '';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 }
