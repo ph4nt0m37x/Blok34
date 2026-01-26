@@ -4,31 +4,15 @@
     ViewData["Title"] = "Create Event";
 }
 
-<div class="d-flex align-items-start justify-content-start"
-     style="min-height: 100vh; padding-top: 1rem; padding-bottom: 3rem;">
-
+<div class="d-flex align-items-start justify-content-start" style="min-height: 100vh; padding-top: 1rem; padding-bottom: 3rem;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 col-md-10 col-sm-12">
-                <!-- Glassmorphism Card -->
-                <div class="card border-0 shadow"
-                     style="background: rgba(255,255,255,0.07);
-                            backdrop-filter: blur(12px);
-                            border-radius: 20px;
-                            border: 1px solid rgba(255,255,255,0.15);
-                            margin-bottom: 2rem;">
-
+                <div class="card border-0 shadow" style="background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 2rem;">
                     <div class="card-body p-4">
-
-                        <!-- Logo and Title -->
                         <div class="text-center mb-4">
                             <svg width="60" height="40" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" class="mb-2">
-                                <defs>
-                                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#4B0082" />
-                                        <stop offset="100%" stop-color="#6a0dad" />
-                                    </linearGradient>
-                                </defs>
+                                <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4B0082" /><stop offset="100%" stop-color="#6a0dad" /></linearGradient></defs>
                                 <rect x="15" y="10" width="25" height="40" rx="4" fill="url(#grad1)" />
                                 <rect x="40" y="20" width="20" height="30" rx="3" fill="#5D3FD3" />
                                 <rect x="60" y="30" width="15" height="20" rx="2" fill="#4B0082" />
@@ -37,218 +21,87 @@
                             <p class="text-white-50">Organize and share your event with the community</p>
                         </div>
 
-                        <!-- Event Form -->
                         <form asp-action="Create" method="post" id="eventForm">
-                            <div asp-validation-summary="ModelOnly"
-                                 class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white small py-2 rounded-pill mb-4"
-                                 role="alert">
-                            </div>
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white small py-2 rounded-pill mb-4" role="alert"></div>
 
-                            <!-- Hidden User ID Field -->
                             <input type="hidden" asp-for="CreatedByUserId" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
 
-                            <!-- Event Title -->
                             <div class="mb-3 position-relative">
-                                <label asp-for="Title" class="form-label text-white fw-medium mb-1">
-                                    <i class="bi bi-calendar-event me-2"></i>Event Title
-                                </label>
+                                <label asp-for="Title" class="form-label text-white fw-medium mb-1"><i class="bi bi-calendar-event me-2"></i>Event Title</label>
                                 <div class="position-relative">
                                     <i class="bi bi-pencil position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
-                                    <input asp-for="Title"
-                                           class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
-                                           style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
-                                           placeholder="Enter event title"
-                                           aria-required="true" />
+                                    <input asp-for="Title" class="form-control bg-transparent text-white py-2 rounded-pill ps-5" style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;" placeholder="Enter event title" aria-required="true" />
                                 </div>
                                 <span asp-validation-for="Title" class="text-danger d-block mt-1"></span>
                             </div>
 
-                            <!-- Event Category Dropdown -->
                             <div class="mb-3">
-                                <label asp-for="Category" class="form-label text-white fw-medium mb-2">
-                                    <i class="bi bi-tags me-2"></i>Event Category
-                                </label>
+                                <label asp-for="Category" class="form-label text-white fw-medium mb-2"><i class="bi bi-tags me-2"></i>Event Category</label>
                                 <div class="position-relative">
-                                    <!-- Custom dropdown container -->
                                     <div class="custom-select-wrapper">
-                                        <div class="custom-select-trigger d-flex align-items-center justify-content-between bg-transparent text-white py-2 px-3 rounded-pill"
-                                             style="border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.2s ease;"
-                                             id="categoryTrigger">
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-tag me-2 text-white-50"></i>
-                                                <span id="selectedCategory">Select a category</span>
-                                            </div>
+                                        <div class="custom-select-trigger d-flex align-items-center justify-content-between bg-transparent text-white py-2 px-3 rounded-pill" style="border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.2s ease;" id="categoryTrigger">
+                                            <div class="d-flex align-items-center"><i class="bi bi-tag me-2 text-white-50"></i><span id="selectedCategory">Select a category</span></div>
                                             <i class="bi bi-chevron-down text-white-50" id="categoryDropdownArrow"></i>
                                         </div>
-
-                                        <!-- Custom dropdown menu -->
-                                        <div class="custom-select-options shadow"
-                                             style="background: rgba(30, 30, 46, 0.98);
-                                                    backdrop-filter: blur(10px);
-                                                    border: 1px solid rgba(255,255,255,0.15);
-                                                    border-radius: 12px;
-                                                    margin-top: 0.5rem;
-                                                    padding: 0.5rem;
-                                                    display: none;
-                                                    position: absolute;
-                                                    width: 100%;
-                                                    z-index: 1000;"
-                                             id="categoryOptions">
+                                        <div class="custom-select-options shadow" style="background: rgba(30, 30, 46, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; margin-top: 0.5rem; padding: 0.5rem; display: none; position: absolute; width: 100%; z-index: 1000;" id="categoryOptions">
                                             @foreach (var category in Html.GetEnumSelectList<EventCategory>())
                                             {
-                                                <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded"
-                                                     style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;"
-                                                     data-value="@category.Value">
-                                                    <div class="me-2 d-flex align-items-center justify-content-center rounded"
-                                                         style="width: 28px; height: 28px; background: rgba(255,255,255,0.1);">
-                                                        <i class="bi bi-calendar-check" style="font-size: 0.8rem;"></i>
-                                                    </div>
-                                                    <span>@category.Text</span>
+                                                <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded" style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;" data-value="@category.Value">
+                                                    <div class="me-2 d-flex align-items-center justify-content-center rounded" style="width: 28px; height: 28px; background: rgba(255,255,255,0.1);"><i class="bi bi-calendar-check" style="font-size: 0.8rem;"></i></div><span>@category.Text</span>
                                                 </div>
                                             }
                                         </div>
-
-                                        <!-- Hidden select for form submission -->
-                                        <select asp-for="Category"
-                                                asp-items="Html.GetEnumSelectList<EventCategory>()"
-                                                class="d-none"
-                                                id="hiddenCategorySelect"
-                                                aria-required="true">
-                                            <option value="" selected disabled>Select a category</option>
-                                        </select>
+                                        <select asp-for="Category" asp-items="Html.GetEnumSelectList<EventCategory>()" class="d-none" id="hiddenCategorySelect" aria-required="true"><option value="" selected disabled>Select a category</option></select>
                                     </div>
                                 </div>
                                 <span asp-validation-for="Category" class="text-danger d-block mt-1" id="categoryError"></span>
                             </div>
 
-                            <!-- Event Description -->
                             <div class="mb-3 position-relative">
-                                <label asp-for="Description" class="form-label text-white fw-medium mb-1">
-                                    <i class="bi bi-text-paragraph me-2"></i>Description
-                                </label>
+                                <label asp-for="Description" class="form-label text-white fw-medium mb-1"><i class="bi bi-text-paragraph me-2"></i>Description</label>
                                 <div class="position-relative">
                                     <i class="bi bi-text-left position-absolute top-0 start-0 ms-3 mt-3 text-white-50"></i>
-                                    <textarea asp-for="Description"
-                                              class="form-control bg-transparent text-white py-2 rounded-4 ps-5"
-                                              style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem; min-height: 120px;"
-                                              placeholder="Describe your event (agenda, activities, etc.)"
-                                              aria-required="true"></textarea>
+                                    <textarea asp-for="Description" class="form-control bg-transparent text-white py-2 rounded-4 ps-5" style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem; min-height: 120px;" placeholder="Describe your event (agenda, activities, etc.)" aria-required="true"></textarea>
                                 </div>
                                 <span asp-validation-for="Description" class="text-danger d-block mt-1"></span>
                             </div>
 
-                            <!-- Start Date & Time Section with DateTime Picker -->
                             <div class="mb-4">
-                                <label asp-for="StartDate" class="form-label text-white fw-medium mb-2 d-block">
-                                    <i class="bi bi-clock me-2"></i>Start Date & Time
-                                </label>
-
-                                <!-- Hidden input for form submission -->
+                                <label asp-for="StartDate" class="form-label text-white fw-medium mb-2 d-block"><i class="bi bi-clock me-2"></i>Start Date & Time</label>
                                 <input type="hidden" asp-for="StartDate" id="startDateTimeInput" />
-
-                                <!-- DateTime Picker Container with Glassmorphism -->
-                                <div class="datetimepicker-container rounded-4 p-3 mb-2"
-                                     style="background: rgba(255,255,255,0.05);
-                                            backdrop-filter: blur(10px);
-                                            border: 1px solid rgba(255,255,255,0.15);">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div id="startDateTimePicker"></div>
-                                        </div>
-                                    </div>
+                                <div class="datetimepicker-container rounded-4 p-3 mb-2" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15);">
+                                    <div class="row"><div class="col-md-12"><div id="startDateTimePicker"></div></div></div>
                                 </div>
-
-                                <!-- Display selected date -->
-                                <div class="mt-2 mb-1">
-                                    <small class="text-white-50">
-                                        <i class="bi bi-calendar2-check me-1"></i>
-                                        Selected: <span id="startDateTimeDisplay" class="fw-medium text-white">Not selected</span>
-                                    </small>
-                                </div>
-
-                                <!-- Error container for start date -->
+                                <div class="mt-2 mb-1"><small class="text-white-50"><i class="bi bi-calendar2-check me-1"></i>Selected: <span id="startDateTimeDisplay" class="fw-medium text-white">Not selected</span></small></div>
                                 <div id="startDateError" class="text-danger d-block mt-1 small"></div>
                             </div>
 
-                            <!-- End Date & Time Section with DateTime Picker -->
                             <div class="mb-4">
-                                <label asp-for="EndDate" class="form-label text-white fw-medium mb-2 d-block">
-                                    <i class="bi bi-clock-history me-2"></i>End Date & Time
-                                </label>
-
-                                <!-- Hidden input for form submission -->
+                                <label asp-for="EndDate" class="form-label text-white fw-medium mb-2 d-block"><i class="bi bi-clock-history me-2"></i>End Date & Time</label>
                                 <input type="hidden" asp-for="EndDate" id="endDateTimeInput" />
-
-                                <!-- DateTime Picker Container with Glassmorphism -->
-                                <div class="datetimepicker-container rounded-4 p-3 mb-2"
-                                     style="background: rgba(255,255,255,0.05);
-                                            backdrop-filter: blur(10px);
-                                            border: 1px solid rgba(255,255,255,0.15);">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div id="endDateTimePicker"></div>
-                                        </div>
-                                    </div>
+                                <div class="datetimepicker-container rounded-4 p-3 mb-2" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15);">
+                                    <div class="row"><div class="col-md-12"><div id="endDateTimePicker"></div></div></div>
                                 </div>
-
-                                <!-- Display selected date -->
-                                <div class="mt-2 mb-1">
-                                    <small class="text-white-50">
-                                        <i class="bi bi-calendar2-check me-1"></i>
-                                        Selected: <span id="endDateTimeDisplay" class="fw-medium text-white">Not selected</span>
-                                    </small>
-                                </div>
-
-                                <!-- Error container for end date -->
+                                <div class="mt-2 mb-1"><small class="text-white-50"><i class="bi bi-calendar2-check me-1"></i>Selected: <span id="endDateTimeDisplay" class="fw-medium text-white">Not selected</span></small></div>
                                 <div id="endDateError" class="text-danger d-block mt-1 small"></div>
                             </div>
 
-                            <!-- Venue Selection -->
                             <div class="mb-4">
-                                <label asp-for="VenueId" class="form-label text-white fw-medium mb-2">
-                                    <i class="bi bi-geo-alt me-2"></i>Select Venue
-                                </label>
+                                <label asp-for="VenueId" class="form-label text-white fw-medium mb-2"><i class="bi bi-geo-alt me-2"></i>Select Venue</label>
                                 <div class="position-relative">
-                                    <!-- Custom dropdown container -->
                                     <div class="custom-select-wrapper">
-                                        <div class="custom-select-trigger d-flex align-items-center justify-content-between bg-transparent text-white py-2 px-3 rounded-pill"
-                                             style="border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.2s ease;"
-                                             id="venueTrigger">
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-building me-2 text-white-50"></i>
-                                                <span id="selectedVenue">Select a venue</span>
-                                            </div>
+                                        <div class="custom-select-trigger d-flex align-items-center justify-content-between bg-transparent text-white py-2 px-3 rounded-pill" style="border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.2s ease;" id="venueTrigger">
+                                            <div class="d-flex align-items-center"><i class="bi bi-building me-2 text-white-50"></i><span id="selectedVenue">Select a venue</span></div>
                                             <i class="bi bi-chevron-down text-white-50" id="venueDropdownArrow"></i>
                                         </div>
-
-                                        <!-- Custom dropdown menu -->
-                                        <div class="custom-select-options shadow"
-                                             style="background: rgba(30, 30, 46, 0.98);
-                                                    backdrop-filter: blur(10px);
-                                                    border: 1px solid rgba(255,255,255,0.15);
-                                                    border-radius: 12px;
-                                                    margin-top: 0.5rem;
-                                                    padding: 0.5rem;
-                                                    display: none;
-                                                    position: absolute;
-                                                    width: 100%;
-                                                    z-index: 1000;"
-                                             id="venueOptions">
+                                        <div class="custom-select-options shadow" style="background: rgba(30, 30, 46, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; margin-top: 0.5rem; padding: 0.5rem; display: none; position: absolute; width: 100%; z-index: 1000;" id="venueOptions">
                                             @if (ViewBag.VenueId != null && ((IEnumerable<SelectListItem>)ViewBag.VenueId).Any())
                                             {
                                                 foreach (var venue in ViewBag.VenueId)
                                                 {
-                                                    <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded"
-                                                         style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;"
-                                                         data-value="@venue.Value">
-                                                        <div class="me-2 d-flex align-items-center justify-content-center rounded"
-                                                             style="width: 28px; height: 28px; background: rgba(255,255,255,0.1);">
-                                                            <i class="bi bi-building" style="font-size: 0.8rem;"></i>
-                                                        </div>
-                                                        <div>
-                                                            <div class="fw-medium">@venue.Text</div>
-                                                            <small class="text-white-50" style="font-size: 0.75rem;">Select this venue</small>
-                                                        </div>
+                                                    <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded" style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;" data-value="@venue.Value">
+                                                        <div class="me-2 d-flex align-items-center justify-content-center rounded" style="width: 28px; height: 28px; background: rgba(255,255,255,0.1);"><i class="bi bi-building" style="font-size: 0.8rem;"></i></div>
+                                                        <div><div class="fw-medium">@venue.Text</div><small class="text-white-50" style="font-size: 0.75rem;">Select this venue</small></div>
                                                     </div>
                                                 }
                                             }
@@ -257,32 +110,18 @@
                                                 <div class="text-center py-3">
                                                     <i class="bi bi-building-slash text-white-50 display-6 mb-2"></i>
                                                     <p class="text-white-50 mb-1">No venues available</p>
-                                                    <a asp-controller="Venues" asp-action="Create" class="text-decoration-none" style="color: #7fa3e4;">
-                                                        <i class="bi bi-plus-circle me-1"></i>Create a venue first
-                                                    </a>
+                                                    <a asp-controller="Venues" asp-action="Create" class="text-decoration-none" style="color: #7fa3e4;"><i class="bi bi-plus-circle me-1"></i>Create a venue first</a>
                                                 </div>
                                             }
                                         </div>
-
-                                        <!-- Hidden select for form submission -->
-                                        <select asp-for="VenueId"
-                                                asp-items="ViewBag.VenueId"
-                                                class="d-none"
-                                                id="hiddenVenueSelect"
-                                                aria-required="true">
-                                            <option value="" selected disabled>Select a venue</option>
-                                        </select>
+                                        <select asp-for="VenueId" asp-items="ViewBag.VenueId" class="d-none" id="hiddenVenueSelect" aria-required="true"><option value="" selected disabled>Select a venue</option></select>
                                     </div>
                                 </div>
                                 <span asp-validation-for="VenueId" class="text-danger d-block mt-1" id="venueError"></span>
                             </div>
 
-                            <!-- Additional Info Section -->
                             <div class="mb-4 p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="bi bi-info-circle text-info me-2" style="font-size: 1.2rem;"></i>
-                                    <h6 class="text-white mb-0">Event Tips</h6>
-                                </div>
+                                <div class="d-flex align-items-center mb-2"><i class="bi bi-info-circle text-info me-2" style="font-size: 1.2rem;"></i><h6 class="text-white mb-0">Event Tips</h6></div>
                                 <ul class="text-white-50 small mb-0 ps-3">
                                     <li>Choose a descriptive title that captures the event's essence</li>
                                     <li>Select the appropriate category to help attendees find your event</li>
@@ -293,25 +132,10 @@
                                 </ul>
                             </div>
 
-                            <!-- Submit Button -->
-                            <button type="submit"
-                                    class="btn w-100 py-2 mb-2 text-white fw-medium rounded-pill fw-bold"
-                                    style="background: linear-gradient(135deg, #6a0dad, #8a2be2);
-                                           border: none;
-                                           font-size: 0.95rem;
-                                           transition: all 0.2s ease;
-                                           box-shadow: 0 4px 15px rgba(106,13,173,0.3);"
-                                    id="submitBtn">
-                                <i class="bi bi-plus-circle me-2"></i>Create Event
-                            </button>
+                            <button type="submit" class="btn w-100 py-2 mb-2 text-white fw-medium rounded-pill fw-bold" style="background: linear-gradient(135deg, #6a0dad, #8a2be2); border: none; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(106,13,173,0.3);" id="submitBtn"><i class="bi bi-plus-circle me-2"></i>Create Event</button>
 
-                            <!-- Back Link -->
                             <div class="text-center mt-3">
-                                <a asp-action="Index"
-                                   class="text-decoration-none fw-medium"
-                                   style="color: #7fa3e4">
-                                    <i class="bi bi-arrow-left me-1"></i>Back to Events List
-                                </a>
+                                <a asp-action="Index" class="text-decoration-none fw-medium" style="color: #7fa3e4"><i class="bi bi-arrow-left me-1"></i>Back to Events List</a>
                             </div>
                         </form>
                     </div>
@@ -322,109 +146,100 @@
 </div>
 
 <style>
-    /* Consistent with other pages styling */
-    .form-control:focus,
-    .form-control:focus-within {
+    .form-control:focus, .form-control:focus-within {
         background-color: rgba(255,255,255,0.1) !important;
-        border-color: rgba(138, 43, 226, 0.5) !important;
-        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.2) !important;
-        color: white !important;
+        border-color: rgba(138,43,226,0.5) !important;
+        box-shadow: 0 0 0 .2rem rgba(138,43,226,.2) !important;
+        color: #fff !important
     }
 
     .form-control::placeholder {
         color: rgba(255,255,255,0.4) !important;
-        font-size: 0.9rem;
+        font-size: .9rem
     }
 
     textarea.form-control {
-        resize: vertical;
+        resize: vertical
     }
 
-    /* Custom styling for icons inside inputs */
     .form-control.ps-5 {
-        padding-left: 2.8rem !important;
+        padding-left: 2.8rem !important
     }
 
-    /* Button hover effect */
     .btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important;
+        box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important
     }
 
-    /* Custom Select Styling */
     .custom-select-wrapper {
-        position: relative;
+        position: relative
     }
 
     .custom-select-trigger:hover {
         background: rgba(255,255,255,0.05) !important;
-        border-color: rgba(138, 43, 226, 0.3) !important;
+        border-color: rgba(138,43,226,0.3) !important
     }
 
     .custom-select-trigger:focus {
         background: rgba(255,255,255,0.1) !important;
-        border-color: rgba(138, 43, 226, 0.5) !important;
-        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.2) !important;
+        border-color: rgba(138,43,226,0.5) !important;
+        box-shadow: 0 0 0 .2rem rgba(138,43,226,.2) !important
     }
 
     .custom-select-options {
         max-height: 250px;
-        overflow-y: auto;
+        overflow-y: auto
     }
 
     .custom-option:hover {
-        background: rgba(138, 43, 226, 0.25) !important;
-        transform: translateX(5px);
+        background: rgba(138,43,226,0.25) !important;
+        transform: translateX(5px)
     }
 
         .custom-option:hover .me-2 {
-            background: rgba(138, 43, 226, 0.4) !important;
-            transform: scale(1.1);
+            background: rgba(138,43,226,0.4) !important;
+            transform: scale(1.1)
         }
 
-    /* Scrollbar styling */
     .custom-select-options::-webkit-scrollbar {
-        width: 6px;
+        width: 6px
     }
 
     .custom-select-options::-webkit-scrollbar-track {
         background: rgba(255,255,255,0.05);
-        border-radius: 3px;
+        border-radius: 3px
     }
 
     .custom-select-options::-webkit-scrollbar-thumb {
-        background: rgba(138, 43, 226, 0.5);
-        border-radius: 3px;
+        background: rgba(138,43,226,0.5);
+        border-radius: 3px
     }
 
         .custom-select-options::-webkit-scrollbar-thumb:hover {
-            background: rgba(138, 43, 226, 0.7);
+            background: rgba(138,43,226,0.7)
         }
 
-    /* DateTime Picker Custom Glassmorphism Styling */
     .datetimepicker-container .bootstrap-datetimepicker-widget {
-        width: 100%;
+        width: 100%
     }
 
     .datetimepicker-container .table-condensed {
         width: 100%;
-        color: white;
+        color: #fff
     }
 
-        .datetimepicker-container .table-condensed th,
-        .datetimepicker-container .table-condensed td {
+        .datetimepicker-container .table-condensed th, .datetimepicker-container .table-condensed td {
             padding: 8px;
-            text-align: center;
+            text-align: center
         }
 
     .datetimepicker-container .picker-switch {
         font-weight: bold;
-        color: white;
-        text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        color: #fff;
+        text-shadow: 0 0 10px rgba(138,43,226,0.5)
     }
 
-    .datetimepicker-container .prev,
-    .datetimepicker-container .next {
+    .datetimepicker-container .prev, .datetimepicker-container .next {
         cursor: pointer;
         background: rgba(255,255,255,0.05);
         border-radius: 50%;
@@ -433,208 +248,366 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s ease;
+        transition: all .2s ease
     }
 
-        .datetimepicker-container .prev:hover,
-        .datetimepicker-container .next:hover {
-            background: rgba(138, 43, 226, 0.3);
-            transform: scale(1.1);
-        }
-
-    .datetimepicker-container .day,
-    .datetimepicker-container .hour,
-    .datetimepicker-container .minute,
-    .datetimepicker-container .month,
-    .datetimepicker-container .year,
-    .datetimepicker-container .decade {
+    .datetimepicker-container .day, .datetimepicker-container .hour, .datetimepicker-container .minute, .datetimepicker-container .month, .datetimepicker-container .year, .datetimepicker-container .decade {
         background: rgba(255,255,255,0.05);
         border-radius: 8px;
         margin: 2px;
-        transition: all 0.2s ease;
-        border: 1px solid transparent;
+        transition: all .2s ease;
+        border: 1px solid transparent
     }
 
-        .datetimepicker-container .day:hover,
-        .datetimepicker-container .hour:hover,
-        .datetimepicker-container .minute:hover,
-        .datetimepicker-container .month:hover,
-        .datetimepicker-container .year:hover,
-        .datetimepicker-container .decade:hover {
-            background: rgba(138, 43, 226, 0.3);
+        .datetimepicker-container .day:hover, .datetimepicker-container .hour:hover, .datetimepicker-container .minute:hover, .datetimepicker-container .month:hover, .datetimepicker-container .year:hover, .datetimepicker-container .decade:hover, .datetimepicker-container .picker-switch:hover, .datetimepicker-container .prev:hover, .datetimepicker-container .next:hover {
+            background: rgba(138,43,226,0.3) !important;
             cursor: pointer;
-            border: 1px solid rgba(138, 43, 226, 0.5);
+            border: 1px solid rgba(138,43,226,0.5) !important;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+            box-shadow: 0 4px 12px rgba(138,43,226,0.3) !important
         }
 
     .datetimepicker-container .active {
-        background: linear-gradient(135deg, #6a0dad, #8a2be2) !important;
-        color: white !important;
+        background: linear-gradient(135deg,#6a0dad,#8a2be2) !important;
+        color: #fff !important;
         border-radius: 8px;
-        /* border: 1px solid rgba(255,255,255,0.3) !important; */
         box-shadow: 0 4px 15px rgba(106,13,173,0.4) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important
     }
 
     .datetimepicker-container .today {
-        background: rgba(138, 43, 226, 0.2);
+        background: rgba(138,43,226,0.2);
         border-radius: 8px;
-        border: 1px solid rgba(138, 43, 226, 0.4);
+        border: 1px solid rgba(138,43,226,0.4)
     }
 
-    .datetimepicker-container .timepicker-hour,
-    .datetimepicker-container .timepicker-minute {
+    .datetimepicker-container .timepicker-hour, .datetimepicker-container .timepicker-minute {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 1.5rem;
         font-weight: bold;
-        color: white;
+        color: #fff;
         background: rgba(255,255,255,0.05);
         border-radius: 8px;
         padding: 8px;
         border: 1px solid rgba(255,255,255,0.1);
+        width: 100%;
+        height: 100%;
+        text-align: center;
     }
 
     .datetimepicker-container .btn-primary {
-        background: linear-gradient(135deg, #6a0dad, #8a2be2);
+        background: linear-gradient(135deg,#6a0dad,#8a2be2);
         border: none;
         border-radius: 8px;
         padding: 8px 16px;
-        transition: all 0.2s ease;
+        transition: all .2s ease
     }
 
         .datetimepicker-container .btn-primary:hover {
-            background: linear-gradient(135deg, #5a0c9d, #7a1bd2);
+            background: linear-gradient(135deg,#5a0c9d,#7a1bd2);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(106,13,173,0.4);
+            box-shadow: 0 4px 12px rgba(106,13,173,0.4)
         }
 
     .datetimepicker-container .separator {
-        width: 10px;
+        width: 5px
     }
 
-    /* Custom styling for the datetime picker widget with glassmorphism */
     .datetimepicker-container .bootstrap-datetimepicker-widget.dropdown-menu {
-        background: rgba(30, 30, 46, 0.95);
+        background: rgba(30,30,46,0.95);
         backdrop-filter: blur(15px);
         border: 1px solid rgba(255,255,255,0.2);
         border-radius: 16px;
-        color: white;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3)
     }
 
     .datetimepicker-container .glyphicon {
-        color: white;
+        color: #fff
     }
 
     .datetimepicker-container .glyphicon-chevron-up,
     .datetimepicker-container .glyphicon-chevron-down {
-        color: #8a2be2;
-        filter: drop-shadow(0 0 5px rgba(138, 43, 226, 0.5));
+        color: #fff !important;
+        font-weight: bold;
+        text-shadow: 0 0 2px white, 0 0 4px white;
+    }
+
+    .datetimepicker-container .timepicker .glyphicon-chevron-up:hover,
+    .datetimepicker-container .timepicker .glyphicon-chevron-down:hover {
+        color: #fff !important;
+        text-shadow: 0 0 4px white, 0 0 8px white;
+        transform: translateY(-2px);
     }
 
     .datetimepicker-container .dow {
         color: rgba(255,255,255,0.8);
         font-weight: 600;
-        text-shadow: 0 0 5px rgba(255,255,255,0.2);
+        text-shadow: 0 0 5px rgba(255,255,255,0.2)
     }
 
-    .datetimepicker-container .old,
-    .datetimepicker-container .new {
+    .datetimepicker-container .old, .datetimepicker-container .new {
         color: rgba(255,255,255,0.3);
-        background: rgba(255,255,255,0.02) !important;
+        background: rgba(255,255,255,0.02) !important
     }
 
-        .datetimepicker-container .old:hover,
-        .datetimepicker-container .new:hover {
-            background: rgba(220, 53, 69, 0.3) !important;
+        .datetimepicker-container .old:hover, .datetimepicker-container .new:hover {
+            background: rgba(220,53,69,0.3) !important;
             color: rgba(255,255,255,0.8);
-            border: 1px solid rgba(220, 53, 69, 0.5) !important;
+            border: 1px solid rgba(220,53,69,0.5) !important;
             cursor: not-allowed !important;
             transform: none !important;
-            box-shadow: none !important;
+            box-shadow: none !important
         }
 
-    /* Disabled past dates */
     .datetimepicker-container .disabled {
-        background: rgba(220, 53, 69, 0.1) !important;
+        background: rgba(220,53,69,0.1) !important;
         color: rgba(255,255,255,0.3) !important;
         cursor: not-allowed !important;
-        border: 1px solid rgba(220, 53, 69, 0.2) !important;
+        border: 1px solid rgba(220,53,69,0.2) !important
     }
 
         .datetimepicker-container .disabled:hover {
-            background: rgba(220, 53, 69, 0.2) !important;
+            background: rgba(220,53,69,0.2) !important;
             transform: none !important;
-            box-shadow: none !important;
+            box-shadow: none !important
         }
 
-    /* List styling */
     ul {
-        padding-left: 1.25rem;
+        padding-left: 1.25rem
     }
 
     li {
-        margin-bottom: 0.25rem;
+        margin-bottom: .25rem
     }
 
-    /* Error styling for custom selects */
     .custom-select-trigger.error {
         border-color: #dc3545 !important;
-        background: rgba(220, 53, 69, 0.1) !important;
+        background: rgba(220,53,69,0.1) !important
     }
 
         .custom-select-trigger.error:focus {
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+            box-shadow: 0 0 0 .2rem rgba(220,53,69,.25) !important
         }
 
-    /* Error message styling */
     .error-message {
         display: none;
-        margin-top: 0.25rem;
-        padding: 0.5rem;
-        background: rgba(220, 53, 69, 0.1);
-        border: 1px solid rgba(220, 53, 69, 0.3);
+        margin-top: .25rem;
+        padding: .5rem;
+        background: rgba(220,53,69,0.1);
+        border: 1px solid rgba(220,53,69,0.3);
         border-radius: 8px;
         color: #ff6b6b;
-        font-size: 0.85rem;
+        font-size: .85rem
     }
 
         .error-message.show {
             display: block;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn .3s ease
         }
 
-
-    /* Time picker specific styling */
     .datetimepicker-container .timepicker-picker {
         background: rgba(255,255,255,0.05);
         border-radius: 12px;
         padding: 10px;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.1)
     }
 
-    .datetimepicker-container .timepicker-hours table,
-    .datetimepicker-container .timepicker-minutes table {
+    .datetimepicker-container .timepicker-hours table, .datetimepicker-container .timepicker-minutes table {
         background: rgba(255,255,255,0.05);
         border-radius: 12px;
-        padding: 10px;
+        padding: 10px
     }
 
+    .datetimepicker-container .timepicker .btn:hover {
+        background: rgba(138,43,226,0.3) !important;
+        cursor: pointer;
+        border: 1px solid rgba(138,43,226,0.5) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(138,43,226,0.3) !important;
+    }
 
+    .datetimepicker-container .timepicker-hour:hover,
+    .datetimepicker-container .timepicker-minute:hover,
+    .datetimepicker-container .timepicker .table-condensed td:hover {
+        background: rgba(138,43,226,0.3) !important;
+        cursor: pointer;
+        border: 1px solid rgba(138,43,226,0.5) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(138,43,226,0.3) !important;
+    }
+
+    .datetimepicker-container .timepicker-picker table {
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+
+        .datetimepicker-container .timepicker-picker table td {
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+            .datetimepicker-container .timepicker-picker table td:not(.separator) {
+                width: 60px;
+                height: 60px;
+            }
+
+            .datetimepicker-container .timepicker-picker table td.separator {
+                width: auto;
+                padding: 0 5px;
+            }
+
+    /* Make the separator smaller and adjust time positioning */
+    .datetimepicker-container .separator {
+        width: 5px !important;
+        padding: 0 2px !important;
+    }
+
+    /* Center the time display horizontally */
+    .datetimepicker-container .timepicker-picker {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+        .datetimepicker-container .timepicker-picker table {
+            margin: 0 auto !important;
+        }
+
+    /* Make time numbers more prominent and centered */
+    .datetimepicker-container .timepicker-hour,
+    .datetimepicker-container .timepicker-minute {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1.5rem !important;
+        font-weight: bold !important;
+        color: #fff !important;
+        background: rgba(255,255,255,0.05) !important;
+        border-radius: 8px !important;
+        padding: 8px !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        width: 100% !important;
+        height: 100% !important;
+        text-align: center !important;
+    }
+
+    /* Style the time picker arrows to be white and consistent */
+    .datetimepicker-container .timepicker .btn {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .datetimepicker-container .timepicker .glyphicon-chevron-up,
+    .datetimepicker-container .timepicker .glyphicon-chevron-down,
+    .datetimepicker-container .timepicker .bi-chevron-up,
+    .datetimepicker-container .timepicker .bi-chevron-down {
+        color: #fff !important;
+        font-weight: bold !important;
+        text-shadow: 0 0 2px white, 0 0 4px white;
+        background: rgba(255,255,255,0.05) !important;
+        border-radius: 8px !important;
+        padding: 4px !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        width: 30px !important;
+        height: 30px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease !important;
+        margin: 0 auto !important;
+    }
+
+        /* Apply the same hover effect to time arrows */
+        .datetimepicker-container .timepicker .glyphicon-chevron-up:hover,
+        .datetimepicker-container .timepicker .glyphicon-chevron-down:hover,
+        .datetimepicker-container .timepicker .bi-chevron-up:hover,
+        .datetimepicker-container .timepicker .bi-chevron-down:hover {
+            color: #fff !important;
+            background: rgba(138,43,226,0.3) !important;
+            cursor: pointer !important;
+            border: 1px solid rgba(138,43,226,0.5) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(138,43,226,0.3) !important;
+            text-shadow: 0 0 4px white, 0 0 8px white !important;
+        }
+
+    /* Adjust the time picker table layout for better centering */
+    .datetimepicker-container .timepicker-picker table {
+        border-collapse: collapse;
+        margin: 0 auto !important;
+    }
+
+        .datetimepicker-container .timepicker-picker table td {
+            padding: 0 !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+            .datetimepicker-container .timepicker-picker table td:not(.separator) {
+                width: 60px !important;
+                height: 60px !important;
+            }
+
+            .datetimepicker-container .timepicker-picker table td.separator {
+                width: auto !important;
+                padding: 0 5px !important;
+            }
+
+        /* Center the colon separator vertically */
+        .datetimepicker-container .timepicker-picker table tr:nth-child(2) td.separator {
+            font-size: 1.5rem !important;
+            font-weight: bold !important;
+            color: rgba(255,255,255,0.8) !important;
+            vertical-align: middle !important;
+            line-height: 1 !important;
+        }
+
+    /* Make AM/PM button consistent with other buttons */
+    .datetimepicker-container .timepicker-picker .btn[data-action="togglePeriod"] {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        border-radius: 8px !important;
+        color: #fff !important;
+        font-weight: bold !important;
+        padding: 8px 12px !important;
+        margin: 2px !important;
+        transition: all 0.2s ease !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+        .datetimepicker-container .timepicker-picker .btn[data-action="togglePeriod"]:hover {
+            background: rgba(138,43,226,0.3) !important;
+            cursor: pointer !important;
+            border: 1px solid rgba(138,43,226,0.5) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(138,43,226,0.3) !important;
+        }
 </style>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <!-- Required libraries for Bootstrap DateTimePicker -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Category dropdown functionality
             const categoryTrigger = document.getElementById('categoryTrigger');
             const categoryOptions = document.getElementById('categoryOptions');
             const categoryDropdownArrow = document.getElementById('categoryDropdownArrow');
@@ -646,7 +619,6 @@
             if (categoryTrigger) {
                 categoryTrigger.addEventListener('click', function(e) {
                     e.stopPropagation();
-
                     if (categoryOptions.style.display === 'block') {
                         categoryOptions.style.display = 'none';
                         categoryDropdownArrow.classList.remove('bi-chevron-up');
@@ -661,7 +633,6 @@
                 categoryCustomOptions.forEach(option => {
                     option.addEventListener('click', function(e) {
                         e.stopPropagation();
-
                         const value = this.getAttribute('data-value');
                         const text = this.querySelector('span').textContent;
                         selectedCategory.textContent = text;
@@ -672,12 +643,7 @@
                         categoryTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
                         categoryTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
                         categoryTrigger.classList.remove('error');
-
-                        // Clear error
-                        if (categoryError) {
-                            categoryError.textContent = '';
-                        }
-
+                        if (categoryError) categoryError.textContent = '';
                         hiddenCategorySelect.dispatchEvent(new Event('change'));
                     });
                 });
@@ -687,13 +653,9 @@
                     categoryDropdownArrow.classList.remove('bi-chevron-up');
                     categoryDropdownArrow.classList.add('bi-chevron-down');
                 });
-
-                categoryOptions.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
+                categoryOptions.addEventListener('click', function(e) { e.stopPropagation(); });
             }
 
-            // Venue dropdown functionality
             const venueTrigger = document.getElementById('venueTrigger');
             const venueOptions = document.getElementById('venueOptions');
             const venueDropdownArrow = document.getElementById('venueDropdownArrow');
@@ -705,7 +667,6 @@
             if (venueTrigger) {
                 venueTrigger.addEventListener('click', function(e) {
                     e.stopPropagation();
-
                     if (venueOptions.style.display === 'block') {
                         venueOptions.style.display = 'none';
                         venueDropdownArrow.classList.remove('bi-chevron-up');
@@ -720,7 +681,6 @@
                 venueCustomOptions.forEach(option => {
                     option.addEventListener('click', function(e) {
                         e.stopPropagation();
-
                         const value = this.getAttribute('data-value');
                         const text = this.querySelector('.fw-medium').textContent;
                         selectedVenue.textContent = text;
@@ -731,12 +691,7 @@
                         venueTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
                         venueTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
                         venueTrigger.classList.remove('error');
-
-                        // Clear error
-                        if (venueError) {
-                            venueError.textContent = '';
-                        }
-
+                        if (venueError) venueError.textContent = '';
                         hiddenVenueSelect.dispatchEvent(new Event('change'));
                     });
                 });
@@ -746,65 +701,42 @@
                     venueDropdownArrow.classList.remove('bi-chevron-up');
                     venueDropdownArrow.classList.add('bi-chevron-down');
                 });
-
-                venueOptions.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
+                venueOptions.addEventListener('click', function(e) { e.stopPropagation(); });
             }
 
-            // Format date for display
             function formatDateForDisplay(date) {
                 if (!date) return 'Not selected';
-                return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+                return moment(date).format('MMMM Do YYYY, h:mm a');
             }
 
-            // Show error message below a field
             function showError(fieldId, message) {
                 const errorElement = document.getElementById(fieldId);
-                if (errorElement) {
-                    errorElement.textContent = message;
-                    errorElement.style.display = 'block';
-                }
+                if (errorElement) { errorElement.textContent = message; errorElement.style.display = 'block'; }
             }
-
-            // Clear error message
             function clearError(fieldId) {
                 const errorElement = document.getElementById(fieldId);
-                if (errorElement) {
-                    errorElement.textContent = '';
-                    errorElement.style.display = 'none';
-                }
+                if (errorElement) { errorElement.textContent = ''; errorElement.style.display = 'none'; }
             }
 
-            // Function to disable past dates in the picker
             function disablePastDates(widget) {
                 const today = moment().startOf('day');
                 const days = widget.find('.day');
-
                 days.each(function() {
                     const dayElement = $(this);
                     const dayDate = moment(dayElement.data('day'), 'MM/DD/YYYY');
-
                     if (dayDate.isBefore(today)) {
                         dayElement.addClass('disabled');
-                        dayElement.css({
-                            'cursor': 'not-allowed',
-                            'opacity': '0.5'
-                        });
+                        dayElement.css({'cursor':'not-allowed','opacity':'0.5'});
                     }
                 });
             }
 
-            // Set initial date (rounded to nearest 5 minutes, but not in the past)
             const now = moment();
             const roundedMinutes = Math.ceil(now.minutes() / 5) * 5;
-            now.minutes(roundedMinutes);
-
-            // Ensure the date is not in the past
-            const currentTime = moment();
+            now.minutes(roundedMinutes).seconds(0);
+            const currentTime = moment().seconds(0);
             const initialStartDate = now.isBefore(currentTime) ? currentTime : now;
 
-            // Initialize Start Date DateTime Picker
             const startDateTimePicker = $('#startDateTimePicker');
             const startDateTimeInput = $('#startDateTimeInput');
             const startDateTimeDisplay = $('#startDateTimeDisplay');
@@ -812,267 +744,153 @@
             startDateTimePicker.datetimepicker({
                 inline: true,
                 sideBySide: true,
-                format: 'YYYY-MM-DD HH:mm:ss',
+                format: 'YYYY-MM-DD HH:mm',
                 defaultDate: initialStartDate,
-                minDate: currentTime, // Prevent past dates
-                icons: {
-                    time: 'bi bi-clock',
-                    date: 'bi bi-calendar',
-                    up: 'bi bi-chevron-up',
-                    down: 'bi bi-chevron-down',
-                    previous: 'bi bi-chevron-left',
-                    next: 'bi bi-chevron-right',
-                    today: 'bi bi-calendar-check',
-                    clear: 'bi bi-trash',
-                    close: 'bi bi-x'
-                }
+                minDate: currentTime,
+                stepping: 5,
+                icons: {time:'bi bi-clock',date:'bi bi-calendar',up:'bi bi-chevron-up',down:'bi bi-chevron-down',previous:'bi bi-chevron-left',next:'bi bi-chevron-right',today:'bi bi-calendar-check',clear:'bi bi-trash',close:'bi bi-x'}
             });
 
-            // Update hidden input and display when date is changed
             startDateTimePicker.on('change.datetimepicker', function(e) {
                 if (e.date) {
-                    const formattedDate = e.date.format('YYYY-MM-DDTHH:mm:ss');
+                    const dateWithZeroSeconds = e.date.seconds(0);
+                    const formattedDate = dateWithZeroSeconds.format('YYYY-MM-DDTHH:mm:00');
                     startDateTimeInput.val(formattedDate);
-                    startDateTimeDisplay.text(formatDateForDisplay(e.date));
-
-                    // Update end date picker minimum date (1 hour after start)
-                    const minEndDate = moment(e.date).add(1, 'hour');
+                    startDateTimeDisplay.text(formatDateForDisplay(dateWithZeroSeconds));
+                    const minEndDate = moment(dateWithZeroSeconds).add(1, 'hour');
                     endDateTimePicker.datetimepicker('minDate', minEndDate);
-
-                    // If current end date is before new start date or its minimum, update it
                     const currentEndDate = endDateTimePicker.datetimepicker('date');
-                    if (!currentEndDate || currentEndDate.isSameOrBefore(e.date) || currentEndDate.isBefore(minEndDate)) {
+                    if (!currentEndDate || currentEndDate.isSameOrBefore(dateWithZeroSeconds) || currentEndDate.isBefore(minEndDate)) {
                         endDateTimePicker.datetimepicker('date', minEndDate);
                     }
-
-                    // Clear any previous errors
                     clearError('startDateError');
                 }
             });
 
-            // Also validate on show event
             startDateTimePicker.on('show.datetimepicker', function(e) {
-                // Disable past dates in the current view
-                setTimeout(() => {
-                    disablePastDates(startDateTimePicker);
-                }, 50);
+                setTimeout(() => { disablePastDates(startDateTimePicker); }, 50);
             });
-
-            // Set initial values
             startDateTimePicker.datetimepicker('date', initialStartDate);
 
-            // Initialize End Date DateTime Picker
             const endDateTimePicker = $('#endDateTimePicker');
             const endDateTimeInput = $('#endDateTimeInput');
             const endDateTimeDisplay = $('#endDateTimeDisplay');
-
-            // Set initial date (1 hour from start, rounded to nearest 5 minutes)
-            const initialEndDate = moment(initialStartDate).add(1, 'hour');
+            const initialEndDate = moment(initialStartDate).add(1, 'hour').seconds(0);
 
             endDateTimePicker.datetimepicker({
                 inline: true,
                 sideBySide: true,
-                format: 'YYYY-MM-DD HH:mm:ss',
+                format: 'YYYY-MM-DD HH:mm',
                 defaultDate: initialEndDate,
-                minDate: initialEndDate, // Minimum 1 hour from start
-                icons: {
-                    time: 'bi bi-clock',
-                    date: 'bi bi-calendar',
-                    up: 'bi bi-chevron-up',
-                    down: 'bi bi-chevron-down',
-                    previous: 'bi bi-chevron-left',
-                    next: 'bi bi-chevron-right',
-                    today: 'bi bi-calendar-check',
-                    clear: 'bi bi-trash',
-                    close: 'bi bi-x'
-                }
+                minDate: initialEndDate,
+                stepping: 5,
+                icons: {time:'bi bi-clock',date:'bi bi-calendar',up:'bi bi-chevron-up',down:'bi bi-chevron-down',previous:'bi bi-chevron-left',next:'bi bi-chevron-right',today:'bi bi-calendar-check',clear:'bi bi-trash',close:'bi bi-x'}
             });
 
-            // Update hidden input and display when date is changed
             endDateTimePicker.on('change.datetimepicker', function(e) {
                 if (e.date) {
-                    const formattedDate = e.date.format('YYYY-MM-DDTHH:mm:ss');
+                    const dateWithZeroSeconds = e.date.seconds(0);
+                    const formattedDate = dateWithZeroSeconds.format('YYYY-MM-DDTHH:mm:00');
                     endDateTimeInput.val(formattedDate);
-                    endDateTimeDisplay.text(formatDateForDisplay(e.date));
-
-                    // Clear any previous errors
+                    endDateTimeDisplay.text(formatDateForDisplay(dateWithZeroSeconds));
                     clearError('endDateError');
                 }
             });
 
-            // Also validate on show event
             endDateTimePicker.on('show.datetimepicker', function(e) {
-                // Disable past dates in the current view
-                setTimeout(() => {
-                    disablePastDates(endDateTimePicker);
-                }, 50);
+                setTimeout(() => { disablePastDates(endDateTimePicker); }, 50);
             });
-
-            // Set initial values
             endDateTimePicker.datetimepicker('date', initialEndDate);
 
-            // Validate date ranges in real-time
             function validateDateRanges() {
                 const startDate = startDateTimePicker.datetimepicker('date');
                 const endDate = endDateTimePicker.datetimepicker('date');
                 let isValid = true;
-
-                // Clear previous errors
-                clearError('startDateError');
-                clearError('endDateError');
-
-                // Validate start date
+                clearError('startDateError'); clearError('endDateError');
                 if (!startDate || !startDateTimeInput.val()) {
-                    showError('startDateError', 'Please select a start date and time');
+                    showError('startDateError','Please select a start date and time');
                     isValid = false;
                 } else if (startDate.isBefore(moment())) {
-                    showError('startDateError', 'Start date cannot be in the past');
+                    showError('startDateError','Start date cannot be in the past');
                     isValid = false;
                 }
-
-                // Validate end date
                 if (!endDate || !endDateTimeInput.val()) {
-                    showError('endDateError', 'Please select an end date and time');
+                    showError('endDateError','Please select an end date and time');
                     isValid = false;
                 } else if (endDate.isBefore(moment())) {
-                    showError('endDateError', 'End date cannot be in the past');
+                    showError('endDateError','End date cannot be in the past');
                     isValid = false;
                 }
-
-                // Validate that end date is after start date
                 if (startDate && endDate && endDate.isSameOrBefore(startDate)) {
-                    showError('endDateError', 'End date must be after start date');
+                    showError('endDateError','End date must be after start date');
                     isValid = false;
                 }
-
                 return isValid;
             }
 
-            // Add change events for date validation
             startDateTimePicker.on('change.datetimepicker', validateDateRanges);
             endDateTimePicker.on('change.datetimepicker', validateDateRanges);
 
-            // Form validation before submission
             const form = document.getElementById('eventForm');
             const submitBtn = document.getElementById('submitBtn');
-
             if (form) {
                 form.addEventListener('submit', function(e) {
                     let isValid = true;
                     let errorMessages = [];
-
-                    // Validate category
                     const categoryValue = hiddenCategorySelect ? hiddenCategorySelect.value : '';
                     if (!categoryValue) {
                         isValid = false;
-                        if (categoryTrigger) {
-                            categoryTrigger.classList.add('error');
-                        }
-                        if (categoryError) {
-                            categoryError.textContent = 'Please select a category';
-                        }
+                        if (categoryTrigger) categoryTrigger.classList.add('error');
+                        if (categoryError) categoryError.textContent = 'Please select a category';
                         errorMessages.push('Category is required');
                     } else {
-                        if (categoryTrigger) {
-                            categoryTrigger.classList.remove('error');
-                        }
-                        if (categoryError) {
-                            categoryError.textContent = '';
-                        }
+                        if (categoryTrigger) categoryTrigger.classList.remove('error');
+                        if (categoryError) categoryError.textContent = '';
                     }
-
-                    // Validate venue
                     const venueValue = hiddenVenueSelect ? hiddenVenueSelect.value : '';
                     if (!venueValue) {
                         isValid = false;
-                        if (venueTrigger) {
-                            venueTrigger.classList.add('error');
-                        }
-                        if (venueError) {
-                            venueError.textContent = 'Please select a venue';
-                        }
+                        if (venueTrigger) venueTrigger.classList.add('error');
+                        if (venueError) venueError.textContent = 'Please select a venue';
                         errorMessages.push('Venue is required');
                     } else {
-                        if (venueTrigger) {
-                            venueTrigger.classList.remove('error');
-                        }
-                        if (venueError) {
-                            venueError.textContent = '';
-                        }
+                        if (venueTrigger) venueTrigger.classList.remove('error');
+                        if (venueError) venueError.textContent = '';
                     }
-
-                    // Validate dates
                     if (!validateDateRanges()) {
                         isValid = false;
                         errorMessages.push('Please fix date and time errors');
                     }
-
-                    // Check if there are any venues available
                     const venueOptions = document.querySelectorAll('#venueOptions .custom-option');
                     if (venueOptions.length === 0) {
                         isValid = false;
-                        if (venueError) {
-                            venueError.textContent = 'No venues available. Please create a venue first.';
-                        }
+                        if (venueError) venueError.textContent = 'No venues available. Please create a venue first.';
                         errorMessages.push('No venues available');
                     }
-
                     if (!isValid) {
                         e.preventDefault();
-
-                        // Show error summary
                         const validationSummary = document.querySelector('[asp-validation-summary="ModelOnly"]');
                         if (validationSummary && errorMessages.length > 0) {
-                            validationSummary.innerHTML = '<strong>Please fix the following errors:</strong><ul class="mb-0 mt-1" style="padding-left: 1rem;">' +
-                                errorMessages.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
+                            validationSummary.innerHTML = '<strong>Please fix the following errors:</strong><ul class="mb-0 mt-1" style="padding-left: 1rem;">' + errorMessages.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
                             validationSummary.style.display = 'block';
-
-                            // Scroll to first error
                             const firstError = document.querySelector('.text-danger:not(:empty)');
-                            if (firstError) {
-                                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            } else {
-                                validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
+                            if (firstError) firstError.scrollIntoView({behavior:'smooth',block:'center'});
+                            else validationSummary.scrollIntoView({behavior:'smooth',block:'center'});
                         }
-
-                        // Reset button state
-                        if (submitBtn) {
-                            submitBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Create Event';
-                            submitBtn.disabled = false;
-                        }
+                        if (submitBtn) { submitBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Create Event'; submitBtn.disabled = false; }
                     } else {
-                        // Show loading spinner
-                        if (submitBtn) {
-                            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
-                            submitBtn.disabled = true;
-                        }
+                        if (submitBtn) { submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...'; submitBtn.disabled = true; }
                     }
                 });
             }
 
-            // Clear validation errors on input
             const inputs = form.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
                 input.addEventListener('input', function() {
                     const errorSpan = this.nextElementSibling;
-                    if (errorSpan && errorSpan.classList.contains('text-danger')) {
-                        errorSpan.textContent = '';
-                    }
-
-                    // Clear custom select errors
-                    if (this === hiddenCategorySelect) {
-                        categoryTrigger.classList.remove('error');
-                        if (categoryError) {
-                            categoryError.textContent = '';
-                        }
-                    }
-                    if (this === hiddenVenueSelect) {
-                        venueTrigger.classList.remove('error');
-                        if (venueError) {
-                            venueError.textContent = '';
-                        }
-                    }
+                    if (errorSpan && errorSpan.classList.contains('text-danger')) errorSpan.textContent = '';
+                    if (this === hiddenCategorySelect) { categoryTrigger.classList.remove('error'); if (categoryError) categoryError.textContent = ''; }
+                    if (this === hiddenVenueSelect) { venueTrigger.classList.remove('error'); if (venueError) venueError.textContent = ''; }
                 });
             });
         });
