@@ -1,0 +1,601 @@
+﻿@using Blok34.Domain.Enums
+@model Blok34.Domain.DomainModels.Venue
+@{
+    ViewData["Title"] = "Create Venue";
+}
+
+<div class="d-flex align-items-start justify-content-start"
+     style="min-height: 100vh; padding-top: 1rem; padding-bottom: 3rem;">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+                <!-- Glassmorphism Card -->
+                <div class="card border-0 shadow"
+                     style="background: rgba(255,255,255,0.07);
+                            backdrop-filter: blur(12px);
+                            border-radius: 20px;
+                            border: 1px solid rgba(255,255,255,0.15);
+                            margin-bottom: 2rem;">
+
+                    <div class="card-body p-4">
+
+                        <!-- Logo and Title -->
+                        <div class="text-center mb-4">
+                            <svg width="60" height="40" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" class="mb-2">
+                                <defs>
+                                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#4B0082" />
+                                        <stop offset="100%" stop-color="#6a0dad" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="15" y="10" width="25" height="40" rx="4" fill="url(#grad1)" />
+                                <rect x="40" y="20" width="20" height="30" rx="3" fill="#5D3FD3" />
+                                <rect x="60" y="30" width="15" height="20" rx="2" fill="#4B0082" />
+                            </svg>
+                            <h3 class="text-white fw-bold mb-1">Register Your Venue</h3>
+                            <p class="text-white-50">Add your venue to our platform</p>
+                        </div>
+
+                        <!-- Venue Form -->
+                        <form asp-action="Create" method="post" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly"
+                                 class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white small py-2 rounded-pill mb-4"
+                                 role="alert">
+                            </div>
+
+                            <!-- Hidden Manager ID Field -->
+                            <input type="hidden" asp-for="VenueManagerId" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+
+                            <!-- Venue Name -->
+                            <div class="mb-3 position-relative">
+                                <label asp-for="Name" class="form-label text-white fw-medium mb-1">
+                                    <i class="bi bi-building me-2"></i>Venue Name
+                                </label>
+                                <div class="position-relative">
+                                    <i class="bi bi-building position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
+                                    <input asp-for="Name"
+                                           class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
+                                           style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
+                                           placeholder="Enter venue name"
+                                           aria-required="true" />
+                                </div>
+                                <span asp-validation-for="Name" class="text-danger d-block mt-1"></span>
+                            </div>
+
+                            <!-- Category Dropdown - Custom Styled -->
+                            <div class="mb-3">
+                                <label asp-for="Category" class="form-label text-white fw-medium mb-2">
+                                    <i class="bi bi-tags me-2"></i>Venue Category
+                                </label>
+                                <div class="position-relative">
+                                    <!-- Custom dropdown container -->
+                                    <div class="custom-select-wrapper">
+                                        <div class="custom-select-trigger d-flex align-items-center justify-content-between bg-transparent text-white py-2 px-3 rounded-pill"
+                                             style="border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.2s ease;"
+                                             id="categoryTrigger">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-tag me-2 text-white-50"></i>
+                                                <span id="selectedCategory">Select a category</span>
+                                            </div>
+                                            <i class="bi bi-chevron-down text-white-50" id="dropdownArrow"></i>
+                                        </div>
+
+                                        <!-- Custom dropdown menu -->
+                                        <div class="custom-select-options shadow"
+                                             style="background: rgba(30, 30, 46, 0.98);
+                                                    backdrop-filter: blur(10px);
+                                                    border: 1px solid rgba(255,255,255,0.15);
+                                                    border-radius: 12px;
+                                                    margin-top: 0.5rem;
+                                                    padding: 0.5rem;
+                                                    display: none;
+                                                    position: absolute;
+                                                    width: 100%;
+                                                    z-index: 1000;"
+                                             id="categoryOptions">
+                                            @foreach (var category in Html.GetEnumSelectList<VenueCategory>())
+                                            {
+                                                <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded"
+                                                     style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;"
+                                                     data-value="@category.Value">
+                                                    <div class="me-2 d-flex align-items-center justify-content-center rounded"
+                                                         style="width: 28px; height: 28px; background: rgba(255,255,255,0.1);">
+                                                        <i class="bi bi-geo-alt" style="font-size: 0.8rem;"></i>
+                                                    </div>
+                                                    <span>@category.Text</span>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Hidden select for form submission -->
+                                        <select asp-for="Category"
+                                                asp-items="Html.GetEnumSelectList<VenueCategory>()"
+                                                class="d-none"
+                                                id="hiddenCategorySelect"
+                                                aria-required="true">
+                                            <option value="" selected disabled>Select a category</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="Category" class="text-danger d-block mt-1"></span>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-3 position-relative">
+                                <label asp-for="Description" class="form-label text-white fw-medium mb-1">
+                                    <i class="bi bi-text-paragraph me-2"></i>Description
+                                </label>
+                                <div class="position-relative">
+                                    <i class="bi bi-text-left position-absolute top-0 start-0 ms-3 mt-3 text-white-50"></i>
+                                    <textarea asp-for="Description"
+                                              class="form-control bg-transparent text-white py-2 rounded-4 ps-5"
+                                              style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem; min-height: 100px;"
+                                              placeholder="Describe your venue (facilities, atmosphere, etc.)"
+                                              aria-required="false"></textarea>
+                                </div>
+                                <span asp-validation-for="Description" class="text-danger d-block mt-1"></span>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="mb-3 position-relative">
+                                <label asp-for="Address" class="form-label text-white fw-medium mb-1">
+                                    <i class="bi bi-geo-alt me-2"></i>Address
+                                </label>
+                                <div class="position-relative">
+                                    <i class="bi bi-geo-alt position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
+                                    <input asp-for="Address"
+                                           class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
+                                           style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
+                                           placeholder="Full address of the venue"
+                                           aria-required="true" />
+                                </div>
+                                <span asp-validation-for="Address" class="text-danger d-block mt-1"></span>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="mb-3 position-relative">
+                                <label asp-for="Phone" class="form-label text-white fw-medium mb-1">
+                                    <i class="bi bi-telephone me-2"></i>Contact Phone
+                                </label>
+                                <div class="position-relative">
+                                    <i class="bi bi-telephone position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
+                                    <input asp-for="Phone"
+                                           class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
+                                           style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
+                                           placeholder="Phone number for inquiries"
+                                           aria-required="false" />
+                                </div>
+                                <span asp-validation-for="Phone" class="text-danger d-block mt-1"></span>
+                            </div>
+
+                            <!-- Banner Image Upload -->
+                            <div class="mb-4">
+                                <label class="form-label text-white fw-medium mb-2">
+                                    <i class="bi bi-image me-2"></i>Venue Banner Image
+                                </label>
+
+                                <!-- Image Preview Area -->
+                                <div class="image-upload-area mb-3 rounded"
+                                     style="border: 2px dashed rgba(255,255,255,0.3);
+                                            background: rgba(255,255,255,0.05);
+                                            min-height: 200px;
+                                            cursor: pointer;
+                                            position: relative;
+                                            overflow: hidden;">
+
+                                    <!-- Default Preview -->
+                                    <div class="d-flex flex-column align-items-center justify-content-center h-100 p-4" id="defaultPreview">
+                                        <i class="bi bi-cloud-arrow-up display-4 text-white-50 mb-3"></i>
+                                        <p class="text-white-50 mb-2 text-center">Click or drag to upload banner image</p>
+                                        <small class="text-white-50">Recommended: 1920x400 pixels</small>
+                                    </div>
+
+                                    <!-- Image Preview -->
+                                    <img id="imagePreview"
+                                         class="w-100 h-100 object-fit-cover d-none"
+                                         style="position: absolute; top: 0; left: 0; object-fit: cover;" />
+
+                                    <!-- Remove Image Button -->
+                                    <button type="button"
+                                            class="btn btn-sm position-absolute top-0 end-0 m-2 rounded-circle d-none"
+                                            id="removeImageBtn"
+                                            style="background: rgba(220, 53, 69, 0.8);
+                                                   border: none;
+                                                   width: 32px;
+                                                   height: 32px;">
+                                        <i class="bi bi-x text-white"></i>
+                                    </button>
+
+                                    <!-- Hidden File Input -->
+                                    <input type="file"
+                                           name="BannerFile"
+                                           id="bannerFileInput"
+                                           accept="image/*"
+                                           class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" />
+                                </div>
+
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <small class="text-white-50">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Upload a banner image for your venue (JPG, PNG, GIF)
+                                    </small>
+                                    <small class="text-white-50" id="fileSizeInfo"></small>
+                                </div>
+                                <span class="text-danger d-block mt-1" id="fileError"></span>
+                            </div>
+
+                            <!-- Visibility Toggle Section -->
+                            <div class="mb-4 p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                <div class="form-check form-switch d-flex align-items-start">
+                                    <input class="form-check-input me-3"
+                                           type="checkbox"
+                                           role="switch"
+                                           asp-for="IsPublic"
+                                           style="width: 3rem; height: 1.5rem; background-color: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3);"
+                                           checked />
+                                    <div>
+                                        <label class="form-check-label text-white fw-medium">
+                                            <i class="bi bi-eye me-2"></i>Public Venue
+                                        </label>
+
+                                        <!-- Public Option Info -->
+                                        <div class="mt-2 mb-2 p-2 rounded" style="background: rgba(25, 135, 84, 0.1); border-left: 3px solid rgba(25, 135, 84, 0.5);">
+                                            <p class="text-white small mb-0">
+                                                <i class="bi bi-check-circle text-success me-1"></i>
+                                                <strong>Public venues</strong> are immediately available for all users to create events.
+                                            </p>
+                                        </div>
+
+                                        <!-- Private Option Info -->
+                                        <div class="mt-2 p-2 rounded" style="background: rgba(13, 110, 253, 0.1); border-left: 3px solid rgba(13, 110, 253, 0.5); display: none;" id="privateInfo">
+                                            <p class="text-white small mb-0">
+                                                <i class="bi bi-shield-lock text-primary me-1"></i>
+                                                <strong>Private venues</strong> require ownership verification.
+                                                Only you can create events, and we'll contact you via email to confirm venue ownership.
+                                                Other users cannot see or use your private venue.
+                                            </p>
+                                        </div>
+
+                                        <p class="text-white-50 small mb-0 mt-2">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Toggle to switch between public and private venue settings.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit"
+                                    class="btn w-100 py-2 mb-2 text-white fw-medium rounded-pill fw-bold"
+                                    style="background: linear-gradient(135deg, #6a0dad, #8a2be2);
+                                           border: none;
+                                           font-size: 0.95rem;
+                                           transition: all 0.2s ease;
+                                           box-shadow: 0 4px 15px rgba(106,13,173,0.3);">
+                                <i class="bi bi-plus-circle me-2"></i>Create Venue
+                            </button>
+
+                            <!-- Back Link -->
+                            <div class="text-center mt-3">
+                                <a asp-action="Index"
+                                   class="text-decoration-none fw-medium"
+                                   style="color: #7fa3e4">
+                                    <i class="bi bi-arrow-left me-1"></i>Back to Venues List
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Information Card -->
+                <div class="card border-0 shadow mt-3"
+                     style="background: rgba(255,255,255,0.05);
+                            backdrop-filter: blur(12px);
+                            border-radius: 16px;
+                            border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-info-circle text-info me-2" style="font-size: 1.2rem;"></i>
+                            <h6 class="text-white mb-0">Venue Registration Tips</h6>
+                        </div>
+                        <ul class="text-white-50 small mb-0 ps-3">
+                            <li>Choose the right category to help users find your venue</li>
+                            <li>Public venues allow anyone to create events instantly</li>
+                            <li>Private venues require ownership verification via email</li>
+                            <li>Provide accurate contact information for customer inquiries</li>
+                            <li>Add a descriptive banner image to attract more visitors</li>
+                            <li>You can edit these details later from your dashboard</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus,
+    .form-control:focus-within {
+        background-color: rgba(255,255,255,0.1) !important;
+        border-color: rgba(138, 43, 226, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.2) !important;
+        color: white !important;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255,255,255,0.4) !important;
+        font-size: 0.9rem;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+    }
+
+    .form-control.ps-5 {
+        padding-left: 2.8rem !important;
+    }
+
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important;
+    }
+
+    .form-check-input:checked {
+        background-color: #8a2be2 !important;
+        border-color: #8a2be2 !important;
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.25) !important;
+    }
+
+    /* List styling */
+    ul {
+        padding-left: 1.25rem;
+    }
+
+    li {
+        margin-bottom: 0.25rem;
+    }
+
+    .custom-select-wrapper {
+        position: relative;
+    }
+
+    .custom-select-trigger:hover {
+        background: rgba(255,255,255,0.05) !important;
+        border-color: rgba(138, 43, 226, 0.3) !important;
+    }
+
+    .custom-select-trigger:focus {
+        background: rgba(255,255,255,0.1) !important;
+        border-color: rgba(138, 43, 226, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.2) !important;
+    }
+
+    .custom-select-options {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .custom-option:hover {
+        background: rgba(138, 43, 226, 0.25) !important;
+        transform: translateX(5px);
+    }
+
+        .custom-option:hover .me-2 {
+            background: rgba(138, 43, 226, 0.4) !important;
+            transform: scale(1.1);
+        }
+
+    .custom-select-options::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-select-options::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.05);
+        border-radius: 3px;
+    }
+
+    .custom-select-options::-webkit-scrollbar-thumb {
+        background: rgba(138, 43, 226, 0.5);
+        border-radius: 3px;
+    }
+
+        .custom-select-options::-webkit-scrollbar-thumb:hover {
+            background: rgba(138, 43, 226, 0.7);
+        }
+
+    .image-upload-area:hover {
+        border-color: rgba(138, 43, 226, 0.5) !important;
+        background: rgba(138, 43, 226, 0.05) !important;
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryTrigger = document.getElementById('categoryTrigger');
+        const categoryOptions = document.getElementById('categoryOptions');
+        const dropdownArrow = document.getElementById('dropdownArrow');
+        const selectedCategory = document.getElementById('selectedCategory');
+        const hiddenSelect = document.getElementById('hiddenCategorySelect');
+        const customOptions = document.querySelectorAll('.custom-option');
+
+        categoryTrigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+
+            if (categoryOptions.style.display === 'block') {
+                categoryOptions.style.display = 'none';
+                dropdownArrow.classList.remove('bi-chevron-up');
+                dropdownArrow.classList.add('bi-chevron-down');
+            } else {
+                categoryOptions.style.display = 'block';
+                dropdownArrow.classList.remove('bi-chevron-down');
+                dropdownArrow.classList.add('bi-chevron-up');
+            }
+        });
+
+        customOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                const value = this.getAttribute('data-value');
+                const text = this.querySelector('span').textContent;
+                selectedCategory.textContent = text;
+                hiddenSelect.value = value;
+                categoryOptions.style.display = 'none';
+                dropdownArrow.classList.remove('bi-chevron-up');
+                dropdownArrow.classList.add('bi-chevron-down');
+                categoryTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
+                categoryTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
+                hiddenSelect.dispatchEvent(new Event('change'));
+            });
+        });
+
+        document.addEventListener('click', function() {
+            categoryOptions.style.display = 'none';
+            dropdownArrow.classList.remove('bi-chevron-up');
+            dropdownArrow.classList.add('bi-chevron-down');
+        });
+
+        categoryOptions.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        const isPublicCheckbox = document.querySelector('input[asp-for="IsPublic"]');
+        const privateInfo = document.getElementById('privateInfo');
+        const publicInfo = document.querySelector('[style*="rgba(25, 135, 84, 0.1)"]');
+
+        function updateVisibilityInfo() {
+            if (isPublicCheckbox.checked) {
+                publicInfo.style.display = 'block';
+                privateInfo.style.display = 'none';
+            } else {
+                publicInfo.style.display = 'none';
+                privateInfo.style.display = 'block';
+            }
+        }
+
+        updateVisibilityInfo();
+
+        isPublicCheckbox.addEventListener('change', updateVisibilityInfo);
+
+        isPublicCheckbox.addEventListener('change', function() {
+            const switchLabel = document.querySelector('.form-check-label');
+            if (this.checked) {
+                switchLabel.innerHTML = '<i class="bi bi-eye me-2"></i>Public Venue';
+            } else {
+                switchLabel.innerHTML = '<i class="bi bi-shield-lock me-2"></i>Private Venue';
+            }
+        });
+
+        const bannerFileInput = document.getElementById('bannerFileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const defaultPreview = document.getElementById('defaultPreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const fileSizeInfo = document.getElementById('fileSizeInfo');
+        const fileError = document.getElementById('fileError');
+        const imageUploadArea = document.querySelector('.image-upload-area');
+
+        bannerFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    fileError.textContent = 'Please select a valid image file (JPG, PNG, GIF, WebP).';
+                    bannerFileInput.value = '';
+                    return;
+                }
+
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    fileError.textContent = 'File size must be less than 5MB.';
+                    bannerFileInput.value = '';
+                    return;
+                }
+
+                fileError.textContent = '';
+                const fileSize = file.size > 1024 * 1024
+                    ? (file.size / (1024 * 1024)).toFixed(2) + ' MB'
+                    : (file.size / 1024).toFixed(2) + ' KB';
+                fileSizeInfo.textContent = fileSize;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('d-none');
+                    defaultPreview.classList.add('d-none');
+                    removeImageBtn.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
+
+                imageUploadArea.style.borderColor = 'rgba(25, 135, 84, 0.5)';
+                imageUploadArea.style.borderStyle = 'solid';
+            }
+        });
+
+        removeImageBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            bannerFileInput.value = '';
+            imagePreview.src = '';
+            imagePreview.classList.add('d-none');
+            defaultPreview.classList.remove('d-none');
+            removeImageBtn.classList.add('d-none');
+            fileSizeInfo.textContent = '';
+            fileError.textContent = '';
+            imageUploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
+            imageUploadArea.style.borderStyle = 'dashed';
+        });
+
+        imageUploadArea.addEventListener('click', function(e) {
+            if (e.target !== bannerFileInput && e.target !== removeImageBtn) {
+                bannerFileInput.click();
+            }
+        });
+
+        imageUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            imageUploadArea.style.borderColor = 'rgba(138, 43, 226, 0.5)';
+            imageUploadArea.style.background = 'rgba(138, 43, 226, 0.1)';
+        });
+
+        imageUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            imageUploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
+            imageUploadArea.style.background = 'rgba(255,255,255,0.05)';
+        });
+
+        imageUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            imageUploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
+            imageUploadArea.style.background = 'rgba(255,255,255,0.05)';
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                bannerFileInput.files = files;
+                bannerFileInput.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

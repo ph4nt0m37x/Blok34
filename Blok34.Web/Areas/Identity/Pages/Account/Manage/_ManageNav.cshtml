@@ -1,0 +1,335 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!-- Isolated Navigation Container -->
+<div class="account-nav-wrapper">
+    <div class="account-nav-glass">
+        <!-- User Info Section -->
+        <div class="account-nav-header text-center">
+            @{
+                var currentUser = await UserManager.GetUserAsync(User);
+            }
+            <div class="account-nav-avatar mx-auto rounded-circle"
+                 style="width: 36px; height: 36px; background: linear-gradient(135deg, #8a2be2, #5D3FD3); overflow: hidden;">
+                @if (!string.IsNullOrEmpty(currentUser?.AvatarPath))
+                {
+                    <img src="@currentUser.AvatarPath"
+                         alt="Profile"
+                         class="w-100 h-100 rounded-circle"
+                         style="object-fit: cover;" />
+                }
+                else
+                {
+                    <i class="bi bi-person-fill text-white d-flex align-items-center justify-content-center w-100 h-100"
+                       style="font-size: 1rem;"></i>
+                }
+            </div>
+            <h6 class="account-nav-title mt-2 mb-0">Account Settings</h6>
+            <p class="account-nav-subtitle mb-0">Manage your preferences</p>
+        </div>
+
+        <!-- Navigation Items -->
+        <div class="account-nav-items">
+            <a class="account-nav-item @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">
+                <div class="account-nav-icon">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="account-nav-text">
+                    <span>Profile</span>
+                    <small>Personal information</small>
+                </div>
+                <div class="account-nav-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </a>
+
+            <a class="account-nav-item @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">
+                <div class="account-nav-icon">
+                    <i class="bi bi-envelope"></i>
+                </div>
+                <div class="account-nav-text">
+                    <span>Email</span>
+                    <small>Email settings</small>
+                </div>
+                <div class="account-nav-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </a>
+
+            <a class="account-nav-item @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">
+                <div class="account-nav-icon">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <div class="account-nav-text">
+                    <span>Password</span>
+                    <small>Change password</small>
+                </div>
+                <div class="account-nav-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </a>
+
+            <a class="account-nav-item @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">
+                <div class="account-nav-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="account-nav-text">
+                    <span>Two-Factor Auth</span>
+                    <small>Security settings</small>
+                </div>
+                <div class="account-nav-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </a>
+
+            <a class="account-nav-item @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">
+                <div class="account-nav-icon">
+                    <i class="bi bi-database"></i>
+                </div>
+                <div class="account-nav-text">
+                    <span>Personal Data</span>
+                    <small>Download or delete</small>
+                </div>
+                <div class="account-nav-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </a>
+        </div>
+
+        <!-- Logout Button -->
+        <div class="account-nav-footer">
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                <button type="submit" class="account-logout-btn">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    <span>Sign Out</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Isolated styles with specific prefixes to avoid conflicts */
+    .account-nav-wrapper {
+        padding: 1rem;
+        isolation: isolate;
+    }
+
+    .account-nav-glass {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        min-width: 250px;
+        height: fit-content;
+    }
+
+    .account-nav-header {
+        padding-bottom: 1.25rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .account-nav-avatar {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #8a2be2, #5D3FD3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .account-nav-title {
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-top: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .account-nav-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.8rem;
+        margin: 0;
+    }
+
+    .account-nav-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .account-nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .account-nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(135deg, #6a0dad, #8a2be2);
+            transform: scaleY(0);
+            transition: transform 0.2s ease;
+        }
+
+        .account-nav-item:hover {
+            background: rgba(138, 43, 226, 0.1);
+            border-color: rgba(138, 43, 226, 0.3);
+            transform: translateX(3px);
+            color: white;
+            text-decoration: none;
+        }
+
+            .account-nav-item:hover::before {
+                transform: scaleY(1);
+            }
+
+        .account-nav-item.active {
+            background: rgba(138, 43, 226, 0.15);
+            border-color: rgba(138, 43, 226, 0.4);
+            color: white;
+            box-shadow: 0 4px 12px rgba(106, 13, 173, 0.2);
+        }
+
+            .account-nav-item.active::before {
+                transform: scaleY(1);
+            }
+
+    .account-nav-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba(138, 43, 226, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .account-nav-item:hover .account-nav-icon {
+        background: rgba(138, 43, 226, 0.3);
+        transform: scale(1.05);
+    }
+
+    .account-nav-item.active .account-nav-icon {
+        background: linear-gradient(135deg, #6a0dad, #8a2be2);
+    }
+
+    .account-nav-icon i {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .account-nav-text {
+        flex: 1;
+        text-align: left;
+    }
+
+        .account-nav-text span {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 0.1rem;
+        }
+
+        .account-nav-text small {
+            display: block;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.2s ease;
+        }
+
+    .account-nav-item:hover .account-nav-text small {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .account-nav-arrow i {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        transition: all 0.2s ease;
+    }
+
+    .account-nav-item:hover .account-nav-arrow i {
+        color: white;
+        transform: translateX(2px);
+    }
+
+    .account-nav-footer {
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .account-logout-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        font-size: 0.85rem;
+        border: none;
+    }
+
+        .account-logout-btn:hover {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: rgba(220, 53, 69, 0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+            color: white;
+        }
+
+        .account-logout-btn i {
+            font-size: 0.9rem;
+        }
+
+    /* Reset any Bootstrap styles that might interfere */
+    .account-nav-wrapper * {
+        box-sizing: border-box;
+    }
+
+    .account-nav-wrapper a,
+    .account-nav-wrapper button,
+    .account-nav-wrapper div,
+    .account-nav-wrapper span {
+        outline: none;
+        border: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add click handler for navigation items
+        document.querySelectorAll('.account-nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Remove active class from all items
+                document.querySelectorAll('.account-nav-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                // Add active class to clicked item
+                this.classList.add('active');
+            });
+        });
+    });
+</script>

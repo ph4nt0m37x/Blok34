@@ -1,0 +1,25 @@
+﻿@using Blok34.Domain.DomainModels
+
+@model List<Weather>
+
+<form asp-controller="Search" asp-action="Index" method="get" class="input-group-lg">
+    <input type="text"
+           name="query"
+           placeholder="Search events, venues, users..."
+           required />
+
+    <button type="submit">Search</button>
+</form>
+
+<h3>Weather Forecast</h3>
+
+@foreach (var day in Model.Take(5))
+{
+    <div class="card mb-2 p-3">
+        <strong>@day.Date.ToString("dddd")</strong><br />
+        🌡️ @day.MaxTemp°C (feels like @day.FeelsLike°C)<br />
+        🌧️ @day.RainProbability% chance – @day.RainHours h rain<br />
+        💨 Wind gusts: @day.WindGusts km/h<br />
+        ☀️ UV Index: @day.UvIndex
+    </div>
+}

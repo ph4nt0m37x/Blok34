@@ -1,0 +1,172 @@
+﻿@using Blok34.Domain.Identity
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav justify-content-end">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link p-0 dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="avatar-wrapper mx-auto rounded-circle d-flex align-items-center justify-content-center"
+                     style="width: 36px; height: 36px; background: linear-gradient(135deg, #8a2be2, #5D3FD3);">
+                    @{
+                        var currentUser = await UserManager.GetUserAsync(User);
+                    }
+                    @if (!string.IsNullOrEmpty(currentUser.AvatarPath))
+                    {
+                        <img src="@currentUser.AvatarPath" alt="Profile" class="w-100 h-100 rounded-circle" style="object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <i class="bi bi-person-fill text-white" style="font-size: 1rem;"></i>
+                    }
+                </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="navbarDropdown"
+                style="background: rgba(30, 30, 46, 0.98);
+                           backdrop-filter: blur(10px);
+                           border: 1px solid rgba(255,255,255,0.15);
+                           border-radius: 12px;
+                           padding: 0.5rem;
+                           min-width: 220px;">
+                <!-- Header with larger avatar -->
+                <li class="mb-2">
+                    <div class="d-flex flex-column align-items-center p-3 text-white">
+                        <div class="mb-2 rounded-circle d-flex align-items-center justify-content-center border border-white border-opacity-25"
+                             style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(155, 77, 245, 0.8), rgba(106, 76, 219, 0.8));">
+                            @if (!string.IsNullOrEmpty(currentUser.AvatarPath))
+                            {
+                                <a asp-area="Identity" asp-page="/Account/Manage/Index" class="d-block w-100 h-100">
+                                    <img src="@currentUser.AvatarPath" alt="Profile" class="w-100 h-100 rounded-circle" style="object-fit: cover;" />
+                                </a>
+                            }
+                            else
+                            {
+                                <i class="bi bi-person-fill text-white" style="font-size: 1.5rem;"></i>
+                            }
+                        </div>
+                        <a class="text-decoration-none" asp-area="Identity" asp-page="/Account/Manage/Index">
+                            <h6 class="mb-0 text-light fw-medium">@currentUser.Name</h6>
+                        </a>
+                        <a class="text-decoration-none" asp-area="Identity" asp-page="/Account/Manage/Index">
+                            <small class="text-white-50">@currentUser.UserName</small>
+                        </a>
+                    </div>
+                </li>
+
+                <li><hr class="dropdown-divider mx-3 my-2" style="border-color: rgba(255,255,255,0.15);"></li>
+
+                <!-- Menu Items -->
+                <li>
+                    <a class="dropdown-item d-flex align-items-center text-white py-2 px-3" asp-controller="Profile" asp-action="Index" asp-route-id="@currentUser.Id">
+                        <div class="me-2 d-flex align-items-center justify-content-center rounded"
+                             style="width: 30px; height: 30px; background: rgba(255,255,255,0.1);">
+                            <i class="bi bi-person" style="font-size: 0.9rem;"></i>
+                        </div>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center text-white py-2 px-3" asp-controller="Events" asp-action="Index">
+                        <div class="me-2 d-flex align-items-center justify-content-center rounded"
+                             style="width: 30px; height: 30px; background: rgba(255,255,255,0.1);">
+                            <i class="bi bi-calendar-event" style="font-size: 0.9rem;"></i>
+                        </div>
+                        <span>My Events</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center text-white py-2 px-3" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <div class="me-2 d-flex align-items-center justify-content-center rounded"
+                             style="width: 30px; height: 30px; background: rgba(255,255,255,0.1);">
+                            <i class="bi bi-gear" style="font-size: 0.9rem;"></i>
+                        </div>
+                        <span>Settings</span>
+                    </a>
+                </li>
+
+                <li><hr class="dropdown-divider mx-3 my-2" style="border-color: rgba(255,255,255,0.15);"></li>
+
+                <li>
+                    <form class="form-inline m-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit"
+                                class="dropdown-item d-flex align-items-center text-white py-2 px-3 w-100 border-0 bg-transparent">
+                            <div class="me-2 d-flex align-items-center justify-content-center rounded"
+                                 style="width: 30px; height: 30px; background: rgba(220, 53, 69, 0.2);">
+                                <i class="bi bi-box-arrow-right" style="font-size: 0.9rem;"></i>
+                            </div>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item px-3 d-flex align-items-center">
+            <a asp-area="Identity" asp-page="/Account/Register"
+               class="nav-link px-4 text-white d-flex align-items-center"
+               style="font-size: 1.1rem; letter-spacing: 0.5px; height: 100%;">
+                <h5 class="nav-text mb-0">REGISTER</h5>
+            </a>
+        </li>
+        <li class="nav-item px-3 d-flex align-items-center">
+            <a asp-area="Identity" asp-page="/Account/Login"
+               class="nav-link px-4 text-white d-flex align-items-center"
+               style="font-size: 1.1rem; letter-spacing: 0.5px; height: 100%;">
+                <h5 class="nav-text mb-0">LOGIN</h5>
+            </a>
+        </li>
+    }
+</ul>
+
+<style>
+    /* Fix Bootstrap dropdown colors */
+    .dropdown-menu {
+        --bs-dropdown-link-hover-bg: rgba(138, 43, 226, 0.25);
+        --bs-dropdown-link-hover-color: white;
+    }
+
+    /* Custom hover effects for dropdown items */
+    .dropdown-item:hover {
+        background-color: rgba(138, 43, 226, 0.25) !important;
+        color: white !important;
+    }
+
+        .dropdown-item:hover div {
+            background-color: rgba(138, 43, 226, 0.4) !important;
+        }
+
+    /* Logout button specific hover */
+    .dropdown-item button:hover {
+        background-color: rgba(220, 53, 69, 0.25) !important;
+    }
+
+        .dropdown-item button:hover div {
+            background-color: rgba(220, 53, 69, 0.4) !important;
+        }
+
+    /* Avatar hover effect */
+    .avatar-wrapper {
+        transition: transform 0.2s ease;
+    }
+
+        .avatar-wrapper:hover {
+            transform: scale(1.05);
+        }
+
+    /* Remove Bootstrap active/focus states */
+    .dropdown-item:focus,
+    .dropdown-item.active {
+        background-color: transparent !important;
+        color: inherit !important;
+    }
+
+    .dropdown-toggle::after {
+        display: none; /* Hide the default dropdown arrow */
+    }
+</style>

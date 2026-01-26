@@ -1,0 +1,179 @@
+﻿@using Blok34.Domain.Identity
+@using Microsoft.AspNetCore.Identity
+@*inject SignInManager<ApplicationUser> SignInManager *@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Blok34</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Blok34.Web.styles.css" asp-append-version="true" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72, #6a0dad);
+        }
+    </style>
+    <style>
+        .btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+            .btn:hover {
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 0 10px 25px rgba(106, 13, 173, 0.3);
+            }
+
+        .nav-item a:hover {
+            box-shadow: 0 12px 30px rgba(106, 13, 173, 0.4) !important;
+        }
+
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .div {
+            background-color: transparent !important;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            background-color: #6c757d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .avatar-initials {
+            line-height: 1;
+        }
+
+        /* Hover effect for avatar */
+        .avatar-circle:hover {
+            background-color: #5a6268;
+            cursor: pointer;
+        }
+
+        /* Make the entire nav-link clickable as dropdown toggle */
+        .nav-link.dropdown-toggle {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column">
+       
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark position-relative"
+             style="padding: 0.5rem 1.5rem;">
+
+            <div class="container-fluid d-flex align-items-center justify-content-between">
+
+                <!-- Brand with subtle purple bubbles -->
+                <a class="navbar-brand d-flex align-items-center fw-bold fs-3 text-white"
+                   asp-area="" asp-controller="Home" asp-action="Index" style="gap:10px; position:relative;">
+                    <svg width="100" height="60" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#4B0082" />
+                                <stop offset="100%" stop-color="#6a0dad" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Abstract building silhouette -->
+                        <rect x="15" y="10" width="25" height="40" rx="4" fill="url(#grad1)" />
+                        <rect x="40" y="20" width="20" height="30" rx="3" fill="#5D3FD3" />
+                        <rect x="60" y="30" width="15" height="20" rx="2" fill="#4B0082" />
+
+                        <!-- Stylized bubble pattern forming a wave/curve -->
+                        <g transform="translate(0, -5)">
+                            <circle cx="20" cy="20" r="4" fill="#4B0082" />
+                            <circle cx="35" cy="20" r="4" fill="#5D3FD3" />
+                            <circle cx="50" cy="25" r="4" fill="#6a0dad" />
+                            <circle cx="65" cy="30" r="4" fill="#4B0082" />
+                            <circle cx="80" cy="25" r="4" fill="#5D3FD3" />
+                            <circle cx="95" cy="20" r="4" fill="#6a0dad" />
+
+                            <!-- Second row -->
+                            <circle cx="25" cy="35" r="4" fill="#6a0dad" />
+                            <circle cx="40" cy="40" r="4" fill="#4B0082" />
+                            <circle cx="55" cy="45" r="4" fill="#5D3FD3" />
+                            <circle cx="70" cy="45" r="4" fill="#6a0dad" />
+                            <circle cx="85" cy="40" r="4" fill="#4B0082" />
+                        </g>
+                    </svg>
+
+                    Blok34
+                </a>
+
+                <!-- Mobile toggler -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarRight"
+                        aria-controls="navbarRight" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Login/Register on the right -->
+                <div class="collapse navbar-collapse justify-content-end" id="navbarRight">
+                    <partial name="_LoginPartial" />
+                </div>
+
+            </div>
+        </nav>
+    </header>
+    <main role="main" class="flex-fill py-0 align-items-center">
+        
+            @RenderBody()
+    </main>
+    <footer class="footer text-muted" style="border-color: blueviolet; background: linear-gradient(135deg, #1e3c72, #6a0dad);">
+        <div class="container text-center">
+        &copy; 2026 - Blok34</div>
+        </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.nav-item .btn').forEach(button => {
+                button.addEventListener('mouseenter', function(e) {
+                    const ripple = this.querySelector('.position-absolute.rounded-pill');
+                    if (ripple) {
+                        const rect = this.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        ripple.style.width = size + 'px';
+                        ripple.style.height = size + 'px';
+                        ripple.style.opacity = '1';
+                    }
+                });
+
+                button.addEventListener('mouseleave', function(e) {
+                    const ripple = this.querySelector('.position-absolute.rounded-pill');
+                    if (ripple) {
+                        ripple.style.width = '0';
+                        ripple.style.height = '0';
+                        ripple.style.opacity = '0';
+                    }
+                });
+                button.addEventListener('click', function(e) {
+                    this.style.transform = 'translateY(-1px) scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateY(-3px) scale(1.02)';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

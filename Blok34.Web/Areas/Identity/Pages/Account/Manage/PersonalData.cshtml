@@ -1,0 +1,307 @@
+﻿@page
+@model PersonalDataModel
+@{
+    ViewData["Title"] = "Personal Data";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+
+<div class="d-flex align-items-start justify-content-start"
+     style="min-height: 100vh; padding-top: 1rem; padding-bottom: 3rem;">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+                <!-- Glassmorphism Card -->
+                <div class="card border-0 shadow"
+                     style="background: rgba(255,255,255,0.07);
+                            backdrop-filter: blur(12px);
+                            border-radius: 20px;
+                            border: 1px solid rgba(255,255,255,0.15);
+                            margin-bottom: 2rem;">
+
+                    <div class="card-body p-4">
+
+                        <!-- Logo and Title -->
+                        <div class="text-center mb-3">
+                            <svg width="60" height="40" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" class="mb-1">
+                                <defs>
+                                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#4B0082" />
+                                        <stop offset="100%" stop-color="#6a0dad" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="15" y="10" width="25" height="40" rx="4" fill="url(#grad1)" />
+                                <rect x="40" y="20" width="20" height="30" rx="3" fill="#5D3FD3" />
+                                <rect x="60" y="30" width="15" height="20" rx="2" fill="#4B0082" />
+                            </svg>
+                            <h3 class="text-white fw-bold mb-0">Personal Data</h3>
+                            <p class="text-white-50 mt-1">Manage your account information</p>
+                        </div>
+
+                        <!-- Information Cards -->
+                        <div class="row mb-4">
+                            <!-- Data Collection Card -->
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-transparent border border-white-10 rounded-3 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="bi bi-database text-info me-2" style="font-size: 1.5rem;"></i>
+                                            <h5 class="text-white mb-0">Your Data</h5>
+                                        </div>
+                                        <p class="text-white-50 mb-0">
+                                            Your account contains personal information you've provided, including:
+                                        </p>
+                                        <ul class="text-white-50 mt-2 mb-0 small">
+                                            <li>Profile information</li>
+                                            <li>Email address</li>
+                                            <li>Account preferences</li>
+                                            <li>Activity history</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Warning Card -->
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-transparent border border-danger rounded-3 border-opacity-50 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="bi bi-exclamation-triangle text-danger me-2" style="font-size: 1.5rem;"></i>
+                                            <h5 class="text-white mb-0">Important Notice</h5>
+                                        </div>
+                                        <p class="text-white mb-0">
+                                            <strong>Deleting your data will permanently remove your account.</strong>
+                                            This action cannot be undone and all your information will be lost.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions Section -->
+                        <div class="card bg-transparent border border-white-10 rounded-3 mb-4">
+                            <div class="card-body">
+                                <h5 class="text-white mb-3">
+                                    <i class="bi bi-gear me-2"></i>Data Management Actions
+                                </h5>
+
+                                <!-- Download Data Section -->
+                                <div class="mb-4 p-3 rounded-3" style="background: rgba(13, 110, 253, 0.05);">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-download text-info me-2" style="font-size: 1.25rem;"></i>
+                                        <h6 class="text-white mb-0">Download Your Data</h6>
+                                    </div>
+                                    <p class="text-white-50 mb-3">
+                                        Request a copy of all personal data associated with your account.
+                                        This will be provided in a standard format that you can save for your records.
+                                    </p>
+                                    <form id="download-data" asp-page="DownloadPersonalData" method="post">
+                                        <button class="btn rounded-pill px-4"
+                                                style="background: rgba(13, 110, 253, 0.2);
+                                                       border: 1px solid rgba(13, 110, 253, 0.4);
+                                                       color: white;
+                                                       transition: all 0.2s ease;"
+                                                type="submit">
+                                            <i class="bi bi-download me-2"></i>Download My Data
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Delete Data Section -->
+                                <div class="p-3 rounded-3" style="background: rgba(220, 53, 69, 0.05);">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-trash text-danger me-2" style="font-size: 1.25rem;"></i>
+                                        <h6 class="text-white mb-0">Delete Account & Data</h6>
+                                    </div>
+                                    <p class="text-white-50 mb-3">
+                                        <strong class="text-danger">Warning:</strong> This action is permanent and irreversible.
+                                        All your personal data, account information, and history will be permanently deleted.
+                                    </p>
+                                    <div class="d-flex gap-2">
+                                        <a id="delete" asp-page="DeletePersonalData"
+                                           class="btn rounded-pill px-4"
+                                           style="background: rgba(220, 53, 69, 0.2);
+                                                  border: 1px solid rgba(220, 53, 69, 0.4);
+                                                  color: white;
+                                                  transition: all 0.2s ease;">
+                                            <i class="bi bi-trash me-2"></i>Delete Account
+                                        </a>
+                                        <button type="button"
+                                                class="btn rounded-pill px-3"
+                                                style="background: rgba(255,255,255,0.05);
+                                                       border: 1px solid rgba(255,255,255,0.2);
+                                                       color: rgba(255,255,255,0.8);
+                                                       transition: all 0.2s ease;"
+                                                onclick="showDeleteWarning()">
+                                            <i class="bi bi-question-circle me-2"></i>Learn More
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="alert alert-info bg-info bg-opacity-10 border-info border-opacity-25 text-white rounded-pill">
+                            <div class="d-flex">
+                                <i class="bi bi-info-circle-fill me-2" style="font-size: 1.1rem;"></i>
+                                <div>
+                                    <p class="mb-0">
+                                        For questions about data privacy or additional requests, please contact our
+                                        <a href="#" class="text-info fw-medium" style="text-decoration: underline;">support team</a>.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Back to Profile Link -->
+                        <div class="text-center mt-4 pt-3 border-top border-white-10">
+                            <a asp-page="./Index"
+                               class="text-decoration-none fw-medium"
+                               style="color: #7fa3e4">
+                                <i class="bi bi-arrow-left me-1"></i>Back to Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Consistent with other pages styling */
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Specific button hover colors */
+    .btn[style*="rgba(13, 110, 253"]:hover {
+        background: rgba(13, 110, 253, 0.3) !important;
+        border-color: rgba(13, 110, 253, 0.6) !important;
+    }
+
+    .btn[style*="rgba(220, 53, 69"]:hover {
+        background: rgba(220, 53, 69, 0.3) !important;
+        border-color: rgba(220, 53, 69, 0.6) !important;
+    }
+
+    .btn[style*="rgba(255,255,255,0.05)"]:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+
+    /* Card styling */
+    .card.bg-transparent {
+        background: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .border-white-10 {
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* Gap utility */
+    .gap-2 {
+        gap: 0.5rem;
+    }
+
+    /* List styling */
+    ul {
+        padding-left: 1.25rem;
+    }
+
+    /* Alert links */
+    .alert a {
+        color: #7cc4ff;
+        text-decoration: none;
+    }
+
+        .alert a:hover {
+            text-decoration: underline;
+        }
+</style>
+
+<script>
+    function showDeleteWarning() {
+        Swal.fire({
+            title: 'Account Deletion Warning',
+            html: `
+                <div class="text-start">
+                    <p class="mb-3">By deleting your account, you will:</p>
+                    <ul class="mb-3">
+                        <li>Permanently lose access to your account</li>
+                        <li>Remove all your personal data</li>
+                        <li>Delete your profile information</li>
+                        <li>Lose any saved preferences</li>
+                    </ul>
+                    <p class="text-danger fw-bold">This action cannot be undone!</p>
+                </div>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'I understand',
+            cancelButtonText: 'Cancel',
+            background: 'rgba(30, 30, 46, 0.95)',
+            color: 'white',
+            backdrop: 'rgba(0, 0, 0, 0.5)'
+        });
+    }
+
+    // Add confirmation for delete button
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButton = document.getElementById('delete');
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Are you absolutely sure?',
+                    html: `
+                        <div class="text-start">
+                            <p class="mb-2">This will <strong class="text-danger">permanently delete</strong>:</p>
+                            <ul class="mb-3">
+                                <li>Your account and all data</li>
+                                <li>Profile information</li>
+                                <li>Account history</li>
+                                <li>All associated content</li>
+                            </ul>
+                            <p class="text-warning fw-bold">This action cannot be reversed!</p>
+                            <p class="text-white-50 small mt-3">Type <code>DELETE</code> to confirm:</p>
+                            <input type="text" id="confirm-delete" class="form-control bg-dark text-white border-danger" placeholder="Type DELETE here">
+                        </div>
+                    `,
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Delete Account',
+                    cancelButtonText: 'Cancel',
+                    background: 'rgba(30, 30, 46, 0.95)',
+                    color: 'white',
+                    backdrop: 'rgba(0, 0, 0, 0.5)',
+                    preConfirm: () => {
+                        const confirmInput = document.getElementById('confirm-delete');
+                        if (confirmInput.value !== 'DELETE') {
+                            Swal.showValidationMessage('Please type DELETE to confirm');
+                            return false;
+                        }
+                        return true;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Navigate to delete page
+                        window.location.href = deleteButton.href;
+                    }
+                });
+            });
+        }
+    });
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!-- SweetAlert2 for better dialogs -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+}

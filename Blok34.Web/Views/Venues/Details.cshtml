@@ -1,0 +1,397 @@
+﻿@model Blok34.Domain.DomainModels.Venue
+
+@{
+    ViewData["Title"] = "Venue Details";
+    var isCurrentUserManager = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.VenueManagerId;
+}
+
+<div class="venue-details-page" style="min-height: 100vh; background: linear-gradient(135deg, #1e3c72, #6a0dad);">
+
+    <!-- Banner Section -->
+    <div class="venue-banner position-relative"
+         style="height: 400px; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)),
+         @if (!string.IsNullOrEmpty(Model.BannerPath))
+        {
+                        <text>url('@Model.BannerPath')</text>
+                }
+                else
+                {
+                        <text>linear-gradient(135deg, #6a0dad, #8a2be2)</text>
+                }
+;
+                background-size: cover;
+                background-position: center;
+                border-bottom: 3px solid rgba(255,255,255,0.1);">
+
+        <!-- Overlay Content -->
+        <div class="container h-100">
+            <div class="row h-100 align-items-end">
+                <div class="col-12 pb-5">
+                    <!-- Venue Name -->
+                    <h1 class="text-white fw-bold display-4 mb-3 text-center text-shadow">@Model.Name</h1>
+
+                    <!-- Category Badge -->
+                    <div class="d-flex justify-content-center mb-4">
+                        <div class="badge px-4 py-2 rounded-pill"
+                             style="background: rgba(255,255,255,0.2);
+                                    backdrop-filter: blur(10px);
+                                    border: 1px solid rgba(255,255,255,0.3);">
+                            <i class="bi bi-tag me-2"></i>
+                            <span class="fw-medium text-white">@Model.Category</span>
+                        </div>
+                    </div>
+
+                    <!-- Public/Private Badge -->
+                    <div class="d-flex justify-content-center">
+                        @if (Model.IsPublic)
+                        {
+                                <div class="badge px-3 py-2 rounded-pill me-2"
+                                     style="background: rgba(25, 135, 84, 0.3);
+                                            border: 1px solid rgba(25, 135, 84, 0.5);">
+                                    <i class="bi bi-eye me-1"></i>
+                                    <span class="text-white fw-medium">Public Venue</span>
+                                </div>
+                        }
+                        else
+                        {
+                                <div class="badge px-3 py-2 rounded-pill me-2"
+                                     style="background: rgba(13, 110, 253, 0.3);
+                                            border: 1px solid rgba(13, 110, 253, 0.5);">
+                                    <i class="bi bi-shield-lock me-1"></i>
+                                    <span class="text-white fw-medium">Private Venue</span>
+                                </div>
+                        }
+
+                        @if (isCurrentUserManager)
+                        {
+                                <div class="badge px-3 py-2 rounded-pill"
+                                     style="background: rgba(255, 193, 7, 0.3);
+                                            border: 1px solid rgba(255, 193, 7, 0.5);">
+                                    <i class="bi bi-person-badge me-1"></i>
+                                    <span class="text-white fw-medium">Venue Manager</span>
+                                </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+                <!-- Details Card -->
+                <div class="card border-0 shadow mb-5"
+                     style="background: rgba(255,255,255,0.07);
+                            backdrop-filter: blur(12px);
+                            border-radius: 20px;
+                            border: 1px solid rgba(255,255,255,0.15);">
+
+                    <div class="card-body p-5">
+                        <div class="row">
+                            <!-- Left Column - Description -->
+                            <div class="col-lg-8 mb-4 mb-lg-0">
+                                <div class="mb-4">
+                                    <h4 class="text-white fw-bold mb-3">
+                                        <i class="bi bi-info-circle me-2 text-info"></i>About This Venue
+                                    </h4>
+                                    @if (!string.IsNullOrEmpty(Model.Description))
+                                    {
+                                        <p class="text-white-50 lead mb-0" style="line-height: 1.6;">@Model.Description</p>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center py-4">
+                                            <i class="bi bi-text-paragraph display-4 text-white-50 mb-3"></i>
+                                            <p class="text-white-50">No description provided</p>
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Contact Information -->
+                                <div class="p-4 rounded" style="background: rgba(255,255,255,0.05);">
+                                    <h5 class="text-white fw-bold mb-3">
+                                        <i class="bi bi-telephone me-2 text-primary"></i>Contact Information
+                                    </h5>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="contact-icon me-3 d-flex align-items-center justify-content-center rounded"
+                                                     style="width: 40px; height: 40px; background: rgba(13, 110, 253, 0.2);">
+                                                    <i class="bi bi-telephone text-primary"></i>
+                                                </div>
+                                                <div>
+                                                    <small class="text-white-50 d-block">Phone</small>
+                                                    @if (!string.IsNullOrEmpty(Model.Phone))
+                                                    {
+                                                        <span class="text-white fw-medium">@Model.Phone</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-white-50">Not provided</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="contact-icon me-3 d-flex align-items-center justify-content-center rounded"
+                                                     style="width: 40px; height: 40px; background: rgba(25, 135, 84, 0.2);">
+                                                    <i class="bi bi-geo-alt text-success"></i>
+                                                </div>
+                                                <div>
+                                                    <small class="text-white-50 d-block">Location</small>
+                                                    @if (!string.IsNullOrEmpty(Model.Address))
+                                                    {
+                                                        <span class="text-white fw-medium">@Model.Address</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-white-50">Address not specified</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Quick Info -->
+                            <div class="col-lg-4">
+                                <div class="p-4 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                    <h5 class="text-white fw-bold mb-4">
+                                        <i class="bi bi-card-checklist me-2 text-warning"></i>Quick Information
+                                    </h5>
+
+                                    <div class="mb-4">
+                                        <small class="text-white-50 d-block mb-1">Venue Type</small>
+                                        <div class="d-flex align-items-center">
+                                            @if (Model.IsPublic)
+                                            {
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                <span class="text-white fw-medium">Open to Public</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-shield-fill text-primary me-2"></i>
+                                                <span class="text-white fw-medium">Private Venue</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <small class="text-white-50 d-block mb-1">Category</small>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-tag-fill text-info me-2"></i>
+                                            <span class="text-white fw-medium">@Model.Category</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <small class="text-white-50 d-block mb-1">Availability</small>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-calendar-check text-success me-2"></i>
+                                            @if (Model.IsPublic)
+                                            {
+                                                <span class="text-white fw-medium">Open for all events</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-white fw-medium">Manager approval required</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-3 border-top border-white-10">
+                                        <small class="text-white-50 d-block mb-2">Event Status</small>
+                                        <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1);">
+                                            <div class="progress-bar"
+                                                 role="progressbar"
+                                                 style="width: 100%; background: linear-gradient(90deg, #6a0dad, #8a2be2);"
+                                                 aria-valuenow="100"
+                                                 aria-valuemin="0"
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <small class="text-white-50 d-block mt-2 text-center">Venue is active and available</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-center gap-3 mb-5">
+                    @if (isCurrentUserManager)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn rounded-pill px-4 py-2 fw-medium"
+                           style="background: linear-gradient(135deg, #6a0dad, #8a2be2);
+                                      border: none;
+                                      color: white;
+                                      transition: all 0.2s ease;">
+                            <i class="bi bi-pencil me-2"></i>Edit Venue
+                        </a>
+                    }
+
+                    <a asp-action="Index"
+                       class="btn rounded-pill px-4 py-2 fw-medium"
+                       style="background: rgba(255,255,255,0.1);
+                              border: 1px solid rgba(255,255,255,0.3);
+                              color: white;
+                              transition: all 0.2s ease;">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Venues
+                    </a>
+
+                    <!-- Optional: Create Event Button -->
+                    @if (Model.IsPublic || isCurrentUserManager)
+                    {
+                        <a href="#"
+                           class="btn rounded-pill px-4 py-2 fw-medium"
+                           style="background: rgba(25, 135, 84, 0.2);
+                                      border: 1px solid rgba(25, 135, 84, 0.4);
+                                      color: white;
+                                      transition: all 0.2s ease;">
+                            <i class="bi bi-plus-circle me-2"></i>Create Event Here
+                        </a>
+                    }
+                </div>
+
+                <!-- Stats Card (Optional) -->
+                <div class="card border-0 shadow"
+                     style="background: rgba(255,255,255,0.05);
+                            backdrop-filter: blur(12px);
+                            border-radius: 16px;
+                            border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="card-body p-4">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">0</div>
+                                <small class="text-white-50">Total Events</small>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">0</div>
+                                <small class="text-white-50">Upcoming Events</small>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">0</div>
+                                <small class="text-white-50">Past Events</small>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-white fw-bold display-6">0</div>
+                                <small class="text-white-50">Active Bookings</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Text shadow for banner text */
+    .text-shadow {
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Hover effects for buttons */
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Contact icon hover */
+    .contact-icon {
+        transition: all 0.2s ease;
+    }
+
+        .contact-icon:hover {
+            transform: scale(1.1);
+        }
+
+    /* Smooth transitions */
+    .venue-banner {
+        transition: background-image 0.5s ease;
+    }
+
+    /* Border utilities */
+    .border-white-10 {
+        border-color: rgba(255,255,255,0.1) !important;
+    }
+
+    /* Badge glow effect */
+    .badge {
+        transition: all 0.2s ease;
+    }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+    /* Responsive banner height */
+    .venue-banner {
+        height: 400px;
+    }
+
+    /* Mobile adjustments */
+    .mobile-banner-height {
+        height: 300px;
+    }
+
+    .mobile-banner-text {
+        font-size: 2.5rem;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover effects to interactive elements
+        const badges = document.querySelectorAll('.badge');
+        badges.forEach(badge => {
+            badge.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+            });
+
+            badge.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Add click effect to buttons
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'translateY(-1px) scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-2px)';
+                }, 150);
+            });
+        });
+
+        // Simple mobile detection for banner
+        function adjustBannerForMobile() {
+            const banner = document.querySelector('.venue-banner');
+            const title = document.querySelector('.venue-banner h1');
+
+            if (window.innerWidth < 768) {
+                if (banner) banner.classList.add('mobile-banner-height');
+                if (title) title.classList.add('mobile-banner-text');
+            } else {
+                if (banner) banner.classList.remove('mobile-banner-height');
+                if (title) title.classList.remove('mobile-banner-text');
+            }
+        }
+
+        // Check on load and resize
+        adjustBannerForMobile();
+        window.addEventListener('resize', adjustBannerForMobile);
+    });
+</script>

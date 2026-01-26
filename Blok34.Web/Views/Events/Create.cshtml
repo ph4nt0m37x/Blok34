@@ -1,0 +1,802 @@
+﻿@model Blok34.Domain.DomainModels.Event
+@using Blok34.Domain.Enums
+@{
+    ViewData["Title"] = "Create Event";
+}
+
+<div class="d-flex align-items-start justify-content-start"
+     style="min-height: 100vh; padding-top: 1rem; padding-bottom: 3rem;">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+                <!-- Glassmorphism Card -->
+                <div class="card border-0 shadow"
+                     style="background: rgba(255,255,255,0.07);
+                            backdrop-filter: blur(12px);
+                            border-radius: 20px;
+                            border: 1px solid rgba(255,255,255,0.15);
+                            margin-bottom: 2rem;">
+
+                    <div class="card-body p-4">
+
+                        <!-- Logo and Title -->
+                        <div class="text-center mb-4">
+                            <svg width="60" height="40" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" class="mb-2">
+                                <defs>
+                                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#4B0082" />
+                                        <stop offset="100%" stop-color="#6a0dad" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="15" y="10" width="25" height="40" rx="4" fill="url(#grad1)" />
+                                <rect x="40" y="20" width="20" height="30" rx="3" fill="#5D3FD3" />
+                                <rect x="60" y="30" width="15" height="20" rx="2" fill="#4B0082" />
+                            </svg>
+                            <h3 class="text-white fw-bold mb-1">Create New Event</h3>
+                            <p class="text-white-50">Organize and share your event with the community</p>
+                        </div>
+
+                        <!-- Event Form -->
+                        <form asp-action="Create" method="post" id="eventForm">
+                            <div asp-validation-summary="ModelOnly"
+                                 class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white small py-2 rounded-pill mb-4"
+                                 role="alert">
+                            </div>
+
+                            <!-- Hidden User ID Field -->
+                            <input type="hidden" asp-for="CreatedByUserId" value="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+
+                            <!-- Event Title -->
+                            <div class="mb-3 position-relative">
+                                <label asp-for="Title" class="form-label text-white fw-medium mb-1">
+                                    <i class="bi bi-calendar-event me-2"></i>Event Title
+                                </label>
+                                <div class="position-relative">
+                                    <i class="bi bi-pencil position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
+                                    <input asp-for="Title"
+                                           class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
+                                           style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
+                                           placeholder="Enter event title"
+                                           aria-required="true" />
+                                </div>
+                                <span asp-validation-for="Title" class="text-danger d-block mt-1"></span>
+                            </div>
+
+                            <!-- Event Category Dropdown -->
+                            <div class="mb-3">
+                                <label asp-for="Category" class="form-label text-white fw-medium mb-2">
+                                    <i class="bi bi-tags me-2"></i>Event Category
+                                </label>
+                                <div class="position-relative">
+                                    <!-- Custom dropdown container -->
+                                    <div class="custom-select-wrapper">
+                                        <div class="custom-select-trigger d-flex align-items-center justify-content-between bg-transparent text-white py-2 px-3 rounded-pill"
+                                             style="border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.2s ease;"
+                                             id="categoryTrigger">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-tag me-2 text-white-50"></i>
+                                                <span id="selectedCategory">Select a category</span>
+                                            </div>
+                                            <i class="bi bi-chevron-down text-white-50" id="categoryDropdownArrow"></i>
+                                        </div>
+
+                                        <!-- Custom dropdown menu -->
+                                        <div class="custom-select-options shadow"
+                                             style="background: rgba(30, 30, 46, 0.98);
+                                                    backdrop-filter: blur(10px);
+                                                    border: 1px solid rgba(255,255,255,0.15);
+                                                    border-radius: 12px;
+                                                    margin-top: 0.5rem;
+                                                    padding: 0.5rem;
+                                                    display: none;
+                                                    position: absolute;
+                                                    width: 100%;
+                                                    z-index: 1000;"
+                                             id="categoryOptions">
+                                            @foreach (var category in Html.GetEnumSelectList<EventCategory>())
+                                            {
+                                                <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded"
+                                                     style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;"
+                                                     data-value="@category.Value">
+                                                    <div class="me-2 d-flex align-items-center justify-content-center rounded"
+                                                         style="width: 28px; height: 28px; background: rgba(255,255,255,0.1);">
+                                                        <i class="bi bi-calendar-check" style="font-size: 0.8rem;"></i>
+                                                    </div>
+                                                    <span>@category.Text</span>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Hidden select for form submission - SAME AS VENUE PAGE -->
+                                        <select asp-for="Category"
+                                                asp-items="Html.GetEnumSelectList<EventCategory>()"
+                                                class="d-none"
+                                                id="hiddenCategorySelect"
+                                                aria-required="true">
+                                            <option value="" selected disabled>Select a category</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="Category" class="text-danger d-block mt-1" id="categoryError"></span>
+                            </div>
+
+                            <!-- Event Description -->
+                            <div class="mb-3 position-relative">
+                                <label asp-for="Description" class="form-label text-white fw-medium mb-1">
+                                    <i class="bi bi-text-paragraph me-2"></i>Description
+                                </label>
+                                <div class="position-relative">
+                                    <i class="bi bi-text-left position-absolute top-0 start-0 ms-3 mt-3 text-white-50"></i>
+                                    <textarea asp-for="Description"
+                                              class="form-control bg-transparent text-white py-2 rounded-4 ps-5"
+                                              style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem; min-height: 120px;"
+                                              placeholder="Describe your event (agenda, activities, etc.)"
+                                              aria-required="true"></textarea>
+                                </div>
+                                <span asp-validation-for="Description" class="text-danger d-block mt-1"></span>
+                            </div>
+
+                            <!-- Date & Time Section -->
+                            <div class="row">
+                                <!-- Start Date -->
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="StartDate" class="form-label text-white fw-medium mb-1">
+                                        <i class="bi bi-clock me-2"></i>Start Date & Time
+                                    </label>
+                                    <div class="position-relative">
+                                        <i class="bi bi-calendar position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
+                                        <input asp-for="StartDate"
+                                               type="datetime-local"
+                                               class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
+                                               style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
+                                               aria-required="true"
+                                               step="300" /> <!-- 5-minute steps for better time selection -->
+                                    </div>
+                                    <span asp-validation-for="StartDate" class="text-danger d-block mt-1"></span>
+                                </div>
+
+                                <!-- End Date -->
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="EndDate" class="form-label text-white fw-medium mb-1">
+                                        <i class="bi bi-clock-history me-2"></i>End Date & Time
+                                    </label>
+                                    <div class="position-relative">
+                                        <i class="bi bi-calendar-check position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
+                                        <input asp-for="EndDate"
+                                               type="datetime-local"
+                                               class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
+                                               style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
+                                               aria-required="true"
+                                               step="300" /> <!-- 5-minute steps for better time selection -->
+                                    </div>
+                                    <span asp-validation-for="EndDate" class="text-danger d-block mt-1"></span>
+                                </div>
+                            </div>
+
+                            <!-- Venue Selection -->
+                            <div class="mb-4">
+                                <label asp-for="VenueId" class="form-label text-white fw-medium mb-2">
+                                    <i class="bi bi-geo-alt me-2"></i>Select Venue
+                                </label>
+                                <div class="position-relative">
+                                    <!-- Custom dropdown container -->
+                                    <div class="custom-select-wrapper">
+                                        <div class="custom-select-trigger d-flex align-items-center justify-content-between bg-transparent text-white py-2 px-3 rounded-pill"
+                                             style="border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.2s ease;"
+                                             id="venueTrigger">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-building me-2 text-white-50"></i>
+                                                <span id="selectedVenue">Select a venue</span>
+                                            </div>
+                                            <i class="bi bi-chevron-down text-white-50" id="venueDropdownArrow"></i>
+                                        </div>
+
+                                        <!-- Custom dropdown menu -->
+                                        <div class="custom-select-options shadow"
+                                             style="background: rgba(30, 30, 46, 0.98);
+                                                    backdrop-filter: blur(10px);
+                                                    border: 1px solid rgba(255,255,255,0.15);
+                                                    border-radius: 12px;
+                                                    margin-top: 0.5rem;
+                                                    padding: 0.5rem;
+                                                    display: none;
+                                                    position: absolute;
+                                                    width: 100%;
+                                                    z-index: 1000;"
+                                             id="venueOptions">
+                                            @if (ViewBag.VenueId != null && ((IEnumerable<SelectListItem>)ViewBag.VenueId).Any())
+                                            {
+                                                foreach (var venue in ViewBag.VenueId)
+                                                {
+                                                    <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded"
+                                                         style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;"
+                                                         data-value="@venue.Value">
+                                                        <div class="me-2 d-flex align-items-center justify-content-center rounded"
+                                                             style="width: 28px; height: 28px; background: rgba(255,255,255,0.1);">
+                                                            <i class="bi bi-building" style="font-size: 0.8rem;"></i>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-medium">@venue.Text</div>
+                                                            <small class="text-white-50" style="font-size: 0.75rem;">Select this venue</small>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="text-center py-3">
+                                                    <i class="bi bi-building-slash text-white-50 display-6 mb-2"></i>
+                                                    <p class="text-white-50 mb-1">No venues available</p>
+                                                    <a asp-controller="Venues" asp-action="Create" class="text-decoration-none" style="color: #7fa3e4;">
+                                                        <i class="bi bi-plus-circle me-1"></i>Create a venue first
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Hidden select for form submission - SAME AS VENUE PAGE -->
+                                        <select asp-for="VenueId"
+                                                asp-items="ViewBag.VenueId"
+                                                class="d-none"
+                                                id="hiddenVenueSelect"
+                                                aria-required="true">
+                                            <option value="" selected disabled>Select a venue</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="VenueId" class="text-danger d-block mt-1" id="venueError"></span>
+                            </div>
+
+                            <!-- Additional Info Section -->
+                            <div class="mb-4 p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-info-circle text-info me-2" style="font-size: 1.2rem;"></i>
+                                    <h6 class="text-white mb-0">Event Tips</h6>
+                                </div>
+                                <ul class="text-white-50 small mb-0 ps-3">
+                                    <li>Choose a descriptive title that captures the event's essence</li>
+                                    <li>Select the appropriate category to help attendees find your event</li>
+                                    <li>Provide clear details about the schedule and activities</li>
+                                    <li>Make sure your venue can accommodate the expected number of attendees</li>
+                                    <li>Double-check dates and times for accuracy</li>
+                                    <li>Consider accessibility and facilities available at the venue</li>
+                                </ul>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit"
+                                    class="btn w-100 py-2 mb-2 text-white fw-medium rounded-pill fw-bold"
+                                    style="background: linear-gradient(135deg, #6a0dad, #8a2be2);
+                                           border: none;
+                                           font-size: 0.95rem;
+                                           transition: all 0.2s ease;
+                                           box-shadow: 0 4px 15px rgba(106,13,173,0.3);"
+                                    id="submitBtn">
+                                <i class="bi bi-plus-circle me-2"></i>Create Event
+                            </button>
+
+                            <!-- Back Link -->
+                            <div class="text-center mt-3">
+                                <a asp-action="Index"
+                                   class="text-decoration-none fw-medium"
+                                   style="color: #7fa3e4">
+                                    <i class="bi bi-arrow-left me-1"></i>Back to Events List
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Consistent with other pages styling */
+    .form-control:focus,
+    .form-control:focus-within {
+        background-color: rgba(255,255,255,0.1) !important;
+        border-color: rgba(138, 43, 226, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.2) !important;
+        color: white !important;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255,255,255,0.4) !important;
+        font-size: 0.9rem;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+    }
+
+    /* Custom styling for icons inside inputs */
+    .form-control.ps-5 {
+        padding-left: 2.8rem !important;
+    }
+
+    /* Button hover effect */
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important;
+    }
+
+    /* Custom Select Styling */
+    .custom-select-wrapper {
+        position: relative;
+    }
+
+    .custom-select-trigger:hover {
+        background: rgba(255,255,255,0.05) !important;
+        border-color: rgba(138, 43, 226, 0.3) !important;
+    }
+
+    .custom-select-trigger:focus {
+        background: rgba(255,255,255,0.1) !important;
+        border-color: rgba(138, 43, 226, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.2) !important;
+    }
+
+    .custom-select-options {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .custom-option:hover {
+        background: rgba(138, 43, 226, 0.25) !important;
+        transform: translateX(5px);
+    }
+
+        .custom-option:hover .me-2 {
+            background: rgba(138, 43, 226, 0.4) !important;
+            transform: scale(1.1);
+        }
+
+    /* Scrollbar styling */
+    .custom-select-options::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-select-options::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.05);
+        border-radius: 3px;
+    }
+
+    .custom-select-options::-webkit-scrollbar-thumb {
+        background: rgba(138, 43, 226, 0.5);
+        border-radius: 3px;
+    }
+
+        .custom-select-options::-webkit-scrollbar-thumb:hover {
+            background: rgba(138, 43, 226, 0.7);
+        }
+
+    /* Enhanced Datetime input styling for better time picker */
+    input[type="datetime-local"] {
+        /* Ensure consistent styling */
+        color-scheme: dark;
+    }
+
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) brightness(0.7);
+            cursor: pointer;
+            margin-right: 0.5rem;
+            padding: 0.25rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+            input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+                background: rgba(138, 43, 226, 0.3);
+                transform: scale(1.05);
+            }
+
+    /* For Firefox */
+    input[type="datetime-local"] {
+        color-scheme: dark;
+    }
+
+    /* Time input specific styling */
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(0.7);
+    }
+
+    /* List styling */
+    ul {
+        padding-left: 1.25rem;
+    }
+
+    li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* Error styling for custom selects */
+    .custom-select-trigger.error {
+        border-color: #dc3545 !important;
+        background: rgba(220, 53, 69, 0.1) !important;
+    }
+
+        .custom-select-trigger.error:focus {
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+
+    /* Time input helper */
+    .time-input-helper {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Category dropdown functionality
+        const categoryTrigger = document.getElementById('categoryTrigger');
+        const categoryOptions = document.getElementById('categoryOptions');
+        const categoryDropdownArrow = document.getElementById('categoryDropdownArrow');
+        const selectedCategory = document.getElementById('selectedCategory');
+        const hiddenCategorySelect = document.getElementById('hiddenCategorySelect');
+        const categoryCustomOptions = document.querySelectorAll('#categoryOptions .custom-option');
+        const categoryError = document.getElementById('categoryError');
+
+        if (categoryTrigger) {
+            categoryTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                if (categoryOptions.style.display === 'block') {
+                    categoryOptions.style.display = 'none';
+                    categoryDropdownArrow.classList.remove('bi-chevron-up');
+                    categoryDropdownArrow.classList.add('bi-chevron-down');
+                } else {
+                    categoryOptions.style.display = 'block';
+                    categoryDropdownArrow.classList.remove('bi-chevron-down');
+                    categoryDropdownArrow.classList.add('bi-chevron-up');
+                }
+            });
+
+            categoryCustomOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+
+                    const value = this.getAttribute('data-value');
+                    const text = this.querySelector('span').textContent;
+                    selectedCategory.textContent = text;
+                    hiddenCategorySelect.value = value;
+                    categoryOptions.style.display = 'none';
+                    categoryDropdownArrow.classList.remove('bi-chevron-up');
+                    categoryDropdownArrow.classList.add('bi-chevron-down');
+                    categoryTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
+                    categoryTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
+                    categoryTrigger.classList.remove('error');
+
+                    // Clear error
+                    if (categoryError) {
+                        categoryError.textContent = '';
+                    }
+
+                    hiddenCategorySelect.dispatchEvent(new Event('change'));
+                });
+            });
+
+            document.addEventListener('click', function() {
+                categoryOptions.style.display = 'none';
+                categoryDropdownArrow.classList.remove('bi-chevron-up');
+                categoryDropdownArrow.classList.add('bi-chevron-down');
+            });
+
+            categoryOptions.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Venue dropdown functionality
+        const venueTrigger = document.getElementById('venueTrigger');
+        const venueOptions = document.getElementById('venueOptions');
+        const venueDropdownArrow = document.getElementById('venueDropdownArrow');
+        const selectedVenue = document.getElementById('selectedVenue');
+        const hiddenVenueSelect = document.getElementById('hiddenVenueSelect');
+        const venueCustomOptions = document.querySelectorAll('#venueOptions .custom-option');
+        const venueError = document.getElementById('venueError');
+
+        if (venueTrigger) {
+            venueTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                if (venueOptions.style.display === 'block') {
+                    venueOptions.style.display = 'none';
+                    venueDropdownArrow.classList.remove('bi-chevron-up');
+                    venueDropdownArrow.classList.add('bi-chevron-down');
+                } else {
+                    venueOptions.style.display = 'block';
+                    venueDropdownArrow.classList.remove('bi-chevron-down');
+                    venueDropdownArrow.classList.add('bi-chevron-up');
+                }
+            });
+
+            venueCustomOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+
+                    const value = this.getAttribute('data-value');
+                    const text = this.querySelector('.fw-medium').textContent;
+                    selectedVenue.textContent = text;
+                    hiddenVenueSelect.value = value;
+                    venueOptions.style.display = 'none';
+                    venueDropdownArrow.classList.remove('bi-chevron-up');
+                    venueDropdownArrow.classList.add('bi-chevron-down');
+                    venueTrigger.style.background = 'rgba(138, 43, 226, 0.1)';
+                    venueTrigger.style.borderColor = 'rgba(138, 43, 226, 0.4)';
+                    venueTrigger.classList.remove('error');
+
+                    // Clear error
+                    if (venueError) {
+                        venueError.textContent = '';
+                    }
+
+                    hiddenVenueSelect.dispatchEvent(new Event('change'));
+                });
+            });
+
+            document.addEventListener('click', function() {
+                venueOptions.style.display = 'none';
+                venueDropdownArrow.classList.remove('bi-chevron-up');
+                venueDropdownArrow.classList.add('bi-chevron-down');
+            });
+
+            venueOptions.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Fix for datetime-local input to ensure time is selectable
+        const startDateInput = document.querySelector('input[name="StartDate"]');
+        const endDateInput = document.querySelector('input[name="EndDate"]');
+
+        function formatDateTimeLocal(date) {
+            // Format date to YYYY-MM-DDTHH:MM
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        function validateDates() {
+            if (startDateInput.value && endDateInput.value) {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+
+                if (endDate <= startDate) {
+                    endDateInput.style.borderColor = '#dc3545';
+                    endDateInput.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+
+                    // Set end date to 1 hour after start date
+                    const oneHourLater = new Date(startDate.getTime() + 60 * 60 * 1000);
+                    endDateInput.value = formatDateTimeLocal(oneHourLater);
+
+                    return false;
+                } else {
+                    endDateInput.style.borderColor = 'rgba(255,255,255,0.3)';
+                    endDateInput.style.boxShadow = 'none';
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        // Initialize datetime inputs with proper time
+        const now = new Date();
+
+        // Round minutes to nearest 5
+        const roundedMinutes = Math.ceil(now.getMinutes() / 5) * 5;
+        now.setMinutes(roundedMinutes);
+
+        // Format for datetime-local
+        const formattedNow = formatDateTimeLocal(now);
+
+        // Set default start date to now (rounded to nearest 5 minutes)
+        if (startDateInput && !startDateInput.value) {
+            startDateInput.min = formattedNow;
+            startDateInput.value = formattedNow;
+        }
+
+        // Set default end date to 1 hour from now (rounded to nearest 5 minutes)
+        if (endDateInput && !endDateInput.value) {
+            const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+            const formattedOneHourLater = formatDateTimeLocal(oneHourLater);
+            endDateInput.min = formattedOneHourLater;
+            endDateInput.value = formattedOneHourLater;
+        }
+
+        // Add event listeners for date validation
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', function() {
+                // When start date changes, update end date minimum
+                const startDate = new Date(this.value);
+                const minEndDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour later
+                endDateInput.min = formatDateTimeLocal(minEndDate);
+
+                // If current end date is before new start date, update it
+                const currentEndDate = new Date(endDateInput.value);
+                if (currentEndDate <= startDate) {
+                    endDateInput.value = formatDateTimeLocal(minEndDate);
+                }
+
+                validateDates();
+            });
+
+            endDateInput.addEventListener('change', validateDates);
+        }
+
+        // Helper function to show time selection hint
+        function showTimeHint(inputElement) {
+            // Remove existing hint
+            const existingHint = inputElement.nextElementSibling;
+            if (existingHint && existingHint.classList.contains('time-input-helper')) {
+                existingHint.remove();
+            }
+
+            // Add hint for time selection
+            const hint = document.createElement('small');
+            hint.className = 'time-input-helper';
+            hint.textContent = 'Click calendar icon or type to set time (HH:MM)';
+            hint.style.display = 'block';
+            inputElement.parentNode.appendChild(hint);
+
+            // Remove hint after 5 seconds
+            setTimeout(() => {
+                if (hint.parentNode) {
+                    hint.style.opacity = '0';
+                    hint.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => {
+                        if (hint.parentNode) {
+                            hint.remove();
+                        }
+                    }, 500);
+                }
+            }, 5000);
+        }
+
+        // Add click event to show time selection hint
+        if (startDateInput) {
+            startDateInput.addEventListener('focus', function() {
+                showTimeHint(this);
+            });
+        }
+
+        if (endDateInput) {
+            endDateInput.addEventListener('focus', function() {
+                showTimeHint(this);
+            });
+        }
+
+        // Form validation before submission
+        const form = document.getElementById('eventForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                let errorMessages = [];
+
+                // Validate category
+                const categoryValue = hiddenCategorySelect ? hiddenCategorySelect.value : '';
+                if (!categoryValue) {
+                    isValid = false;
+                    if (categoryTrigger) {
+                        categoryTrigger.classList.add('error');
+                    }
+                    if (categoryError) {
+                        categoryError.textContent = 'Please select a category';
+                    }
+                    errorMessages.push('Category is required');
+                } else {
+                    if (categoryTrigger) {
+                        categoryTrigger.classList.remove('error');
+                    }
+                    if (categoryError) {
+                        categoryError.textContent = '';
+                    }
+                }
+
+                // Validate venue
+                const venueValue = hiddenVenueSelect ? hiddenVenueSelect.value : '';
+                if (!venueValue) {
+                    isValid = false;
+                    if (venueTrigger) {
+                        venueTrigger.classList.add('error');
+                    }
+                    if (venueError) {
+                        venueError.textContent = 'Please select a venue';
+                    }
+                    errorMessages.push('Venue is required');
+                } else {
+                    if (venueTrigger) {
+                        venueTrigger.classList.remove('error');
+                    }
+                    if (venueError) {
+                        venueError.textContent = '';
+                    }
+                }
+
+                // Validate dates
+                if (!validateDates()) {
+                    isValid = false;
+                    errorMessages.push('End date must be after start date');
+                }
+
+                // Check if there are any venues available
+                const venueOptions = document.querySelectorAll('#venueOptions .custom-option');
+                if (venueOptions.length === 0) {
+                    isValid = false;
+                    if (venueError) {
+                        venueError.textContent = 'No venues available. Please create a venue first.';
+                    }
+                    errorMessages.push('No venues available');
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+
+                    // Show error summary
+                    const validationSummary = document.querySelector('[asp-validation-summary="ModelOnly"]');
+                    if (validationSummary && errorMessages.length > 0) {
+                        validationSummary.innerHTML = '<strong>Please fix the following errors:</strong><ul class="mb-0 mt-1" style="padding-left: 1rem;">' +
+                            errorMessages.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
+                        validationSummary.style.display = 'block';
+
+                        // Scroll to top of form
+                        validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+
+                    // Reset button state
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Create Event';
+                        submitBtn.disabled = false;
+                    }
+                } else {
+                    // Show loading spinner
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+                        submitBtn.disabled = true;
+                    }
+                }
+            });
+        }
+
+        // Clear validation errors on input
+        const inputs = form.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const errorSpan = this.nextElementSibling;
+                if (errorSpan && errorSpan.classList.contains('text-danger')) {
+                    errorSpan.textContent = '';
+                }
+
+                // Clear custom select errors
+                if (this === hiddenCategorySelect) {
+                    categoryTrigger.classList.remove('error');
+                    if (categoryError) {
+                        categoryError.textContent = '';
+                    }
+                }
+                if (this === hiddenVenueSelect) {
+                    venueTrigger.classList.remove('error');
+                    if (venueError) {
+                        venueError.textContent = '';
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

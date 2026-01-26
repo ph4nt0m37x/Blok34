@@ -1,0 +1,404 @@
+﻿@model Blok34.Domain.DTO.SearchDTO
+
+
+<div class="d-flex align-items-center justify-content-center"
+     style="background: linear-gradient(135deg, #1e3c72, #6a0dad); padding-top: 80px;">
+
+    <div class="container py-5">
+        <!-- Search Header -->
+        <div class="text-center mb-5">
+            <h2 class="text-white fw-bold mb-3">Search Results</h2>
+            <p class="text-white-50 lead">Found results for "<span class="fw-bold text-white">@Model.Query</span>"</p>
+
+            <!-- Search Stats -->
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                @{
+                    var totalResults = Model.Users.Count + Model.Events.Count + Model.Venues.Count;
+                }
+                <div class="text-center">
+                    <div class="text-white fw-bold fs-4">@totalResults</div>
+                    <div class="text-white-50 small">Total Results</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-white fw-bold fs-4">@Model.Users.Count</div>
+                    <div class="text-white-50 small">Users</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-white fw-bold fs-4">@Model.Events.Count</div>
+                    <div class="text-white-50 small">Events</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-white fw-bold fs-4">@Model.Venues.Count</div>
+                    <div class="text-white-50 small">Venues</div>
+                </div>
+            </div>
+
+            <!-- Search Again -->
+            <div class="d-flex justify-content-center">
+                <div class="col-lg-6">
+                    <form method="get" class="input-group">
+                        <input type="text"
+                               name="query"
+                               class="form-control bg-transparent text-white rounded-pill border-end-0"
+                               placeholder="Search again..."
+                               value="@Model.Query"
+                               style="border-color: rgba(255,255,255,0.3);">
+                        <button class="btn btn-outline-light rounded-pill border-start-0 px-4" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Results -->
+        @if (!Model.Users.Any() && !Model.Events.Any() && !Model.Venues.Any())
+        {
+            <div class="text-center py-5">
+                <div class="card border-0 shadow-lg mx-auto"
+                     style="max-width: 500px; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
+                    <div class="card-body py-5">
+                        <i class="bi bi-search display-1 text-white-50 mb-4"></i>
+                        <h4 class="text-white mb-3">No Results Found</h4>
+                        <p class="text-white-50 mb-4">Try different keywords or browse our categories</p>
+                        <a href="/" class="btn rounded-pill px-4 py-2 fw-bold"
+                           style="background: linear-gradient(135deg, #6a0dad, #8a2be2); color: white;">
+                            <i class="bi bi-house me-2"></i>Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Users Section -->
+        @if (Model.Users.Any())
+        {
+            <div class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-white">
+                        <i class="bi bi-people-fill me-2"></i>Users <span class="badge bg-purple rounded-pill">@Model.Users.Count</span>
+                    </h3>
+                    <a href="#events" class="text-decoration-none" style="color: #7fa3e4;">
+                        Skip to Events <i class="bi bi-arrow-down"></i>
+                    </a>
+                </div>
+
+                <div class="row g-4">
+                    @foreach (var user in Model.Users)
+                    {
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="card h-100 border-0 shadow-lg"
+                                 style="background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border-radius: 15px; border: 1px solid rgba(255,255,255,0.15);">
+                                <div class="card-body text-center p-4">
+                                    <!-- User Avatar -->
+                                    <div class="mb-3">
+                                        <div class="mx-auto rounded-circle d-flex align-items-center justify-content-center"
+                                             style="width: 80px; height: 80px; background: linear-gradient(135deg, #8a2be2, #5D3FD3);">
+                                    @if (!string.IsNullOrEmpty(user.AvatarPath)) {
+                                            <img src="@user.AvatarPath" alt="Profile picture" class="w-100 h-100 rounded-circle" style="object-fit: cover;" />
+                                    }
+                                    else{
+                                            <i class="bi bi-person-fill text-white" style="font-size: 2rem;"></i>  
+                                    }
+                                        </div>
+                                    </div>
+
+                                    <!-- User Info -->
+                                    <h5 class="card-title text-white mb-2">@user.UserName</h5>
+
+                                    @if (!string.IsNullOrEmpty(user.Name))
+                                    {
+                                        <p class="text-white-50 mb-3">@user.Name</p>
+                                    }
+
+                                    <!-- Stats (optional - add if you have user stats) -->
+                                    <div class="d-flex justify-content-center gap-3 mb-4">
+                                        <div class="text-center">
+                                            <div class="text-white fw-bold">0</div>
+                                            <div class="text-white-50 small">Events</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-white fw-bold">0</div>
+                                            <div class="text-white-50 small">Following</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Button -->
+                                    <a asp-controller="Profile" asp-action="Index" asp-route-id="@user.Id" class="btn btn-sm w-100 rounded-pill py-2"
+                                       style="background: rgba(138, 43, 226, 0.2); border: 1px solid rgba(138, 43, 226, 0.5); color: white;">
+                                        <i class="bi bi-person-circle me-2"></i>View Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Events Section -->
+        @if (Model.Events.Any())
+        {
+            <div class="mb-5" id="events">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-white">
+                        <i class="bi bi-calendar-event me-2"></i>Events <span class="badge bg-purple rounded-pill">@Model.Events.Count</span>
+                    </h3>
+                    <a href="#venues" class="text-decoration-none" style="color: #7fa3e4;">
+                        Skip to Venues <i class="bi bi-arrow-down"></i>
+                    </a>
+                </div>
+
+                <div class="row g-4">
+                    @foreach (var ev in Model.Events)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-lg"
+                                 style="background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border-radius: 15px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden;">
+
+                                <!-- Event Banner -->
+                                @if (!string.IsNullOrEmpty(ev.Venue?.BannerPath))
+                                {
+                                    <img src="@ev.Venue.BannerPath" class="card-img-top" alt="@ev.Title" style="height: 150px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top" style="height: 150px; background: linear-gradient(135deg, #8a2be2, #5D3FD3);"></div>
+                                }
+
+                                <div class="card-body p-4">
+                                    <!-- Event Title & Date -->
+                                    <h5 class="card-title text-white mb-2">@ev.Title</h5>
+
+                                    @if (!string.IsNullOrEmpty(ev.Description))
+                                    {
+                                        <p class="text-white-50 small mb-3">@(ev.Description.Length > 100 ? ev.Description.Substring(0, 100) + "..." : ev.Description)</p>
+                                    }
+
+                                    <!-- Event Details -->
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center text-white-50 mb-2">
+                                            <i class="bi bi-calendar me-3" style="width: 20px;"></i>
+                                            <small>@ev.StartDate.ToString("MMM dd, yyyy")</small>
+                                        </div>
+                                        @if (ev.Venue != null)
+                                        {
+                                            <div class="d-flex align-items-center text-white-50 mb-2">
+                                                <i class="bi bi-geo-alt me-3" style="width: 20px;"></i>
+                                                <small>@ev.Venue.Name</small>
+                                            </div>
+                                        }
+                                        @if (ev.Attendees != null)
+                                        {
+                                            var attendingCount = ev.Attendees.Count(a => a.Status.Equals("Attending"));
+                                            <div class="d-flex align-items-center text-white-50">
+                                                <i class="bi bi-people me-3" style="width: 20px;"></i>
+                                                <small>@attendingCount attending</small>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="d-flex gap-2">
+                                        <a href="/Events/Details/@ev.Id" class="btn btn-sm flex-fill rounded-pill py-2"
+                                           style="background: linear-gradient(135deg, #6a0dad, #8a2be2); color: white;">
+                                            <i class="bi bi-eye me-2"></i>View
+                                        </a>
+                                        <button class="btn btn-sm rounded-pill py-2 px-3"
+                                                style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white;">
+                                            <i class="bi bi-bookmark"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Venues Section -->
+        @if (Model.Venues.Any())
+        {
+            <div class="mb-5" id="venues">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-white">
+                        <i class="bi bi-building me-2"></i>Venues <span class="badge bg-purple rounded-pill">@Model.Venues.Count</span>
+                    </h3>
+                    <a href="#top" class="text-decoration-none" style="color: #7fa3e4;">
+                        <i class="bi bi-arrow-up"></i> Back to Top
+                    </a>
+                </div>
+
+                <div class="row g-4">
+                    @foreach (var venue in Model.Venues)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-lg"
+                                 style="background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border-radius: 15px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden;">
+
+                                <!-- Venue Banner -->
+                                @if (!string.IsNullOrEmpty(venue.BannerPath))
+                                {
+                                    <img src="@venue.BannerPath" class="card-img-top" alt="@venue.Name" style="height: 150px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top" style="height: 150px; background: linear-gradient(135deg, #5D3FD3, #4B0082);"></div>
+                                }
+
+                                <div class="card-body p-4">
+                                    <!-- Venue Name & Status -->
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title text-white mb-0">@venue.Name</h5>
+                                        @if (venue.IsPublic)
+                                        {
+                                            <span class="badge bg-success rounded-pill">Public</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill">Private</span>
+                                        }
+                                    </div>
+
+                                    <!-- Venue Description -->
+                                    @if (!string.IsNullOrEmpty(venue.Description))
+                                    {
+                                        <p class="text-white-50 small mb-3">@(venue.Description.Length > 100 ? venue.Description.Substring(0, 100) + "..." : venue.Description)</p>
+                                    }
+
+                                    <!-- Venue Details -->
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center text-white-50 mb-2">
+                                            <i class="bi bi-geo me-3" style="width: 20px;"></i>
+                                            <small>@venue.Address</small>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(venue.Phone))
+                                        {
+                                            <div class="d-flex align-items-center text-white-50">
+                                                <i class="bi bi-telephone me-3" style="width: 20px;"></i>
+                                                <small>@venue.Phone</small>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="d-flex gap-2">
+                                        <a href="/Venues/Details/@venue.Id" class="btn btn-sm flex-fill rounded-pill py-2"
+                                           style="background: linear-gradient(135deg, #5D3FD3, #4B0082); color: white;">
+                                            <i class="bi bi-info-circle me-2"></i>Details
+                                        </a>
+                                        <a href="/Events/Create?venueId=@venue.Id" class="btn btn-sm flex-fill rounded-pill py-2"
+                                           style="background: rgba(138, 43, 226, 0.2); border: 1px solid rgba(138, 43, 226, 0.5); color: white;">
+                                            <i class="bi bi-plus-circle me-2"></i>Create Event
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Events Count (if you have this data) -->
+                                @if (venue.Events != null)
+                                {
+                                    <div class="card-footer bg-transparent border-top-0 pt-0">
+                                        <div class="text-center">
+                                            <small class="text-white-50">
+                                                <i class="bi bi-calendar3 me-1"></i>
+                                                @venue.Events.Count upcoming events
+                                            </small>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Back to Home -->
+        <div class="text-center mt-5 py-4">
+            <a href="/" class="btn btn-lg rounded-pill px-5 py-3 fw-bold"
+               style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white;">
+                <i class="bi bi-arrow-left me-2"></i>Back to Homepage
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3) !important;
+            border-color: rgba(138, 43, 226, 0.3) !important;
+        }
+
+    .form-control:focus {
+        background-color: rgba(255,255,255,0.1) !important;
+        border-color: rgba(138, 43, 226, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.2) !important;
+        color: white !important;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255,255,255,0.4) !important;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        transition: all 0.2s ease;
+    }
+
+    .badge.bg-purple {
+        background: linear-gradient(135deg, #8a2be2, #5D3FD3) !important;
+    }
+
+    .btn-glow:hover {
+        box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #6a0dad, #8a2be2);
+        border-radius: 5px;
+    }
+</style>
+
+<!-- Script for smooth animations -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add fade-in animation to cards
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Add tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

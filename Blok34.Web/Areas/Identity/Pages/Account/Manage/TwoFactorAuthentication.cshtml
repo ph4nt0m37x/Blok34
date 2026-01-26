@@ -1,0 +1,287 @@
+﻿@page
+@using Microsoft.AspNetCore.Http.Features
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "Two-factor authentication (2FA)";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<div class="d-flex align-items-start justify-content-start"
+     style="min-height: 100vh; padding-top: 1rem; padding-bottom: 3rem;">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+                <!-- Glassmorphism Card -->
+                <div class="card border-0 shadow"
+                     style="background: rgba(255,255,255,0.07);
+                            backdrop-filter: blur(12px);
+                            border-radius: 20px;
+                            border: 1px solid rgba(255,255,255,0.15);
+                            margin-bottom: 2rem;">
+
+                    <div class="card-body p-4">
+
+                        <!-- Logo and Title -->
+                        <div class="text-center mb-3">
+                            <svg width="60" height="40" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" class="mb-1">
+                                <defs>
+                                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#4B0082" />
+                                        <stop offset="100%" stop-color="#6a0dad" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="15" y="10" width="25" height="40" rx="4" fill="url(#grad1)" />
+                                <rect x="40" y="20" width="20" height="30" rx="3" fill="#5D3FD3" />
+                                <rect x="60" y="30" width="15" height="20" rx="2" fill="#4B0082" />
+                            </svg>
+                            <h3 class="text-white fw-bold mb-0">Two-Factor Authentication</h3>
+                            <p class="text-white-50 mt-1">Enhanced account security</p>
+                        </div>
+
+                        <!-- Status Message -->
+                        <partial name="_StatusMessage" for="StatusMessage" />
+
+                        <!-- Feature Not Implemented Banner -->
+                        <div class="alert alert-info bg-info bg-opacity-10 border-info border-opacity-25 text-white mb-4 rounded-pill">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-info-circle-fill me-2" style="font-size: 1.2rem;"></i>
+                                <span class="fw-medium">This feature is currently under development and will be available soon.</span>
+                            </div>
+                        </div>
+
+                        @{
+                            var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
+                            @if (consentFeature?.CanTrack ?? true)
+                            {
+                                <!-- 2FA Status Card -->
+                                <div class="card bg-transparent border border-white-10 mb-4">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="bi bi-shield-check text-white me-2" style="font-size: 1.5rem;"></i>
+                                            <h5 class="text-white mb-0">Current Status</h5>
+                                        </div>
+
+                                        @if (Model.Is2faEnabled)
+                                        {
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="badge bg-success bg-opacity-25 text-success px-3 py-2 rounded-pill me-2">
+                                                    <i class="bi bi-check-circle me-1"></i>Enabled
+                                                </div>
+                                                <span class="text-white-50">Two-factor authentication is active</span>
+                                            </div>
+
+                                            <!-- Recovery Codes Status -->
+                                            <div class="mb-3">
+                                                <h6 class="text-white mb-2">
+                                                    <i class="bi bi-key me-2"></i>Recovery Codes
+                                                </h6>
+                                                @if (Model.RecoveryCodesLeft == 0)
+                                                {
+                                                    <div class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white rounded-pill">
+                                                        <strong><i class="bi bi-exclamation-triangle me-1"></i>No recovery codes left</strong>
+                                                    </div>
+                                                }
+                                                else if (Model.RecoveryCodesLeft == 1)
+                                                {
+                                                    <div class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white rounded-pill">
+                                                        <strong><i class="bi bi-exclamation-triangle me-1"></i>1 recovery code remaining</strong>
+                                                    </div>
+                                                }
+                                                else if (Model.RecoveryCodesLeft <= 3)
+                                                {
+                                                    <div class="alert alert-warning bg-warning bg-opacity-10 border-warning border-opacity-25 text-white rounded-pill">
+                                                        <strong><i class="bi bi-exclamation-circle me-1"></i>@Model.RecoveryCodesLeft recovery codes remaining</strong>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="text-white-50">
+                                                        <i class="bi bi-check-circle text-success me-1"></i>@Model.RecoveryCodesLeft recovery codes available
+                                                    </div>
+                                                }
+                                            </div>
+
+                                            @if (Model.IsMachineRemembered)
+                                            {
+                                                <div class="mb-3">
+                                                    <h6 class="text-white mb-2">
+                                                        <i class="bi bi-pc me-2"></i>Remembered Browser
+                                                    </h6>
+                                                    <div class="text-white-50">
+                                                        <i class="bi bi-info-circle me-1"></i>This browser is currently remembered
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <!-- Action Buttons (Disabled) -->
+                                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                                @if (Model.IsMachineRemembered)
+                                                {
+                                                    <button class="btn rounded-pill px-3 disabled"
+                                                            style="background: rgba(255,255,255,0.1);
+                                                                                   border: 1px solid rgba(255,255,255,0.2);
+                                                                                   color: rgba(255,255,255,0.5);
+                                                                                   cursor: not-allowed;">
+                                                        <i class="bi bi-trash me-1"></i>Forget This Browser
+                                                    </button>
+                                                }
+                                                <button class="btn rounded-pill px-3 disabled"
+                                                        style="background: rgba(220, 53, 69, 0.1);
+                                                                           border: 1px solid rgba(220, 53, 69, 0.3);
+                                                                           color: rgba(255,255,255,0.5);
+                                                                           cursor: not-allowed;">
+                                                    <i class="bi bi-slash-circle me-1"></i>Disable 2FA
+                                                </button>
+                                                <button class="btn rounded-pill px-3 disabled"
+                                                        style="background: rgba(255, 193, 7, 0.1);
+                                                                           border: 1px solid rgba(255, 193, 7, 0.3);
+                                                                           color: rgba(255,255,255,0.5);
+                                                                           cursor: not-allowed;">
+                                                    <i class="bi bi-arrow-repeat me-1"></i>Reset Recovery Codes
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="badge bg-danger bg-opacity-25 text-danger px-3 py-2 rounded-pill me-2">
+                                                    <i class="bi bi-x-circle me-1"></i>Disabled
+                                                </div>
+                                                <span class="text-white-50">Two-factor authentication is not active</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Authenticator App Section -->
+                                <div class="card bg-transparent border border-white-10">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <i class="bi bi-phone text-white me-2" style="font-size: 1.5rem;"></i>
+                                            <h5 class="text-white mb-0">Authenticator App</h5>
+                                        </div>
+
+                                        @if (!Model.HasAuthenticator)
+                                        {
+                                            <div class="mb-3">
+                                                <p class="text-white-50 mb-2">No authenticator app is configured</p>
+                                            </div>
+                                            <button class="btn rounded-pill px-4 disabled"
+                                                    style="background: rgba(255,255,255,0.1);
+                                                                       border: 1px solid rgba(255,255,255,0.2);
+                                                                       color: rgba(255,255,255,0.5);
+                                                                       cursor: not-allowed;">
+                                                <i class="bi bi-plus-circle me-1"></i>Add Authenticator App
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <div class="mb-3">
+                                                <p class="text-white-50 mb-2">Authenticator app is configured and ready</p>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <button class="btn rounded-pill px-4 disabled"
+                                                        style="background: rgba(255,255,255,0.1);
+                                                                           border: 1px solid rgba(255,255,255,0.2);
+                                                                           color: rgba(255,255,255,0.5);
+                                                                           cursor: not-allowed;">
+                                                    <i class="bi bi-gear me-1"></i>Setup Authenticator
+                                                </button>
+                                                <button class="btn rounded-pill px-4 disabled"
+                                                        style="background: rgba(255, 193, 7, 0.1);
+                                                                           border: 1px solid rgba(255, 193, 7, 0.3);
+                                                                           color: rgba(255,255,255,0.5);
+                                                                           cursor: not-allowed;">
+                                                    <i class="bi bi-arrow-clockwise me-1"></i>Reset Authenticator
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- Privacy Consent Required -->
+                                <div class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white rounded-pill">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 1.2rem;"></i>
+                                        <div>
+                                            <strong>Privacy and cookie policy have not been accepted.</strong>
+                                            <p class="mb-0">You must accept the policy before you can enable two factor authentication.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                        <!-- Back to Profile Link -->
+                        <div class="text-center mt-4 pt-3 border-top border-white-10">
+                            <a asp-page="./Index"
+                               class="text-decoration-none fw-medium"
+                               style="color: #7fa3e4">
+                                <i class="bi bi-arrow-left me-1"></i>Back to Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Consistent with other pages styling */
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important;
+    }
+
+    /* Disabled button styling */
+    .btn.disabled,
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+        .btn.disabled:hover,
+        .btn:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+    /* Card styling */
+    .card.bg-transparent {
+        background: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .border-white-10 {
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* Badge styling */
+    .badge {
+        font-weight: 500;
+    }
+
+    /* Alert styling */
+    .alert {
+        border-radius: 12px;
+    }
+
+    /* Text colors */
+    .text-white-50 {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    /* Gap utility */
+    .gap-2 {
+        gap: 0.5rem;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

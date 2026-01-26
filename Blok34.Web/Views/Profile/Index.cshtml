@@ -1,0 +1,28 @@
+﻿@model Blok34.Domain.Identity.ApplicationUser
+
+<div class="container mt-5">
+    <div class="text-center">
+
+        <div class="mx-auto rounded-circle d-flex align-items-center justify-content-center overflow-hidden mb-3"
+             style="width: 120px; height: 120px; background: linear-gradient(135deg, #8a2be2, #5D3FD3);">
+
+            @if (!string.IsNullOrEmpty(Model.AvatarPath))
+            {
+                <img src="@Model.AvatarPath"
+                     class="w-100 h-100"
+                     style="object-fit: cover;" />
+            }
+            else
+            {
+                <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
+            }
+        </div>
+
+        <h3>@Model.Name</h3>
+        @if (!string.IsNullOrEmpty(Model.AvatarPath)) {
+            <p class="text-muted">@Model.Bio</p>
+        }
+
+    </div>
+</div>
+<

@@ -1,0 +1,105 @@
+﻿<div class="container-fluid justify-content-center py-5 overflow-hidden align-items-center"
+     style=";">
+    <span class="rounded-circle position-absolute"
+          style="width:50px; height:50px; top:10%; left:5%;
+                 background: rgba(138,43,226,0.3);
+                 animation: float1 8s ease-in-out infinite;
+                 animation-name: float1;"></span>
+
+    <span class="rounded-circle position-absolute"
+          style="width:70px; height:70px; top:30%; left:20%;
+                 background: rgba(72,61,139,0.25);
+                 animation: float2 10s ease-in-out infinite;
+                 animation-name: float2;"></span>
+
+    <span class="rounded-circle position-absolute"
+          style="width:60px; height:60px; top:60%; left:70%;
+                 background: rgba(138,43,226,0.2);
+                 animation: float3 12s ease-in-out infinite;
+                 animation-name: float3;"></span>
+    <div class="row align-items-center justify-content-center h-100 text-center text-md-start px-4">
+
+        <div class="col-md-6 text-white">
+            <h1 class="display-4 fw-bold mb-3" id="h1"></h1>
+            <p class="lead mb-4" id="paragraph"></p>
+        </div>
+       
+    <div class="col-lg-5 col-xl-4">
+        <div class="card border-0 shadow-lg" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 24px;">
+            <div class="card-body p-5">
+
+                <h3 class="text-white text-center mb-4" style="font-weight: 600;">
+                        Start exploring Skopje now.
+                </h3>
+                <a asp-area="Identity" asp-page="/Account/Register"
+                   class="btn btn-lg w-100 py-3 mb-3 text-white d-flex align-items-center justify-content-center gap-3"
+                   style="font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px;
+                      background: linear-gradient(135deg, #6a0dad, #8a2be2);
+                      border: none; border-radius: 16px;
+                      transition: all 0.3s ease;
+                      box-shadow: 0 8px 30px rgba(106,13,173,0.4);"
+                   onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(106,13,173,0.6)';"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 30px rgba(106,13,173,0.4)';">
+                    <span>Get Started</span>
+                    <span>→</span>
+                </a>
+                <div class="d-flex align-items-center my-4">
+                    <hr class="flex-grow-1" style="border-color: rgba(255,255,255,0.1);">
+                    <span class="px-3 text-white-50" style="font-size: 0.9rem;">or explore</span>
+                    <hr class="flex-grow-1" style="border-color: rgba(255,255,255,0.1);">
+                </div>
+                <a asp-area="Identity" asp-page="/Account/Login"
+                   class="btn btn-lg w-100 py-3 text-white d-flex align-items-center justify-content-center gap-3"
+                   style="font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px;
+                      background: rgba(255,255,255,0.1);
+                      border: 2px solid rgba(255,255,255,0.2); border-radius: 16px;
+                      transition: all 0.3s ease;"
+                   onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.borderColor='rgba(255,255,255,0.3)'; this.style.transform='translateY(-2px)';"
+                   onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.2)'; this.style.transform='translateY(0)';">
+                    <span>Already have an account?</span>
+                </a>
+
+            </div>
+        </div>
+        </div>
+</div>
+</div>
+
+<script>
+    document.querySelectorAll('.container-fluid span.rounded-circle').forEach((bubble, i) => {
+        let top = parseFloat(bubble.style.top);
+        let left = parseFloat(bubble.style.left);
+        let direction = 1;
+        setInterval(() => {
+            top += 0.1 * direction;
+            left += 0.05 * direction;
+            bubble.style.top = top + "%";
+            bubble.style.left = left + "%";
+            if (top > 70 || top < 5) direction *= -1;
+        }, 20 + i*10);
+    });
+</script>
+    <script>
+            function typeWriter(element, text, speed = 100, callback) {
+        let index = 0;
+        element.textContent = ""; 
+
+        function nextChar() {
+            if (index < text.length) {
+                element.textContent += text.charAt(index++);
+                setTimeout(nextChar, speed);
+            } else if (callback) {
+                callback();
+            }
+        }
+        nextChar();
+    }
+
+    const output1 = document.getElementById('h1');
+    const output2 = document.getElementById('paragraph');
+
+    typeWriter(output1, "Skopje is happening — are you?", 30, () => {
+ typeWriter(output2, "Share your events, plan with friends, or discover what’s happening around you.", 30);
+    });
+    </script>
+
