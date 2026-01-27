@@ -126,15 +126,6 @@
                                                   transition: all 0.2s ease;">
                                             <i class="bi bi-trash me-2"></i>Delete Account
                                         </a>
-                                        <button type="button"
-                                                class="btn rounded-pill px-3"
-                                                style="background: rgba(255,255,255,0.05);
-                                                       border: 1px solid rgba(255,255,255,0.2);
-                                                       color: rgba(255,255,255,0.8);
-                                                       transition: all 0.2s ease;"
-                                                onclick="showDeleteWarning()">
-                                            <i class="bi bi-question-circle me-2"></i>Learn More
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -186,11 +177,6 @@
         border-color: rgba(220, 53, 69, 0.6) !important;
     }
 
-    .btn[style*="rgba(255,255,255,0.05)"]:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border-color: rgba(255, 255, 255, 0.3) !important;
-    }
-
     /* Card styling */
     .card.bg-transparent {
         background: rgba(255, 255, 255, 0.03) !important;
@@ -221,87 +207,6 @@
         }
 </style>
 
-<script>
-    function showDeleteWarning() {
-        Swal.fire({
-            title: 'Account Deletion Warning',
-            html: `
-                <div class="text-start">
-                    <p class="mb-3">By deleting your account, you will:</p>
-                    <ul class="mb-3">
-                        <li>Permanently lose access to your account</li>
-                        <li>Remove all your personal data</li>
-                        <li>Delete your profile information</li>
-                        <li>Lose any saved preferences</li>
-                    </ul>
-                    <p class="text-danger fw-bold">This action cannot be undone!</p>
-                </div>
-            `,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'I understand',
-            cancelButtonText: 'Cancel',
-            background: 'rgba(30, 30, 46, 0.95)',
-            color: 'white',
-            backdrop: 'rgba(0, 0, 0, 0.5)'
-        });
-    }
-
-    // Add confirmation for delete button
-    document.addEventListener('DOMContentLoaded', function() {
-        const deleteButton = document.getElementById('delete');
-        if (deleteButton) {
-            deleteButton.addEventListener('click', function(e) {
-                e.preventDefault();
-
-                Swal.fire({
-                    title: 'Are you absolutely sure?',
-                    html: `
-                        <div class="text-start">
-                            <p class="mb-2">This will <strong class="text-danger">permanently delete</strong>:</p>
-                            <ul class="mb-3">
-                                <li>Your account and all data</li>
-                                <li>Profile information</li>
-                                <li>Account history</li>
-                                <li>All associated content</li>
-                            </ul>
-                            <p class="text-warning fw-bold">This action cannot be reversed!</p>
-                            <p class="text-white-50 small mt-3">Type <code>DELETE</code> to confirm:</p>
-                            <input type="text" id="confirm-delete" class="form-control bg-dark text-white border-danger" placeholder="Type DELETE here">
-                        </div>
-                    `,
-                    icon: 'error',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Delete Account',
-                    cancelButtonText: 'Cancel',
-                    background: 'rgba(30, 30, 46, 0.95)',
-                    color: 'white',
-                    backdrop: 'rgba(0, 0, 0, 0.5)',
-                    preConfirm: () => {
-                        const confirmInput = document.getElementById('confirm-delete');
-                        if (confirmInput.value !== 'DELETE') {
-                            Swal.showValidationMessage('Please type DELETE to confirm');
-                            return false;
-                        }
-                        return true;
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Navigate to delete page
-                        window.location.href = deleteButton.href;
-                    }
-                });
-            });
-        }
-    });
-</script>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <!-- SweetAlert2 for better dialogs -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 }

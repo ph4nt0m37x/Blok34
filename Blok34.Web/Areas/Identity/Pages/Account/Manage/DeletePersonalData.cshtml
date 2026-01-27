@@ -1,0 +1,261 @@
+﻿@page
+@model DeletePersonalDataModel
+@{
+    ViewData["Title"] = "Delete Personal Data";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+
+<div class="d-flex align-items-start justify-content-start"
+     style="min-height: 100vh; padding-top: 1rem; padding-bottom: 3rem;">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <div class="card border-0 shadow"
+                     style="background: rgba(255,255,255,0.07);
+                            backdrop-filter: blur(12px);
+                            border-radius: 20px;
+                            border: 1px solid rgba(255,255,255,0.15);
+                            margin-bottom: 2rem;">
+
+                    <div class="card-body p-4">
+
+                        <!-- Warning Icon and Title -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <svg width="70" height="70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 9V12M12 15H12.01M5.07183 19H18.9282C20.4678 19 21.4301 17.3333 20.6603 16L13.7321 4C12.9623 2.66667 11.0377 2.66667 10.2679 4L3.33975 16C2.56995 17.3333 3.53223 19 5.07183 19Z"
+                                          stroke="#ff6b6b"
+                                          stroke-width="2"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <h3 class="text-white fw-bold mb-1">Delete Personal Data</h3>
+                            <p class="text-white-50 mt-1">Permanently remove your account and all associated data</p>
+                        </div>
+
+                        <!-- Warning Alert -->
+                        <div class="alert alert-warning bg-warning bg-opacity-10 border-warning border-opacity-25 text-white rounded-4 mb-4"
+                             role="alert"
+                             style="border: 1px solid rgba(255,193,7,0.3);">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 1.2rem;"></i>
+                                </div>
+                                <div>
+                                    <h5 class="alert-heading text-warning fw-bold mb-2">
+                                        <i class="bi bi-shield-exclamation me-2"></i>Irreversible Action
+                                    </h5>
+                                    <p class="mb-2">
+                                        <strong>This action cannot be undone.</strong> Deleting your data will:
+                                    </p>
+                                    <ul class="mb-0 ps-3 text-white-50">
+                                        <li>Permanently delete your account</li>
+                                        <li>Remove all your personal information</li>
+                                        <li>Delete your profile, posts, and activity</li>
+                                        <li>Remove all your uploaded content</li>
+                                        <li>Cancel any active subscriptions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confirmation Form -->
+                        <form id="delete-user" method="post">
+                            <div asp-validation-summary="ModelOnly"
+                                 class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white small py-2 rounded-pill mb-4"
+                                 role="alert">
+                            </div>
+
+                            <!-- Password Input (if required) -->
+                            @if (Model.RequirePassword)
+                            {
+                                <div class="mb-4 position-relative">
+                                    <label asp-for="Input.Password" class="form-label text-white fw-medium mb-1">
+                                        <i class="bi bi-shield-lock me-2"></i>Confirm Password
+                                    </label>
+                                    <div class="position-relative">
+                                        <i class="bi bi-key position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
+                                        <input asp-for="Input.Password"
+                                               class="form-control bg-transparent text-white py-2 rounded-pill ps-5"
+                                               style="border-color: rgba(255,255,255,0.3); font-size: 0.9rem;"
+                                               autocomplete="current-password"
+                                               aria-required="true"
+                                               placeholder="Enter your password to confirm" />
+                                    </div>
+                                    <span asp-validation-for="Input.Password" class="text-danger d-block mt-1"></span>
+                                    <small class="text-white-50 d-block mt-2">
+                                        <i class="bi bi-info-circle me-1"></i>For security reasons, please confirm your password
+                                    </small>
+                                </div>
+                            }
+
+                            <!-- Double Confirmation Checkbox -->
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="confirmDelete"
+                                           required
+                                           style="background-color: rgba(255,255,255,0.1);
+                                                  border-color: rgba(255,107,107,0.5);">
+                                    <label class="form-check-label text-white" for="confirmDelete">
+                                        <strong>I understand that this action is permanent and cannot be undone.</strong>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Delete Button -->
+                            <button class="btn w-100 py-2 mb-3 text-white fw-medium rounded-pill fw-bold"
+                                    type="submit"
+                                    id="delete-button"
+                                    style="background: linear-gradient(135deg, #dc3545, #ff6b6b);
+                                           border: none;
+                                           font-size: 0.95rem;
+                                           transition: all 0.2s ease;
+                                           box-shadow: 0 4px 15px rgba(220,53,69,0.3);"
+                                    disabled>
+                                <i class="bi bi-trash3 me-2"></i>Delete Data & Close Account
+                            </button>
+
+                            <!-- Cancel Link -->
+                            <div class="text-center mt-3">
+                                <a asp-page="./Index"
+                                   class="text-decoration-none fw-medium"
+                                   style="color: #7fa3e4">
+                                    <i class="bi bi-arrow-left me-1"></i>Back to Profile Settings
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Consistent with profile page styling */
+    .form-control:focus,
+    .form-control:focus-within {
+        background-color: rgba(255,255,255,0.1) !important;
+        border-color: rgba(255, 107, 107, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.2) !important;
+        color: white !important;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255,255,255,0.4) !important;
+        font-size: 0.9rem;
+    }
+
+    /* Checkbox styling */
+    .form-check-input:checked {
+        background-color: #ff6b6b !important;
+        border-color: #ff6b6b !important;
+    }
+
+    .form-check-input:focus {
+        border-color: #ff6b6b !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25) !important;
+    }
+
+    /* Button hover effect */
+    .btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220,53,69,0.4) !important;
+    }
+
+    /* Disabled button styling */
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Alert list styling */
+    ul {
+        margin-bottom: 0;
+    }
+
+    li {
+        margin-bottom: 4px;
+    }
+
+    /* Custom styling for icons inside inputs */
+    .form-control.ps-5 {
+        padding-left: 2.8rem !important;
+    }
+
+    /* Ensure proper spacing */
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+    }
+
+    .text-center.mb-4 svg {
+        animation: pulse 2s infinite;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Enable/disable delete button based on checkbox
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmCheckbox = document.getElementById('confirmDelete');
+            const deleteButton = document.getElementById('delete-button');
+            const deleteForm = document.getElementById('delete-user');
+
+            // Enable/disable button based on checkbox
+            confirmCheckbox.addEventListener('change', function() {
+                deleteButton.disabled = !this.checked;
+            });
+
+            // Show confirmation dialog before submitting
+            deleteForm.addEventListener('submit', function(e) {
+                if (!confirm('Are you absolutely sure? This action cannot be undone!')) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Change button to loading state
+                deleteButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
+                deleteButton.disabled = true;
+
+                // Add a small delay to show the loading state
+                setTimeout(() => {
+                    deleteButton.disabled = false;
+                }, 3000);
+
+                return true;
+            });
+
+            // Validate password on blur
+            const passwordInput = document.querySelector('input[asp-for="Input.Password"]');
+            if (passwordInput) {
+                passwordInput.addEventListener('blur', function() {
+                    if (this.value.length > 0 && this.value.length < 6) {
+                        this.classList.add('is-invalid');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            }
+        });
+
+        // Show countdown before enabling delete button
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const confirmCheckbox = document.getElementById('confirmDelete');
+                if (confirmCheckbox) {
+                    // Add tooltip or help text
+                    const label = confirmCheckbox.closest('.form-check').querySelector('label');
+                    label.innerHTML += ' <span class="text-warning"><i class="bi bi-exclamation-circle"></i> Please read carefully</span>';
+                }
+            }, 1000);
+        });
+    </script>
+}
