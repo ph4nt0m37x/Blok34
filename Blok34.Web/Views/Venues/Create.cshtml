@@ -175,52 +175,81 @@
                                     <i class="bi bi-image me-2"></i>Venue Banner Image
                                 </label>
 
-                                <!-- Image Preview Area -->
-                                <div class="image-upload-area mb-3 rounded"
-                                     style="border: 2px dashed rgba(255,255,255,0.3);
-                                            background: rgba(255,255,255,0.05);
-                                            min-height: 200px;
-                                            cursor: pointer;
-                                            position: relative;
-                                            overflow: hidden;">
+                                <!-- Image Preview Container -->
+                                <div class="image-preview-container mb-3 position-relative">
+                                    <!-- Upload Area (only shows when no image selected) -->
+                                    <div class="image-upload-area rounded" id="uploadArea"
+                                         style="border: 2px dashed rgba(255,255,255,0.3);
+                                                background: rgba(255,255,255,0.05);
+                                                min-height: 200px;
+                                                cursor: pointer;
+                                                position: relative;">
+                                        <div class="d-flex flex-column align-items-center justify-content-center h-100 p-4">
+                                            <i class="bi bi-cloud-arrow-up display-4 text-white-50 mb-3"></i>
+                                            <p class="text-white-50 mb-2 text-center">Click or drag to upload banner image</p>
+                                            <small class="text-white-50">Recommended: 1920x400 pixels</small>
+                                        </div>
 
-                                    <!-- Default Preview -->
-                                    <div class="d-flex flex-column align-items-center justify-content-center h-100 p-4" id="defaultPreview">
-                                        <i class="bi bi-cloud-arrow-up display-4 text-white-50 mb-3"></i>
-                                        <p class="text-white-50 mb-2 text-center">Click or drag to upload banner image</p>
-                                        <small class="text-white-50">Recommended: 1920x400 pixels</small>
+                                        <!-- Hidden File Input -->
+                                        <input type="file"
+                                               name="BannerFile"
+                                               id="bannerFileInput"
+                                               accept="image/*"
+                                               class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" />
                                     </div>
 
-                                    <!-- Image Preview -->
-                                    <img id="imagePreview"
-                                         class="w-100 h-100 object-fit-cover d-none"
-                                         style="position: absolute; top: 0; left: 0; object-fit: cover;" />
+                                    <!-- Preview Area (shows when image is selected) -->
+                                    <div class="image-preview-area rounded d-none" id="previewArea"
+                                         style="border: 2px solid rgba(255,255,255,0.3);
+                                                background: rgba(0,0,0,0.3);
+                                                min-height: 200px;
+                                                position: relative;
+                                                overflow: hidden;">
 
-                                    <!-- Remove Image Button -->
-                                    <button type="button"
-                                            class="btn btn-sm position-absolute top-0 end-0 m-2 rounded-circle d-none"
-                                            id="removeImageBtn"
-                                            style="background: rgba(220, 53, 69, 0.8);
-                                                   border: none;
-                                                   width: 32px;
-                                                   height: 32px;">
-                                        <i class="bi bi-x text-white"></i>
-                                    </button>
+                                        <!-- Selected Image -->
+                                        <img id="imagePreview"
+                                             class="w-100 h-100 object-fit-cover"
+                                             style="max-height: 300px; object-fit: cover;" />
 
-                                    <!-- Hidden File Input -->
-                                    <input type="file"
-                                           name="BannerFile"
-                                           id="bannerFileInput"
-                                           accept="image/*"
-                                           class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" />
+                                        <!-- Image Info Overlay -->
+                                        <div class="position-absolute top-0 start-0 w-100 p-3"
+                                             style="background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="text-white">
+                                                    <i class="bi bi-image me-2"></i>
+                                                    <small id="fileName">No file selected</small>
+                                                </div>
+                                                <div class="text-white" id="fileSizeDisplay"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="position-absolute bottom-0 end-0 m-3 d-flex gap-2">
+                                            <!-- Choose Another Button -->
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-primary rounded-pill"
+                                                    id="chooseAnotherBtn"
+                                                    style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); font-size: 0.85rem;">
+                                                <i class="bi bi-arrow-repeat me-1"></i>Choose Another
+                                            </button>
+
+                                            <!-- Remove Image Button -->
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-danger rounded-pill"
+                                                    id="removeImageBtn"
+                                                    style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); font-size: 0.85rem;">
+                                                <i class="bi bi-trash me-1"></i>Remove
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex align-items-center justify-content-between">
                                     <small class="text-white-50">
                                         <i class="bi bi-info-circle me-1"></i>
-                                        Upload a banner image for your venue (JPG, PNG, GIF)
+                                        Upload a banner image for your venue (JPG, PNG, GIF, WebP - Max 5MB)
                                     </small>
-                                    <small class="text-white-50" id="fileSizeInfo"></small>
+                                    <small class="text-white-50 d-none" id="fileInfo">No file selected</small>
                                 </div>
                                 <span class="text-danger d-block mt-1" id="fileError"></span>
                             </div>
@@ -232,6 +261,7 @@
                                            type="checkbox"
                                            role="switch"
                                            asp-for="IsPublic"
+                                           id="isPublicCheckbox"
                                            style="width: 3rem; height: 1.5rem; background-color: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3);"
                                            checked />
                                     <div>
@@ -315,6 +345,7 @@
 </div>
 
 <style>
+    /* Consistent with other pages styling */
     .form-control:focus,
     .form-control:focus-within {
         background-color: rgba(255,255,255,0.1) !important;
@@ -332,24 +363,40 @@
         resize: vertical;
     }
 
+    /* Custom styling for icons inside inputs */
     .form-control.ps-5 {
         padding-left: 2.8rem !important;
     }
 
-
+    /* Button hover effect */
     .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important;
     }
 
-    .form-check-input:checked {
-        background-color: #8a2be2 !important;
-        border-color: #8a2be2 !important;
+    .btn-outline-primary {
+        border-color: rgba(138, 43, 226, 0.5);
+        color: rgba(138, 43, 226, 0.8);
+        background: rgba(138, 43, 226, 0.1);
     }
 
-    .form-check-input:focus {
-        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.25) !important;
+        .btn-outline-primary:hover {
+            background-color: rgba(138, 43, 226, 0.2) !important;
+            border-color: rgba(138, 43, 226, 0.8);
+            color: rgba(138, 43, 226, 1);
+        }
+
+    .btn-outline-danger {
+        border-color: rgba(220, 53, 69, 0.5);
+        color: rgba(220, 53, 69, 0.8);
+        background: rgba(220, 53, 69, 0.1);
     }
+
+        .btn-outline-danger:hover {
+            background-color: rgba(220, 53, 69, 0.2) !important;
+            border-color: rgba(220, 53, 69, 0.8);
+            color: rgba(220, 53, 69, 1);
+        }
 
     /* List styling */
     ul {
@@ -360,6 +407,7 @@
         margin-bottom: 0.25rem;
     }
 
+    /* Custom Select Styling */
     .custom-select-wrapper {
         position: relative;
     }
@@ -390,6 +438,7 @@
             transform: scale(1.1);
         }
 
+    /* Scrollbar styling */
     .custom-select-options::-webkit-scrollbar {
         width: 6px;
     }
@@ -408,22 +457,35 @@
             background: rgba(138, 43, 226, 0.7);
         }
 
+    /* Image upload area styling */
     .image-upload-area:hover {
         border-color: rgba(138, 43, 226, 0.5) !important;
         background: rgba(138, 43, 226, 0.05) !important;
     }
 
+    /* Object fit utility */
     .object-fit-cover {
         object-fit: cover;
     }
 
+    /* Cursor pointer utility */
     .cursor-pointer {
         cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: #8a2be2 !important;
+        border-color: #8a2be2 !important;
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.25) !important;
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Category dropdown functionality
         const categoryTrigger = document.getElementById('categoryTrigger');
         const categoryOptions = document.getElementById('categoryOptions');
         const dropdownArrow = document.getElementById('dropdownArrow');
@@ -431,26 +493,31 @@
         const hiddenSelect = document.getElementById('hiddenCategorySelect');
         const customOptions = document.querySelectorAll('.custom-option');
 
-        categoryTrigger.addEventListener('click', function(e) {
-            e.stopPropagation();
+        // Toggle dropdown on trigger click
+        if (categoryTrigger) {
+            categoryTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
 
-            if (categoryOptions.style.display === 'block') {
-                categoryOptions.style.display = 'none';
-                dropdownArrow.classList.remove('bi-chevron-up');
-                dropdownArrow.classList.add('bi-chevron-down');
-            } else {
-                categoryOptions.style.display = 'block';
-                dropdownArrow.classList.remove('bi-chevron-down');
-                dropdownArrow.classList.add('bi-chevron-up');
-            }
-        });
+                if (categoryOptions.style.display === 'block') {
+                    categoryOptions.style.display = 'none';
+                    dropdownArrow.classList.remove('bi-chevron-up');
+                    dropdownArrow.classList.add('bi-chevron-down');
+                } else {
+                    categoryOptions.style.display = 'block';
+                    dropdownArrow.classList.remove('bi-chevron-down');
+                    dropdownArrow.classList.add('bi-chevron-up');
+                }
+            });
+        }
 
+        // Handle option selection
         customOptions.forEach(option => {
             option.addEventListener('click', function(e) {
                 e.stopPropagation();
 
                 const value = this.getAttribute('data-value');
                 const text = this.querySelector('span').textContent;
+
                 selectedCategory.textContent = text;
                 hiddenSelect.value = value;
                 categoryOptions.style.display = 'none';
@@ -462,133 +529,237 @@
             });
         });
 
+        // Close dropdown when clicking outside
         document.addEventListener('click', function() {
-            categoryOptions.style.display = 'none';
-            dropdownArrow.classList.remove('bi-chevron-up');
-            dropdownArrow.classList.add('bi-chevron-down');
+            if (categoryOptions) {
+                categoryOptions.style.display = 'none';
+                dropdownArrow.classList.remove('bi-chevron-up');
+                dropdownArrow.classList.add('bi-chevron-down');
+            }
         });
 
-        categoryOptions.addEventListener('click', function(e) {
+        // Prevent dropdown from closing when clicking inside it
+        if (categoryOptions) {
+            categoryOptions.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Banner Image Upload Functionality
+        const bannerFileInput = document.getElementById('bannerFileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const previewArea = document.getElementById('previewArea');
+        const imagePreview = document.getElementById('imagePreview');
+        const chooseAnotherBtn = document.getElementById('chooseAnotherBtn');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const fileNameDisplay = document.getElementById('fileName');
+        const fileSizeDisplay = document.getElementById('fileSizeDisplay');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileError = document.getElementById('fileError');
+
+        // Handle file selection
+        bannerFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            handleFileSelection(file);
+        });
+
+        // Handle file selection logic
+        function handleFileSelection(file) {
+            if (file) {
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    showError('Please select a valid image file (JPG, PNG, GIF, WebP).');
+                    clearFileSelection();
+                    return;
+                }
+
+                // Validate file size (5MB)
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    showError('File size must be less than 5MB.');
+                    clearFileSelection();
+                    return;
+                }
+
+                // Clear any previous errors
+                clearError();
+
+                // Display file info
+                const fileSize = file.size > 1024 * 1024
+                    ? (file.size / (1024 * 1024)).toFixed(2) + ' MB'
+                    : (file.size / 1024).toFixed(2) + ' KB';
+
+                fileNameDisplay.textContent = file.name.length > 20
+                    ? file.name.substring(0, 20) + '...'
+                    : file.name;
+                fileSizeDisplay.textContent = fileSize;
+                fileInfo.textContent = `${file.name} (${fileSize})`;
+                fileInfo.classList.remove('d-none');
+
+                // Preview image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+
+                    // Switch to preview mode
+                    uploadArea.classList.add('d-none');
+                    previewArea.classList.remove('d-none');
+
+                    // Add success styling
+                    previewArea.style.borderColor = 'rgba(25, 135, 84, 0.5)';
+                    previewArea.style.borderStyle = 'solid';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Choose another image button
+        chooseAnotherBtn.addEventListener('click', function(e) {
             e.stopPropagation();
+            bannerFileInput.click();
         });
 
-        const isPublicCheckbox = document.querySelector('input[asp-for="IsPublic"]');
+        // Remove selected image
+        removeImageBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            clearFileSelection();
+        });
+
+        // Clear file selection
+        function clearFileSelection() {
+            bannerFileInput.value = '';
+            uploadArea.classList.remove('d-none');
+            previewArea.classList.add('d-none');
+            fileInfo.textContent = 'No file selected';
+            fileInfo.classList.add('d-none');
+            clearError();
+
+            // Reset styling
+            previewArea.style.borderColor = 'rgba(255,255,255,0.3)';
+            previewArea.style.borderStyle = 'solid';
+        }
+
+        // Show error message
+        function showError(message) {
+            fileError.textContent = message;
+            fileError.classList.remove('d-none');
+        }
+
+        // Clear error message
+        function clearError() {
+            fileError.textContent = '';
+            fileError.classList.add('d-none');
+        }
+
+        // Click on upload area triggers file input
+        uploadArea.addEventListener('click', function(e) {
+            if (e.target !== bannerFileInput) {
+                bannerFileInput.click();
+            }
+        });
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.borderColor = 'rgba(138, 43, 226, 0.5)';
+            uploadArea.style.background = 'rgba(138, 43, 226, 0.1)';
+            uploadArea.style.borderStyle = 'dashed';
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
+            uploadArea.style.background = 'rgba(255,255,255,0.05)';
+            uploadArea.style.borderStyle = 'dashed';
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            uploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
+            uploadArea.style.background = 'rgba(255,255,255,0.05)';
+            uploadArea.style.borderStyle = 'dashed';
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelection(files[0]);
+            }
+        });
+
+        // Visibility toggle functionality
+        const isPublicCheckbox = document.getElementById('isPublicCheckbox');
         const privateInfo = document.getElementById('privateInfo');
         const publicInfo = document.querySelector('[style*="rgba(25, 135, 84, 0.1)"]');
+        const switchLabel = document.querySelector('.form-check-label');
 
         function updateVisibilityInfo() {
             if (isPublicCheckbox.checked) {
                 publicInfo.style.display = 'block';
                 privateInfo.style.display = 'none';
+                switchLabel.innerHTML = '<i class="bi bi-eye me-2"></i>Public Venue';
             } else {
                 publicInfo.style.display = 'none';
                 privateInfo.style.display = 'block';
+                switchLabel.innerHTML = '<i class="bi bi-shield-lock me-2"></i>Private Venue';
             }
         }
 
+        // Initialize visibility info
         updateVisibilityInfo();
 
+        // Update on change
         isPublicCheckbox.addEventListener('change', updateVisibilityInfo);
 
-        isPublicCheckbox.addEventListener('change', function() {
-            const switchLabel = document.querySelector('.form-check-label');
-            if (this.checked) {
-                switchLabel.innerHTML = '<i class="bi bi-eye me-2"></i>Public Venue';
-            } else {
-                switchLabel.innerHTML = '<i class="bi bi-shield-lock me-2"></i>Private Venue';
-            }
-        });
-
-        const bannerFileInput = document.getElementById('bannerFileInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const defaultPreview = document.getElementById('defaultPreview');
-        const removeImageBtn = document.getElementById('removeImageBtn');
-        const fileSizeInfo = document.getElementById('fileSizeInfo');
-        const fileError = document.getElementById('fileError');
-        const imageUploadArea = document.querySelector('.image-upload-area');
-
-        bannerFileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-
-            if (file) {
-                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-                if (!validTypes.includes(file.type)) {
-                    fileError.textContent = 'Please select a valid image file (JPG, PNG, GIF, WebP).';
-                    bannerFileInput.value = '';
-                    return;
-                }
-
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                if (file.size > maxSize) {
-                    fileError.textContent = 'File size must be less than 5MB.';
-                    bannerFileInput.value = '';
-                    return;
-                }
-
-                fileError.textContent = '';
-                const fileSize = file.size > 1024 * 1024
-                    ? (file.size / (1024 * 1024)).toFixed(2) + ' MB'
-                    : (file.size / 1024).toFixed(2) + ' KB';
-                fileSizeInfo.textContent = fileSize;
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.classList.remove('d-none');
-                    defaultPreview.classList.add('d-none');
-                    removeImageBtn.classList.remove('d-none');
-                }
-                reader.readAsDataURL(file);
-
-                imageUploadArea.style.borderColor = 'rgba(25, 135, 84, 0.5)';
-                imageUploadArea.style.borderStyle = 'solid';
-            }
-        });
-
-        removeImageBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            bannerFileInput.value = '';
-            imagePreview.src = '';
-            imagePreview.classList.add('d-none');
-            defaultPreview.classList.remove('d-none');
-            removeImageBtn.classList.add('d-none');
-            fileSizeInfo.textContent = '';
+        // Form submission validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            // Clear any previous file errors
             fileError.textContent = '';
-            imageUploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
-            imageUploadArea.style.borderStyle = 'dashed';
-        });
 
-        imageUploadArea.addEventListener('click', function(e) {
-            if (e.target !== bannerFileInput && e.target !== removeImageBtn) {
-                bannerFileInput.click();
+            // Check if a file is selected (optional field)
+            if (bannerFileInput.files.length > 0) {
+                const file = bannerFileInput.files[0];
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                const maxSize = 5 * 1024 * 1024;
+
+                if (!validTypes.includes(file.type)) {
+                    e.preventDefault();
+                    fileError.textContent = 'Please select a valid image file (JPG, PNG, GIF, WebP).';
+                    bannerFileInput.focus();
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    e.preventDefault();
+                    fileError.textContent = 'File size must be less than 5MB.';
+                    bannerFileInput.focus();
+                    return;
+                }
             }
-        });
 
-        imageUploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            imageUploadArea.style.borderColor = 'rgba(138, 43, 226, 0.5)';
-            imageUploadArea.style.background = 'rgba(138, 43, 226, 0.1)';
-        });
+            // Validate category is selected
+            if (!hiddenSelect.value) {
+                e.preventDefault();
+                const categoryError = document.createElement('div');
+                categoryError.className = 'alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-white small py-2 rounded-pill mb-3';
+                categoryError.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Please select a venue category.';
 
-        imageUploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            imageUploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
-            imageUploadArea.style.background = 'rgba(255,255,255,0.05)';
-        });
+                const categorySection = document.querySelector('.mb-3');
+                categorySection.insertBefore(categoryError, categorySection.firstChild);
 
-        imageUploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
+                // Scroll to error
+                categoryError.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            imageUploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
-            imageUploadArea.style.background = 'rgba(255,255,255,0.05)';
+                // Remove error after 5 seconds
+                setTimeout(() => {
+                    categoryError.remove();
+                }, 5000);
 
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                bannerFileInput.files = files;
-                bannerFileInput.dispatchEvent(new Event('change'));
+                return;
             }
         });
     });

@@ -37,7 +37,7 @@
                                     backdrop-filter: blur(10px);
                                     border: 1px solid rgba(255,255,255,0.3);">
                             <i class="bi bi-tag me-2"></i>
-                            <span class="fw-medium text-white">@Model.Category</span>
+                            <span class="fw-medium text-white">@Html.DisplayFor(m => m.Category)</span>
                         </div>
                     </div>
 
@@ -186,21 +186,23 @@
                                         <small class="text-white-50 d-block mb-1">Category</small>
                                         <div class="d-flex align-items-center">
                                             <i class="bi bi-tag-fill text-info me-2"></i>
-                                            <span class="text-white fw-medium">@Model.Category</span>
+                                            <span class="text-white fw-medium">@Html.DisplayFor(m => m.Category)</span>
                                         </div>
                                     </div>
 
                                     <div class="mb-4">
                                         <small class="text-white-50 d-block mb-1">Availability</small>
                                         <div class="d-flex align-items-center">
-                                            <i class="bi bi-calendar-check text-success me-2"></i>
+                                            
                                             @if (Model.IsPublic)
                                             {
+                                                <i class="bi bi-calendar-check text-success me-2"></i>
                                                 <span class="text-white fw-medium">Open for all events</span>
                                             }
                                             else
                                             {
-                                                <span class="text-white fw-medium">Manager approval required</span>
+                                                <i class="bi bi-calendar-x text-danger me-2"></i>
+                                                <span class="text-white fw-medium">Restricted to owner</span>
                                             }
                                         </div>
                                     </div>

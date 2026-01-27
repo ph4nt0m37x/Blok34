@@ -1,4 +1,5 @@
-﻿@model Blok34.Domain.DTO.SearchDTO
+﻿@using System.Security.Claims
+@model Blok34.Domain.DTO.SearchDTO
 
 
 <div class="d-flex align-items-center justify-content-center"
@@ -42,7 +43,7 @@
                                class="form-control bg-transparent text-white rounded-pill border-end-0"
                                placeholder="Search again..."
                                value="@Model.Query"
-                               style="border-color: rgba(255,255,255,0.3);">
+                               style="border-color: rgba(255,255,255,0.3);"><span class="px-1"></span>
                         <button class="btn btn-outline-light rounded-pill border-start-0 px-4" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
@@ -110,18 +111,6 @@
                                     {
                                         <p class="text-white-50 mb-3">@user.Name</p>
                                     }
-
-                                    <!-- Stats (optional - add if you have user stats) -->
-                                    <div class="d-flex justify-content-center gap-3 mb-4">
-                                        <div class="text-center">
-                                            <div class="text-white fw-bold">0</div>
-                                            <div class="text-white-50 small">Events</div>
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="text-white fw-bold">0</div>
-                                            <div class="text-white-50 small">Following</div>
-                                        </div>
-                                    </div>
 
                                     <!-- Action Button -->
                                     <a asp-controller="Profile" asp-action="Index" asp-route-id="@user.Id" class="btn btn-sm w-100 rounded-pill py-2"
@@ -201,13 +190,10 @@
                                     <!-- Action Buttons -->
                                     <div class="d-flex gap-2">
                                         <a href="/Events/Details/@ev.Id" class="btn btn-sm flex-fill rounded-pill py-2"
-                                           style="background: linear-gradient(135deg, #6a0dad, #8a2be2); color: white;">
-                                            <i class="bi bi-eye me-2"></i>View
+                                           style="background: rgba(138, 43, 226, 0.2); border: 1px solid rgba(138, 43, 226, 0.5); color: white;">
+                                            <i class="bi bi-eye me-2"></i>View more about this event
                                         </a>
-                                        <button class="btn btn-sm rounded-pill py-2 px-3"
-                                                style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white;">
-                                            <i class="bi bi-bookmark"></i>
-                                        </button>
+
                                     </div>
                                 </div>
                             </div>
@@ -284,13 +270,17 @@
 
                                     <!-- Action Buttons -->
                                     <div class="d-flex gap-2">
-                                        <a href="/Venues/Details/@venue.Id" class="btn btn-sm flex-fill rounded-pill py-2"
-                                           style="background: linear-gradient(135deg, #5D3FD3, #4B0082); color: white;">
-                                            <i class="bi bi-info-circle me-2"></i>Details
-                                        </a>
-                                        <a href="/Events/Create?venueId=@venue.Id" class="btn btn-sm flex-fill rounded-pill py-2"
+                                        @if (venue.IsPublic || venue.VenueManagerId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
+                                        {
+
+                                            <a href="/Events/Create?venueId=@venue.Id" class="btn btn-sm flex-fill rounded-pill py-2"
                                            style="background: rgba(138, 43, 226, 0.2); border: 1px solid rgba(138, 43, 226, 0.5); color: white;">
                                             <i class="bi bi-plus-circle me-2"></i>Create Event
+                                        </a>
+                                        }
+                                        <a href="/Venues/Details/@venue.Id" class="btn btn-sm flex-fill rounded-pill py-2"
+                                           style="background: rgba(138, 43, 226, 0.2); border: 1px solid rgba(138, 43, 226, 0.5); color: white;">
+                                            <i class="bi bi-info-circle me-2"></i>Details
                                         </a>
                                     </div>
                                 </div>

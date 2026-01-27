@@ -77,12 +77,20 @@
                             </div>
 
                             <div class="mb-4">
-                                <label asp-for="EndDate" class="form-label text-white fw-medium mb-2 d-block"><i class="bi bi-clock-history me-2"></i>End Date & Time</label>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label asp-for="EndDate" class="form-label text-white fw-medium mb-0"><i class="bi bi-clock-history me-2"></i>End Date & Time</label>
+                                    <button type="button" class="btn btn-sm px-3 py-1 rounded-pill" id="clearEndDateBtn" style="background: rgba(220, 53, 69, 0.2); color: #ff6b6b; border: 1px solid rgba(220, 53, 69, 0.3); font-size: 0.8rem; transition: all 0.2s ease;">
+                                        <i class="bi bi-x-circle me-1"></i>Clear End Date
+                                    </button>
+                                </div>
                                 <input type="hidden" asp-for="EndDate" id="endDateTimeInput" />
                                 <div class="datetimepicker-container rounded-4 p-3 mb-2" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15);">
                                     <div class="row"><div class="col-md-12"><div id="endDateTimePicker"></div></div></div>
                                 </div>
-                                <div class="mt-2 mb-1"><small class="text-white-50"><i class="bi bi-calendar2-check me-1"></i>Selected: <span id="endDateTimeDisplay" class="fw-medium text-white">Not selected</span></small></div>
+                                <div class="mt-2 mb-1 d-flex justify-content-between">
+                                    <small class="text-white-50"><i class="bi bi-calendar2-check me-1"></i>Selected: <span id="endDateTimeDisplay" class="fw-medium text-white">Not selected</span></small>
+                                    <small class="text-white-50"><i class="bi bi-info-circle me-1"></i>Optional</small>
+                                </div>
                                 <div id="endDateError" class="text-danger d-block mt-1 small"></div>
                             </div>
 
@@ -596,6 +604,86 @@
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 12px rgba(138,43,226,0.3) !important;
         }
+
+    /* Clear button styling */
+    #clearEndDateBtn:hover {
+        background: rgba(220, 53, 69, 0.3) !important;
+        border-color: rgba(220, 53, 69, 0.5) !important;
+        color: #ff8a8a !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2) !important;
+    }
+
+    /* Make time separator much smaller */
+    .datetimepicker-container .timepicker-picker table tr:nth-child(2) td.separator {
+        font-size: 1rem !important;
+        font-weight: bold !important;
+        color: rgba(255,255,255,0.6) !important;
+        vertical-align: middle !important;
+        line-height: 1 !important;
+        padding: 0 1px !important;
+        width: 8px !important;
+        min-width: 8px !important;
+    }
+
+    /* Remove the weird blue hover effect from time picker cells */
+    .datetimepicker-container .timepicker-picker table td:hover {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    /* Make the time picker area more compact */
+    .datetimepicker-container .timepicker-picker {
+        padding: 5px !important;
+    }
+
+        .datetimepicker-container .timepicker-picker table td:not(.separator) {
+            width: 50px !important;
+            height: 50px !important;
+        }
+
+    /* Remove blue hover effects from time picker arrows container */
+    .datetimepicker-container .timepicker .table-condensed td span:hover {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    /* Make the colon smaller and better positioned */
+    .datetimepicker-container .timepicker-picker table tr:nth-child(2) td.separator span {
+        font-size: 1.2rem !important;
+        margin-top: -2px !important;
+        display: inline-block !important;
+    }
+
+    /* Adjust arrow container sizes */
+    .datetimepicker-container .timepicker .glyphicon-chevron-up,
+    .datetimepicker-container .timepicker .glyphicon-chevron-down,
+    .datetimepicker-container .timepicker .bi-chevron-up,
+    .datetimepicker-container .timepicker .bi-chevron-down {
+        width: 24px !important;
+        height: 24px !important;
+        padding: 2px !important;
+    }
+
+    /* Remove all blue hover effects from time picker */
+    .datetimepicker-container .timepicker-picker table tr:first-child td:hover,
+    .datetimepicker-container .timepicker-picker table tr:last-child td:hover {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    /* Fix the arrow cells to not have hover effects */
+    .datetimepicker-container .timepicker-picker table tr:first-child td,
+    .datetimepicker-container .timepicker-picker table tr:last-child td {
+        background: transparent !important;
+        border: none !important;
+    }
 </style>
 
 @section Scripts {
@@ -775,6 +863,7 @@
             const endDateTimePicker = $('#endDateTimePicker');
             const endDateTimeInput = $('#endDateTimeInput');
             const endDateTimeDisplay = $('#endDateTimeDisplay');
+            const clearEndDateBtn = $('#clearEndDateBtn');
             const initialEndDate = moment(initialStartDate).add(1, 'hour').seconds(0);
 
             endDateTimePicker.datetimepicker({
@@ -802,9 +891,35 @@
             });
             endDateTimePicker.datetimepicker('date', initialEndDate);
 
+            // Clear end date button functionality
+            clearEndDateBtn.on('click', function() {
+                endDateTimePicker.datetimepicker('clear');
+                endDateTimeInput.val('');
+                endDateTimeDisplay.text('Not selected');
+                clearError('endDateError');
+
+                // Add a visual effect
+                $(this).html('<i class="bi bi-check-circle me-1"></i>Cleared!');
+                $(this).css({
+                    'background': 'rgba(40, 167, 69, 0.2)',
+                    'border-color': 'rgba(40, 167, 69, 0.3)',
+                    'color': '#28a745'
+                });
+
+                setTimeout(() => {
+                    $(this).html('<i class="bi bi-x-circle me-1"></i>Clear End Date');
+                    $(this).css({
+                        'background': 'rgba(220, 53, 69, 0.2)',
+                        'border-color': 'rgba(220, 53, 69, 0.3)',
+                        'color': '#ff6b6b'
+                    });
+                }, 1500);
+            });
+
             function validateDateRanges() {
                 const startDate = startDateTimePicker.datetimepicker('date');
                 const endDate = endDateTimePicker.datetimepicker('date');
+                const endDateValue = endDateTimeInput.val();
                 let isValid = true;
                 clearError('startDateError'); clearError('endDateError');
                 if (!startDate || !startDateTimeInput.val()) {
@@ -814,16 +929,19 @@
                     showError('startDateError','Start date cannot be in the past');
                     isValid = false;
                 }
-                if (!endDate || !endDateTimeInput.val()) {
-                    showError('endDateError','Please select an end date and time');
-                    isValid = false;
-                } else if (endDate.isBefore(moment())) {
-                    showError('endDateError','End date cannot be in the past');
-                    isValid = false;
-                }
-                if (startDate && endDate && endDate.isSameOrBefore(startDate)) {
-                    showError('endDateError','End date must be after start date');
-                    isValid = false;
+                // Only validate end date if it's set (it's optional)
+                if (endDateValue) {
+                    if (!endDate) {
+                        showError('endDateError','Please select a valid end date and time');
+                        isValid = false;
+                    } else if (endDate.isBefore(moment())) {
+                        showError('endDateError','End date cannot be in the past');
+                        isValid = false;
+                    }
+                    if (startDate && endDate && endDate.isSameOrBefore(startDate)) {
+                        showError('endDateError','End date must be after start date');
+                        isValid = false;
+                    }
                 }
                 return isValid;
             }
@@ -894,5 +1012,38 @@
                 });
             });
         });
+
+                function restoreCustomSelectState() {
+            // Category
+            if (hiddenCategorySelect) {
+                const catValue = hiddenCategorySelect.value;
+                if (catValue) {
+                    const opt = hiddenCategorySelect.options[hiddenCategorySelect.selectedIndex];
+                    if (opt && opt.text) selectedCategory.textContent = opt.text;
+                    // visually mark the matching custom option (if present)
+                    const chosenCat = document.querySelector(`#categoryOptions .custom-option[data-value="${catValue}"]`);
+                    if (chosenCat) {
+                        // optionally add an "active" class or style to match your hover/active styling
+                        chosenCat.classList.add('active');
+                    }
+                }
+            }
+
+            // Venue
+            if (hiddenVenueSelect) {
+                const venValue = hiddenVenueSelect.value;
+                if (venValue) {
+                    const opt = hiddenVenueSelect.options[hiddenVenueSelect.selectedIndex];
+                    if (opt && opt.text) selectedVenue.textContent = opt.text;
+                    const chosenVen = document.querySelector(`#venueOptions .custom-option[data-value="${venValue}"]`);
+                    if (chosenVen) chosenVen.classList.add('active');
+                } else {
+                    // if server didn't populate ViewBag, but hidden select might be empty: leave the default
+                }
+            }
+        }
+
+        // call restore after wiring up event listeners
+        restoreCustomSelectState();
     </script>
 }

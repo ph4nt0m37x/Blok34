@@ -1,6 +1,7 @@
 ﻿using Blok34.Domain.DTO;
 using Blok34.Repository;
 using Blok34.Service.Interface;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Blok34.Service.Implementation
@@ -31,6 +32,7 @@ namespace Blok34.Service.Implementation
                     .Where(e =>
                         e.Title.ToLower().Contains(query) ||
                         e.Description.ToLower().Contains(query))
+                    .Include(e => e.Venue)
                     .ToList(),
 
                 Venues = _context.Venues

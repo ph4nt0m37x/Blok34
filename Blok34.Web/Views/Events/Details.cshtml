@@ -1,54 +1,564 @@
 ﻿@model Blok34.Domain.DomainModels.Event
-
+@Html.AntiForgeryToken()
+@using Blok34.Domain.Enums
+@using Blok34.Domain.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Event Details";
+    var isPublicVenue = Model.Venue?.IsPublic ?? false;
+    var hasBanner = !string.IsNullOrEmpty(Model.Venue?.BannerPath);
+    var bannerUrl = hasBanner ? Model.Venue.BannerPath : "/images/default-event-banner.jpg";
+
+    var currentUserId = UserManager.GetUserId(User);
+    var isCreator = Model.CreatedByUserId == currentUserId;
+
+    // Check if current user is already attending/interested
+    var userAttendance = Model.Attendees?.FirstOrDefault(a => a.UserId == currentUserId);
+    var currentUserStatus = userAttendance?.Status;
 }
 
-<h1>Details</h1>
+<div class="d-flex align-items-start justify-content-start" style="min-height: 100vh; padding-top: 1rem; padding-bottom: 3rem;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+                <!-- Event Banner -->
+                @if (hasBanner)
+                {
+                    <div class="card border-0 shadow mb-4" style="border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15);">
+                        <div class="position-relative" style="height: 300px;">
+                            <img src="@bannerUrl" class="card-img-top" alt="@Model.Venue.Name Banner" style="height: 100%; width: 100%; object-fit: cover;">
+                            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));"></div>
+                            <div class="position-absolute bottom-0 start-0 p-4">
+                                <span class="badge rounded-pill px-3 py-2 mb-2" style="background: rgba(106,13,173,0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                                    <i class="bi bi-tag me-1"></i>@Html.DisplayFor(m => m.Category)
+                                </span>
+                                <h1 class="text-white fw-bold mb-0" style="text-shadow: 0 2px 10px rgba(0,0,0,0.5);">@Model.Title</h1>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card border-0 shadow mb-4" style="background: linear-gradient(135deg, #6a0dad, #8a2be2); border-radius: 20px; border: 1px solid rgba(255,255,255,0.15);">
+                        <div class="card-body p-5 text-center">
+                            <svg width="80" height="60" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" class="mb-3">
+                                <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff" /><stop offset="100%" stop-color="#e0c3fc" /></linearGradient></defs>
+                                <rect x="15" y="10" width="25" height="40" rx="4" fill="url(#grad1)" />
+                                <rect x="40" y="20" width="20" height="30" rx="3" fill="#ffffff" opacity="0.9" />
+                                <rect x="60" y="30" width="15" height="20" rx="2" fill="#e0c3fc" opacity="0.9" />
+                            </svg>
+                            <h1 class="text-white fw-bold mb-2">@Model.Title</h1>
+                            <span class="badge rounded-pill px-3 py-2" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);">
+                                <i class="bi bi-tag me-1"></i>@Html.DisplayFor(m => m.Category)
+                            </span>
+                        </div>
+                    </div>
+                }
 
-<div>
-    <h4>Event</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Venue)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Venue.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedByUserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedByUserId)
-        </dd>
-    </dl>
+                <!-- Main Content Card -->
+                <div class="card border-0 shadow" style="background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 2rem;">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="row">
+                            <!-- Left Column - Event Details -->
+                            <div class="col-lg-8">
+                                <div class="mb-5">
+                                    <h4 class="text-white fw-bold mb-3"><i class="bi bi-text-paragraph me-2"></i>Description</h4>
+                                    <div class="p-4 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                        <p class="text-white mb-0" style="line-height: 1.8; white-space: pre-line;">@Model.Description</p>
+                                    </div>
+                                </div>
+
+                                <!-- Event Schedule -->
+                                <div class="mb-5">
+                                    <h4 class="text-white fw-bold mb-3"><i class="bi bi-calendar-week me-2"></i>Event Schedule</h4>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="p-4 rounded d-flex align-items-center" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                                <div class="me-3">
+                                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: linear-gradient(135deg, #6a0dad, #8a2be2);">
+                                                        <i class="bi bi-clock text-white" style="font-size: 1.5rem;"></i>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h6 class="text-white fw-bold mb-1">Starts</h6>
+                                                    <div class="text-white-50">
+                                                        <div><i class="bi bi-calendar2-check me-2"></i>@Model.StartDate.ToString("dddd, MMMM dd, yyyy")</div>
+                                                        <div><i class="bi bi-clock me-2"></i>@Model.StartDate.ToString("h:mm tt")</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (Model.EndDate.HasValue)
+                                        {
+                                            <div class="col-md-6 mb-3">
+                                                <div class="p-4 rounded d-flex align-items-center" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                                    <div class="me-3">
+                                                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: linear-gradient(135deg, #8a2be2, #9370db);">
+                                                            <i class="bi bi-clock-history text-white" style="font-size: 1.5rem;"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="text-white fw-bold mb-1">Ends</h6>
+                                                        <div class="text-white-50">
+                                                            <div><i class="bi bi-calendar2-check me-2"></i>@Model.EndDate.Value.ToString("dddd, MMMM dd, yyyy")</div>
+                                                            <div><i class="bi bi-clock me-2"></i>@Model.EndDate.Value.ToString("h:mm tt")</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Venue & Organizer Info -->
+                            <div class="col-lg-4">
+                                <!-- Venue Information -->
+                                <div class="mb-4">
+                                    <h4 class="text-white fw-bold mb-3"><i class="bi bi-geo-alt me-2"></i>Venue</h4>
+                                    <div class="p-4 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                        <div class="d-flex align-items-start mb-3">
+                                            <div class="me-3">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: rgba(255,255,255,0.1);">
+                                                    <i class="bi bi-building text-white" style="font-size: 1.2rem;"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h5 class="text-white fw-bold mb-1">@Model.Venue?.Name</h5>
+                                                <div class="text-white-50 small">
+                                                    <div><i class="bi bi-geo me-1"></i>@Model.Venue?.Address</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(Model.Venue?.Description))
+                                        {
+                                            <div class="mt-3 pt-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                                                <p class="text-white-50 small mb-0">@Model.Venue.Description</p>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Event Organizer (Only for Public Venues) -->
+                                @if (isPublicVenue && !string.IsNullOrEmpty(Model.CreatedByUserId))
+                                {
+                                    <div class="mb-4">
+                                        <h4 class="text-white fw-bold mb-3"><i class="bi bi-person-circle me-2"></i>Event Organizer</h4>
+                                        <div class="p-4 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="me-3">
+                                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: linear-gradient(135deg, #4B0082, #6a0dad);">
+                                                        <i class="bi bi-person text-white" style="font-size: 1.5rem;"></i>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h5 class="text-white fw-bold mb-1">@(ViewBag.CreatorName ?? "Event Organizer")</h5>
+                                                    <div class="text-white-50 small">
+                                                        <i class="bi bi-person-badge me-1"></i>Event Creator
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(ViewBag.CreatorEmail))
+                                            {
+                                                <div class="mt-3 pt-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                                                    <div class="text-white-50 small">
+                                                        <i class="bi bi-envelope me-1"></i>@ViewBag.CreatorEmail
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Event Actions -->
+                                <div class="mb-4">
+                                    <h4 class="text-white fw-bold mb-3"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h4>
+                                    <div class="d-grid gap-2">
+                                        @if (User.Identity.IsAuthenticated && !isCreator)
+                                        {
+                                            <!-- Attendance Dropdown -->
+                                            <div class="position-relative mb-3">
+                                                <div class="custom-select-wrapper">
+                                                    <div class="custom-select-trigger d-flex align-items-center justify-content-between py-2 px-3 rounded-pill"
+                                                         style="background: linear-gradient(135deg, #6a0dad, #8a2be2); border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.2s ease;"
+                                                         id="attendanceTrigger">
+                                                        <div class="d-flex align-items-center text-white">
+                                                            @if (currentUserStatus == AttendanceStatus.Attending)
+                                                            {
+                                                                <i class="bi bi-check-circle me-2"></i>
+                                                                <span>Attending</span>
+                                                            }
+                                                            else if (currentUserStatus == AttendanceStatus.Interested)
+                                                            {
+                                                                <i class="bi bi-star me-2"></i>
+                                                                <span>Interested</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="bi bi-calendar-plus me-2"></i>
+                                                                <span>RSVP to Event</span>
+                                                            }
+                                                        </div>
+                                                        <i class="bi bi-chevron-down text-white" id="attendanceDropdownArrow"></i>
+                                                    </div>
+                                                    <div class="custom-select-options shadow" style="background: rgba(30, 30, 46, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; margin-top: 0.5rem; padding: 0.5rem; display: none; position: absolute; width: 100%; z-index: 1000;" id="attendanceOptions">
+                                                        <!-- Attending Option -->
+                                                        <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded" style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;" data-status="Attending" onclick="updateAttendance('@Model.Id', 'Attending')">
+                                                            <div class="me-2 d-flex align-items-center justify-content-center rounded" style="width: 28px; height: 28px; background: rgba(106,13,173,0.3);">
+                                                                <i class="bi bi-check-circle" style="font-size: 0.8rem;"></i>
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <div class="fw-medium">Attending</div>
+                                                                <div class="small text-white-50">You will attend this event</div>
+                                                            </div>
+                                                            @if (currentUserStatus == AttendanceStatus.Attending)
+                                                            {
+                                                                <i class="bi bi-check text-success ms-2"></i>
+                                                            }
+                                                        </div>
+
+                                                        <!-- Interested Option -->
+                                                        <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded" style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;" data-status="Interested" onclick="updateAttendance('@Model.Id', 'Interested')">
+                                                            <div class="me-2 d-flex align-items-center justify-content-center rounded" style="width: 28px; height: 28px; background: rgba(255,193,7,0.3);">
+                                                                <i class="bi bi-star" style="font-size: 0.8rem;"></i>
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <div class="fw-medium">Interested</div>
+                                                                <div class="small text-white-50">You're interested in this event</div>
+                                                            </div>
+                                                            @if (currentUserStatus == AttendanceStatus.Interested)
+                                                            {
+                                                                <i class="bi bi-check text-success ms-2"></i>
+                                                            }
+                                                        </div>
+
+                                                        @if (currentUserStatus != null)
+                                                        {
+                                                            <!-- Cancel Option -->
+                                                            <div class="custom-option d-flex align-items-center text-white py-2 px-3 rounded" style="margin: 0.1rem 0; cursor: pointer; transition: all 0.2s ease;" data-status="Cancel" onclick="cancelAttendance('@Model.Id')">
+                                                                <div class="me-2 d-flex align-items-center justify-content-center rounded" style="width: 28px; height: 28px; background: rgba(220,53,69,0.3);">
+                                                                    <i class="bi bi-x-circle" style="font-size: 0.8rem;"></i>
+                                                                </div>
+                                                                <div class="flex-grow-1">
+                                                                    <div class="fw-medium">Cancel RSVP</div>
+                                                                    <div class="small text-white-50">Remove your attendance status</div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @if (isCreator)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn py-2 text-white fw-medium rounded-pill" style="background: linear-gradient(135deg, #6a0dad, #8a2be2); border: none; transition: all 0.2s ease;">
+                                                <i class="bi bi-pencil-square me-2"></i>Edit Event
+                                            </a>
+                                        }
+                                        <button type="button" class="btn py-2 text-white fw-medium rounded-pill" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s ease;" id="shareButton">
+                                            <i class="bi bi-share me-2"></i>Share Event
+                                        </button>
+                                        <a asp-action="Index" class="btn py-2 text-white fw-medium rounded-pill" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); transition: all 0.2s ease;">
+                                            <i class="bi bi-arrow-left me-2"></i>Back to List
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="mt-5 pt-4" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="text-white fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>Event Information</h5>
+                                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                        <div class="row">
+                                            <div class="col-6 mb-2">
+                                                <div class="text-white-50 small">Status</div>
+                                                @{
+                                                    var now = DateTime.UtcNow;
+                                                    var status = "Upcoming";
+                                                    var statusColor = "success";
+
+                                                    if (Model.StartDate <= now && (!Model.EndDate.HasValue || Model.EndDate.Value > now))
+                                                    {
+                                                        status = "Ongoing";
+                                                        statusColor = "info";
+                                                    }
+                                                    else if (Model.EndDate.HasValue && Model.EndDate.Value <= now)
+                                                    {
+                                                        status = "Completed";
+                                                        statusColor = "secondary";
+                                                    }
+                                                }
+                                                <div><span class="badge bg-@statusColor">@status</span></div>
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <div class="text-white-50 small">Category</div>
+                                                <div class="text-white">@Html.DisplayFor(m => m.Category)</div>
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <div class="text-white-50 small">Venue Type</div>
+                                                <div class="text-white">@(Model.Venue?.IsPublic == true ? "Public" : "Private")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Stats -->
+                        <div class="mt-4">
+                            <h5 class="text-white fw-bold mb-3"><i class="bi bi-bar-chart me-2"></i>Event Statistics</h5>
+                            <div class="row">
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="p-3 rounded text-center" style="background: rgba(106,13,173,0.1); border: 1px solid rgba(106,13,173,0.3);">
+                                        <div class="text-white fw-bold display-6">
+                                            @(Model.Attendees?.Count(a => a.Status == AttendanceStatus.Attending) ?? 0)
+                                        </div>
+                                        <div class="text-white-50 small">Attending</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="p-3 rounded text-center" style="background: rgba(138,43,226,0.1); border: 1px solid rgba(138,43,226,0.3);">
+                                        <div class="text-white fw-bold display-6">
+                                            @(Model.Attendees?.Count(a => a.Status == AttendanceStatus.Interested) ?? 0)
+                                        </div>
+                                        <div class="text-white-50 small">Interested</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    .badge {
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important;
+    }
+
+    .rounded-circle {
+        transition: transform 0.3s ease;
+    }
+
+        .rounded-circle:hover {
+            transform: scale(1.05);
+        }
+
+    h1, h2, h3, h4, h5, h6 {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
+        }
+
+    .bg-success {
+        background: rgba(40,167,69,0.2) !important;
+        border-color: rgba(40,167,69,0.3) !important;
+    }
+
+    .bg-info {
+        background: rgba(23,162,184,0.2) !important;
+        border-color: rgba(23,162,184,0.3) !important;
+    }
+
+    .bg-secondary {
+        background: rgba(108,117,125,0.2) !important;
+        border-color: rgba(108,117,125,0.3) !important;
+    }
+
+    .custom-select-trigger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important;
+    }
+
+    .custom-option:hover {
+        background: rgba(106,13,173,0.3) !important;
+        transform: translateX(5px);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attendance dropdown functionality
+            const attendanceTrigger = document.getElementById('attendanceTrigger');
+            const attendanceOptions = document.getElementById('attendanceOptions');
+            const attendanceDropdownArrow = document.getElementById('attendanceDropdownArrow');
+
+            if (attendanceTrigger && attendanceOptions) {
+                attendanceTrigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isOpen = attendanceOptions.style.display === 'block';
+
+                    if (isOpen) {
+                        attendanceOptions.style.display = 'none';
+                        attendanceDropdownArrow.className = 'bi bi-chevron-down text-white';
+                    } else {
+                        attendanceOptions.style.display = 'block';
+                        attendanceDropdownArrow.className = 'bi bi-chevron-up text-white';
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!attendanceTrigger.contains(e.target) && !attendanceOptions.contains(e.target)) {
+                        attendanceOptions.style.display = 'none';
+                        attendanceDropdownArrow.className = 'bi bi-chevron-down text-white';
+                    }
+                });
+            }
+
+            // Share button functionality
+            const shareButton = document.getElementById('shareButton');
+            if (shareButton) {
+                shareButton.addEventListener('click', function() {
+                    const eventTitle = '@Model.Title';
+                    const eventUrl = window.location.href;
+
+                    if (navigator.share) {
+                        navigator.share({
+                            title: eventTitle,
+                            text: 'Check out this event: ' + eventTitle,
+                            url: eventUrl
+                        }).then(() => {
+                            // Change button to show success
+                            const originalHTML = shareButton.innerHTML;
+                            shareButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>Shared!';
+                            shareButton.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+
+                            setTimeout(() => {
+                                shareButton.innerHTML = originalHTML;
+                                shareButton.style.background = 'rgba(255,255,255,0.1)';
+                            }, 2000);
+                        }).catch(console.error);
+                    } else {
+                        // Fallback: Copy to clipboard
+                        navigator.clipboard.writeText(eventUrl).then(() => {
+                            const originalHTML = shareButton.innerHTML;
+                            shareButton.innerHTML = '<i class="bi bi-clipboard-check me-2"></i>Copied!';
+                            shareButton.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+
+                            setTimeout(() => {
+                                shareButton.innerHTML = originalHTML;
+                                shareButton.style.background = 'rgba(255,255,255,0.1)';
+                            }, 2000);
+                        }).catch(console.error);
+                    }
+                });
+            }
+
+            // Countdown timer for upcoming events
+            const startDate = new Date('@Model.StartDate.ToString("o")');
+            const now = new Date();
+
+            if (startDate > now) {
+                const countdownElement = document.createElement('div');
+                countdownElement.className = 'mt-4 p-3 rounded text-center';
+                countdownElement.style.background = 'rgba(106,13,173,0.1)';
+                countdownElement.style.border = '1px solid rgba(106,13,173,0.3)';
+
+                const updateCountdown = () => {
+                    const timeDiff = startDate - new Date();
+                    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+                    if (timeDiff <= 0) {
+                        countdownElement.innerHTML = `
+                            <h5 class="text-white fw-bold mb-2"><i class="bi bi-play-circle me-2"></i>Event Started!</h5>
+                            <div class="text-white display-5 fw-bold">Event is now live</div>
+                            <div class="text-white-50 small mt-1">The event has begun</div>
+                        `;
+                        clearInterval(countdownInterval);
+                    } else {
+                        countdownElement.innerHTML = `
+                            <h5 class="text-white fw-bold mb-2"><i class="bi bi-clock-history me-2"></i>Event Starts In</h5>
+                            <div class="text-white display-5 fw-bold">${days}d ${hours}h ${minutes}m</div>
+                            <div class="text-white-50 small mt-1">Countdown to event start</div>
+                        `;
+                    }
+                };
+
+                updateCountdown();
+                const countdownInterval = setInterval(updateCountdown, 60000); // Update every minute
+
+                // Find a good place to insert the countdown
+                const scheduleSection = document.querySelector('.mb-5');
+                if (scheduleSection) {
+                    scheduleSection.parentNode.insertBefore(countdownElement, scheduleSection.nextSibling);
+                }
+            }
+        });
+
+                function updateAttendance(eventId, status) {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+            fetch(`/Events/UpdateAttendance?eventId=${eventId}&status=${status}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token  // This should work if using cookies
+                },
+                credentials: 'include'  // Important: include cookies
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to update attendance');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred');
+            });
+        }
+
+        function cancelAttendance(eventId) {
+            if (!confirm('Are you sure you want to cancel your RSVP?')) {
+                return;
+            }
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+            fetch(`/Events/CancelAttendance?eventId=${eventId}`, {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                credentials: 'include'  // Include cookies
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to cancel attendance');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred');
+            });
+        }
+    </script>
+}

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Blok34.Web.Controllers
@@ -91,6 +92,15 @@ namespace Blok34.Web.Controllers
         public IActionResult Edit(Guid id)
         {
             var venue = _venueService.GetVenueById(id);
+
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (venue.VenueManagerId != userId)
+            {
+                return Forbid();
+            }
+
             if (venue == null)
             {
                 return NotFound();
@@ -109,6 +119,16 @@ namespace Blok34.Web.Controllers
             {
                 return NotFound();
             }
+
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+            if (@venue.VenueManagerId != userId)
+            {
+                return Forbid();
+            }
+
 
             var existingVenue = _venueService.GetVenueById(id);
 
@@ -152,6 +172,14 @@ namespace Blok34.Web.Controllers
         public IActionResult Delete(Guid id)
         {
             var venue = _venueService.GetVenueById(id);
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (venue.VenueManagerId != userId)
+            {
+                return Forbid();
+            }
+
             if (venue == null)
             {
                 return NotFound();
@@ -166,6 +194,16 @@ namespace Blok34.Web.Controllers
         public IActionResult DeleteConfirmed(Guid id)
         {
             var venue = _venueService.GetVenueById(id);
+
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (venue.VenueManagerId != userId)
+            {
+                return Forbid();
+            }
+
+
 
             if (!string.IsNullOrEmpty(venue.BannerPath))
             {

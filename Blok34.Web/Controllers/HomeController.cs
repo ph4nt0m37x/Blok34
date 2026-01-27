@@ -10,11 +10,17 @@ namespace Blok34.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IWeatherService _weatherService;
+        private readonly IEventService _eventService;
+        private readonly IVenueService _venueService;
+        private readonly IEventAttendanceService _eventAttendanceService;
 
-        public HomeController(ILogger<HomeController> logger, IWeatherService weatherService)
+        public HomeController(ILogger<HomeController> logger, IWeatherService weatherService, IEventService eventService, IVenueService venueService, IEventAttendanceService eventAttendanceService)
         {
             _logger = logger;
             _weatherService = weatherService;
+            _eventService = eventService;
+            _venueService = venueService;
+            _eventAttendanceService = eventAttendanceService;
         }
 
         public IActionResult Index()
