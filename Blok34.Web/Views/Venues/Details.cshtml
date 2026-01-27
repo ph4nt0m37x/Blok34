@@ -238,6 +238,15 @@
                                       transition: all 0.2s ease;">
                             <i class="bi bi-pencil me-2"></i>Edit Venue
                         </a>
+
+                        <a asp-action="Delete" asp-route-id="@Model.Id"
+                           class="btn rounded-pill px-4 py-2 fw-medium"
+                           style="background: linear-gradient(135deg, #dc3545, #ff6b6b);
+                      border: none;
+                      color: white;
+                      transition: all 0.2s ease;">
+                            <i class="bi bi-trash me-2"></i>Delete Venue
+                        </a>
                     }
 
                     <a asp-action="Index"

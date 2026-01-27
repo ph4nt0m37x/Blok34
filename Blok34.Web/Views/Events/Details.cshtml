@@ -256,6 +256,14 @@
                                             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn py-2 text-white fw-medium rounded-pill" style="background: linear-gradient(135deg, #6a0dad, #8a2be2); border: none; transition: all 0.2s ease;">
                                                 <i class="bi bi-pencil-square me-2"></i>Edit Event
                                             </a>
+
+                                            <a asp-action="Delete" asp-route-id="@Model.Id" 
+                                               class="btn py-2 text-white fw-medium rounded-pill" 
+                                               style="background: linear-gradient(135deg, #dc3545, #ff6b6b); border: none; transition: all 0.2s ease;"
+                                               onclick="return confirmEventDelete()">
+                                                <i class="bi bi-trash me-2"></i>Delete Event
+                                            </a>
+
                                         }
                                         <button type="button" class="btn py-2 text-white fw-medium rounded-pill" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s ease;" id="shareButton">
                                             <i class="bi bi-share me-2"></i>Share Event
