@@ -279,22 +279,29 @@
                             border-radius: 16px;
                             border: 1px solid rgba(255,255,255,0.1);">
                     <div class="card-body p-4">
+                        @{
+                            var now = DateTime.UtcNow;
+
+                            var totalEvents = Model.Events?.Count() ?? 0;
+
+                            var upcomingEvents = Model.Events?.Count(e => e.StartDate > now) ?? 0;
+
+                            var pastEvents = Model.Events?.Count(e => e.EndDate.HasValue
+                            ? e.EndDate.Value < now
+                            : e.StartDate < now) ?? 0;
+                        }
                         <div class="row text-center">
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <div class="text-white fw-bold display-6">0</div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">@totalEvents</div>
                                 <small class="text-white-50">Total Events</small>
                             </div>
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <div class="text-white fw-bold display-6">0</div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">@upcomingEvents</div>
                                 <small class="text-white-50">Upcoming Events</small>
                             </div>
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <div class="text-white fw-bold display-6">0</div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">@pastEvents</div>
                                 <small class="text-white-50">Past Events</small>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="text-white fw-bold display-6">0</div>
-                                <small class="text-white-50">Active Bookings</small>
                             </div>
                         </div>
                     </div>

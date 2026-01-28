@@ -4,6 +4,7 @@ using Blok34.Service.Implementation;
 using Blok34.Service.Interface;
 using Blok34.Web.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -40,11 +41,21 @@ namespace Blok34.Web.Controllers
         // GET: Events/Details/5
         public IActionResult Details(Guid id)
         {
+
             var @event = _eventService.GetEventById(id);
             if (@event == null)
             {
                 return NotFound();
             }
+
+            if (!string.IsNullOrEmpty(@event.CreatedByUserId))
+            {
+                var creator = _userService.GetUserById(@event.CreatedByUserId);
+                ViewBag.CreatorName = creator?.Name ?? "Event Organizer";
+                ViewBag.CreatorUsername = creator?.UserName;
+                ViewBag.CreatorProfilePicture = creator?.AvatarPath;
+            }
+
 
             return View(@event);
         }

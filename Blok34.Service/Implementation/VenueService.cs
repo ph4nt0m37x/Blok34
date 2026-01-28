@@ -1,6 +1,7 @@
 ﻿using Blok34.Domain.DomainModels;
 using Blok34.Repository.Interface;
 using Blok34.Service.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,10 @@ namespace Blok34.Service.Implementation
         public Venue? GetVenueById(Guid id)
         {
             return _venueRepository.Get(
-                v => v,
-                v => v.Id == id
-            );
+            v => v,
+            v => v.Id == id,
+            include: q => q.Include(v => v.Events)
+    );
         }
         public List<Venue> SearchVenues(string query)
         {
