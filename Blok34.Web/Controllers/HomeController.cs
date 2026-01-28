@@ -28,12 +28,16 @@ namespace Blok34.Web.Controllers
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var weather = _weatherService.GetDailyWeather(41.9981, 21.4254);
+                var upcomingEvents = _eventService.GetAllUpcomingEvents();
+
+                ViewBag.UpcomingEvents = upcomingEvents;
+
                 return View("IndexLoggedIn", weather);
             }
 
             return View("Index");
-
         }
+
         [Authorize]
         public IActionResult Results(string query)
         {

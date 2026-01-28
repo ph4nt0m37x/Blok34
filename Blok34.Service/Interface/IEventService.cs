@@ -10,14 +10,12 @@ namespace Blok34.Service.Interface
     public interface IEventService
     {
         List<Event> GetAllEvents();
+        List<Event> GetAllUpcomingEvents();
         Event? GetEventById(Guid id);
-
         List<Event> SearchEvents(string query);
-
         Event Insert(Event e);
         Event Update(Event e);
         Event DeleteById(Guid id);
-
         List<Event> GetEventsByCreator(string userId);
     }
 }

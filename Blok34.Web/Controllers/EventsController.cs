@@ -191,7 +191,8 @@ namespace Blok34.Web.Controllers
             if (ModelState.IsValid)
             {
                 _eventService.Update(@event);
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Events", "Profile", new { id = userId });
             }
 
             var venues = _venueService.GetAllVenues()
@@ -239,7 +240,7 @@ namespace Blok34.Web.Controllers
 
             _eventService.DeleteById(id);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Events", "Profile", new { id = userId });
         }
 
     }

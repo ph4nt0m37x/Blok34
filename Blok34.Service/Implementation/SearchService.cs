@@ -38,10 +38,10 @@ namespace Blok34.Service.Implementation
                 Venues = _context.Venues
                     .Where(v =>
                         v.Name.ToLower().Contains(query) ||
-                        v.Description.ToLower().Contains(query) ||
                         v.Address.ToLower().Contains(query))
                     .ToList()
             };
         }
+
     }
 }

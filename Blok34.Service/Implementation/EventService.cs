@@ -22,17 +22,30 @@ namespace Blok34.Service.Implementation
         public List<Event> GetAllEvents()
         {
             return _eventRepository.GetAll(
-                e => e,
+                selector: e => e,
                 include: q => q.Include(e => e.Venue),
                 orderBy: q => q.OrderByDescending(e => e.StartDate)
+            ).ToList();
+        }
+
+        public List<Event> GetAllUpcomingEvents()
+        {
+            var now = DateTime.UtcNow;
+
+            return _eventRepository.GetAll(
+                selector: e => e,
+                predicate: e => e.StartDate >= now,
+                include: q => q.Include(e => e.Venue)
+                .Include(e => e.Attendees),
+                orderBy: q => q.OrderBy(e => e.StartDate)
             ).ToList();
         }
 
         public Event? GetEventById(Guid id)
         {
             return _eventRepository.Get(
-                e => e,
-                e => e.Id == id,
+                selector: e => e,
+                predicate: e => e.Id == id,
                 include: q => q.Include(e => e.Venue).Include(e => e.Attendees)
             );
         }
@@ -40,8 +53,8 @@ namespace Blok34.Service.Implementation
         public List<Event> SearchEvents(string query)
         {
             return _eventRepository.GetAll(
-                e => e,
-                e => e.Title.Contains(query) || e.Description.Contains(query),
+                selector: e => e,
+                predicate: e => e.Title.Contains(query) || e.Description.Contains(query),
                 orderBy: q => q.OrderByDescending(e => e.StartDate),
                 include: q => q.Include(e => e.Venue)
             ).ToList();
@@ -69,9 +82,8 @@ namespace Blok34.Service.Implementation
         public List<Event> GetEventsByCreator(string userId)
         {
             return _eventRepository.GetAll(
-                e => e,
-                e => e.CreatedByUserId == userId,
-                
+                selector: e => e,
+                predicate: e => e.CreatedByUserId == userId,
                 orderBy: q => q.OrderByDescending(e => e.StartDate),
                 include: q => q
             .Include(e => e.Venue)

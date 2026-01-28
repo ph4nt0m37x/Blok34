@@ -22,7 +22,7 @@ namespace Blok34.Service.Implementation
         public List<Venue> GetAllVenues()
         {
             return _venueRepository.GetAll(
-                v => v,
+               selector: v => v,
                 orderBy: q => q.OrderBy(v => v.Name)
             ).ToList();
         }
@@ -30,16 +30,16 @@ namespace Blok34.Service.Implementation
         public Venue? GetVenueById(Guid id)
         {
             return _venueRepository.Get(
-            v => v,
-            v => v.Id == id,
+           selector: v => v,
+           predicate: v => v.Id == id,
             include: q => q.Include(v => v.Events).ThenInclude(e => e.Attendees)
     );
         }
         public List<Venue> SearchVenues(string query)
         {
             return _venueRepository.GetAll(
-                v => v,
-                v => v.Name.Contains(query) || v.Address.Contains(query),
+               selector: v => v,
+              predicate:  v => v.Name.Contains(query) || v.Address.Contains(query),
                 orderBy: q => q.OrderBy(v => v.Name)
             ).ToList();
         }
@@ -67,7 +67,8 @@ namespace Blok34.Service.Implementation
         {
             return _venueRepository.GetAll(
                 v => v,
-                v => v.VenueManagerId == userId
+                v => v.VenueManagerId == userId,
+                include: q => q.Include(v => v.Events)
             ).ToList();
         }
     }

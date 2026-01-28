@@ -165,7 +165,7 @@ namespace Blok34.Web.Controllers
 
 
             _venueService.Update(venue);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Venues", "Profile", new { id = userId });
         }
 
         // GET: Venues/Delete/5
@@ -216,7 +216,7 @@ namespace Blok34.Web.Controllers
 
             _venueService.DeleteById(id);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Venues", "Profile", new { id = userId });
         }
     }
 }

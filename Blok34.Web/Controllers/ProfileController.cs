@@ -38,12 +38,13 @@ namespace Blok34.Web.Controllers
             return View(user);
         }
 
+        [Authorize]
         public IActionResult Events(string id)
         {
           
             return View(_eventService.GetEventsByCreator(id));
         }
-
+        [Authorize]
         public IActionResult Venues(string id)
         {
             return View(_venueService.GetVenuesByOwner(id));
