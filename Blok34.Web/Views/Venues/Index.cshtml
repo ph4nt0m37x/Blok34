@@ -185,6 +185,7 @@
                                            style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white;">
                                             <i class="bi bi-eye me-2"></i>View Details
                                         </a>
+                                        @if(venue.IsPublic){
                                         <a asp-controller="Events" asp-action="Create"
                                            asp-route-venueId="@venue.Id"
                                            class="btn rounded-pill px-3 py-2"
@@ -192,6 +193,7 @@
                                            title="Create Event at this Venue">
                                             <i class="bi bi-calendar-plus"></i>
                                         </a>
+                                        }
                                     </div>
                                 </div>
                             </div>
