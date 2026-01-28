@@ -32,7 +32,7 @@ namespace Blok34.Service.Implementation
             return _venueRepository.Get(
             v => v,
             v => v.Id == id,
-            include: q => q.Include(v => v.Events)
+            include: q => q.Include(v => v.Events).ThenInclude(e => e.Attendees)
     );
         }
         public List<Venue> SearchVenues(string query)

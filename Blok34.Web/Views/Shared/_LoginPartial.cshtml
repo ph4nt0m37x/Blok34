@@ -70,12 +70,21 @@
                     </a>
                 </li>
                 <li>
-                    <a class="dropdown-item d-flex align-items-center text-white py-2 px-3" asp-controller="Events" asp-action="Index">
+                    <a class="dropdown-item d-flex align-items-center text-white py-2 px-3" asp-controller="Profile" asp-route-id="@currentUser.Id" asp-action="Events">
                         <div class="me-2 d-flex align-items-center justify-content-center rounded"
                              style="width: 30px; height: 30px; background: rgba(255,255,255,0.1);">
                             <i class="bi bi-calendar-event" style="font-size: 0.9rem;"></i>
                         </div>
                         <span>My Events</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center text-white py-2 px-3" asp-controller="Profile" asp-route-id="@currentUser.Id" asp-action="Venues">
+                        <div class="me-2 d-flex align-items-center justify-content-center rounded"
+                             style="width: 30px; height: 30px; background: rgba(255,255,255,0.1);">
+                            <i class="bi bi-calendar-event" style="font-size: 0.9rem;"></i>
+                        </div>
+                        <span>My Venues</span>
                     </a>
                 </li>
                 <li>

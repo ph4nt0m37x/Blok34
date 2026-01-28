@@ -1,0 +1,410 @@
+﻿@using System.Security.Claims
+@model IEnumerable<Blok34.Domain.DomainModels.Event>
+
+@{
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var now = DateTime.UtcNow;
+    var totalEvents = Model?.Count() ?? 0;
+    var upcomingEvents = Model?.Count(e => e.StartDate > now) ?? 0;
+    var ongoingEvents = Model?.Count(e => e.StartDate <= now && (!e.EndDate.HasValue || e.EndDate.Value >= now)) ?? 0;
+    var pastEvents = Model?.Count(e => e.EndDate.HasValue ? e.EndDate.Value < now : e.StartDate < now) ?? 0;
+}
+
+<div class="d-flex align-items-center justify-content-center"
+     style="background: linear-gradient(135deg, #1e3c72, #6a0dad); min-height: 100vh; padding-top: 80px;">
+
+    <div class="container py-5">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <h2 class="text-white fw-bold mb-3">
+                <i class="bi bi-calendar-event me-2"></i>My Created Events
+            </h2>
+            <p class="text-white-50 lead">All events created by you</p>
+
+            <!-- Stats Section -->
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <div class="text-center">
+                    <div class="text-white fw-bold fs-4">@totalEvents</div>
+                    <div class="text-white-50 small">Total Events</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-white fw-bold fs-4">@upcomingEvents</div>
+                    <div class="text-white-50 small">Upcoming</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-white fw-bold fs-4">@ongoingEvents</div>
+                    <div class="text-white-50 small">Ongoing</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-white fw-bold fs-4">@pastEvents</div>
+                    <div class="text-white-50 small">Past</div>
+                </div>
+            </div>
+
+            <!-- Create New Event Button -->
+            <div class="mb-5">
+                <a asp-controller="Events" asp-action="Create"
+                   class="btn rounded-pill px-5 py-3 fw-bold btn-glow"
+                   style="background: linear-gradient(135deg, #8a2be2, #5D3FD3); color: white; border: none;">
+                    <i class="bi bi-plus-circle me-2"></i>Create New Event
+                </a>
+            </div>
+        </div>
+
+        <!-- No Events Message -->
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <div class="card border-0 shadow-lg mx-auto"
+                     style="max-width: 500px; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
+                    <div class="card-body py-5">
+                        <i class="bi bi-calendar-x display-1 text-white-50 mb-4"></i>
+                        <h4 class="text-white mb-3">No Events Created Yet</h4>
+                        <p class="text-white-50 mb-4">You haven't created any events. Start by creating your first event!</p>
+                        <a asp-controller="Events" asp-action="Create"
+                           class="btn rounded-pill px-4 py-2 fw-bold"
+                           style="background: linear-gradient(135deg, #6a0dad, #8a2be2); color: white;">
+                            <i class="bi bi-plus-circle me-2"></i>Create Your First Event
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Events Grid -->
+        @if (Model.Any())
+        {
+            <div class="mb-5">
+                <!-- Filter Tabs -->
+                <div class="d-flex justify-content-center mb-5">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-light rounded-pill me-2 active" data-filter="all">
+                            <i class="bi bi-grid me-2"></i>All Events (@totalEvents)
+                        </button>
+                        <button type="button" class="btn btn-outline-light rounded-pill me-2" data-filter="upcoming">
+                            <i class="bi bi-calendar-check me-2"></i>Upcoming (@upcomingEvents)
+                        </button>
+                        <button type="button" class="btn btn-outline-light rounded-pill me-2" data-filter="ongoing">
+                            <i class="bi bi-play-circle me-2"></i>Ongoing (@ongoingEvents)
+                        </button>
+                        <button type="button" class="btn btn-outline-light rounded-pill" data-filter="past">
+                            <i class="bi bi-clock-history me-2"></i>Past (@pastEvents)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-4 events-grid">
+                    @foreach (var ev in Model.OrderByDescending(e => e.StartDate))
+                    {
+                        var isPast = ev.EndDate.HasValue ? ev.EndDate.Value < now : ev.StartDate < now;
+                        var isUpcoming = ev.StartDate > now;
+                        var isOngoing = ev.StartDate <= now && (!ev.EndDate.HasValue || ev.EndDate.Value >= now);
+
+                        var eventClass = isPast ? "past" : isUpcoming ? "upcoming" : "ongoing";
+                        var attendingCount = ev.Attendees.Count;
+
+                        <div class="col-md-6 col-lg-4 col-xl-3 event-card @eventClass">
+                            <div class="card h-100 border-0 shadow-lg"
+                                 style="background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border-radius: 15px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden;">
+
+                                <!-- Event Banner -->
+                                <div class="position-relative">
+                                    @if (!string.IsNullOrEmpty(ev.Venue.BannerPath))
+                                    {
+                                        <img src="@ev.Venue.BannerPath" class="card-img-top" alt="@ev.Title" style="height: 180px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="card-img-top" style="height: 180px; background: linear-gradient(135deg, #8a2be2, #5D3FD3);"></div>
+                                    }
+
+                                    <!-- Event Status Badge -->
+                                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                                        @if (isPast)
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background: rgba(108, 117, 125, 0.3); border: 1px solid rgba(108, 117, 125, 0.5); color: white;">
+                                                <i class="bi bi-clock-history me-1"></i>Past
+                                            </span>
+                                        }
+                                        else if (isOngoing)
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background: rgba(25, 135, 84, 0.3); border: 1px solid rgba(25, 135, 84, 0.5); color: white;">
+                                                <i class="bi bi-play-circle me-1"></i>Ongoing
+                                            </span>
+                                        }
+                                        else if (isUpcoming)
+                                        {
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                  style="background: rgba(13, 110, 253, 0.3); border: 1px solid rgba(13, 110, 253, 0.5); color: white;">
+                                                <i class="bi bi-calendar-check me-1"></i>Upcoming
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="card-body p-4">
+                                    <!-- Event Title -->
+                                    <h5 class="card-title text-white mb-2">@ev.Title</h5>
+
+                                    <!-- Event Description -->
+                                    @if (!string.IsNullOrEmpty(ev.Description))
+                                    {
+                                        <p class="text-white-50 small mb-3">
+                                            @(ev.Description.Length > 100 ? ev.Description.Substring(0, 100) + "..." : ev.Description)
+                                        </p>
+                                    }
+
+                                    <!-- Event Details -->
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center text-white-50 mb-2">
+                                            <div class="me-3" style="width: 24px; height: 24px; background: rgba(106, 13, 173, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-calendar text-white" style="font-size: 0.8rem;"></i>
+                                            </div>
+                                            <small>@ev.StartDate.ToString("MMM dd, yyyy")</small>
+                                        </div>
+
+                                        <div class="d-flex align-items-center text-white-50 mb-2">
+                                            <div class="me-3" style="width: 24px; height: 24px; background: rgba(138, 43, 226, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-clock text-white" style="font-size: 0.8rem;"></i>
+                                            </div>
+                                            <small>@ev.StartDate.ToString("hh:mm tt")</small>
+                                        </div>
+
+                                        @if (ev.Venue != null)
+                                        {
+                                            <div class="d-flex align-items-center text-white-50 mb-2">
+                                                <div class="me-3" style="width: 24px; height: 24px; background: rgba(93, 63, 211, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-geo-alt text-white" style="font-size: 0.8rem;"></i>
+                                                </div>
+                                                <small>@ev.Venue.Name</small>
+                                            </div>
+                                        }
+
+                                        <div class="d-flex align-items-center text-white-50">
+                                            <div class="me-3" style="width: 24px; height: 24px; background: rgba(75, 0, 130, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-people text-white" style="font-size: 0.8rem;"></i>
+                                            </div>
+                                            <small>@attendingCount attending</small>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="d-flex gap-2">
+                                        <a asp-controller="Events" asp-action="Details" asp-route-id="@ev.Id"
+                                           class="btn btn-sm flex-fill rounded-pill py-2"
+                                           style="background: rgba(138, 43, 226, 0.2); border: 1px solid rgba(138, 43, 226, 0.5); color: white;">
+                                            <i class="bi bi-eye me-2"></i>View Details
+                                        </a>
+
+
+                                        @{
+                                            var isEditable = !isPast && !isOngoing;
+                                        }
+
+                                        @if (isEditable)
+                                        {
+                                            <a asp-controller="Events" asp-action="Edit" asp-route-id="@ev.Id"
+                                               class="btn btn-sm rounded-pill py-2"
+                                               style="width: 40px; background: rgba(255, 193, 7, 0.2); border: 1px solid rgba(255, 193, 7, 0.5); color: white;"
+                                               title="Edit Event">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <!-- Optional: Show disabled button or tooltip -->
+                                            <button class="btn btn-sm rounded-pill py-2"
+                                                    style="width: 40px; background: rgba(108, 117, 125, 0.2); border: 1px solid rgba(108, 117, 125, 0.5); color: #adb5bd; cursor: not-allowed;"
+                                                    title="@(isPast ? "Cannot edit past events" : "Cannot edit ongoing events")"
+                                                    disabled>
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Event Footer -->
+                                <div class="card-footer bg-transparent border-top-0 pt-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-white-50">
+                                            <i class="bi bi-tag me-1"></i>
+                                            @ev.Category
+                                        </small>
+                                        <small class="text-white-50">
+                                            <i class="bi bi-person-circle me-1"></i>
+                                            Created by you
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Back Button -->
+        <div class="text-center mt-5 py-4">
+            <a href="javascript:history.back()" class="btn btn-lg rounded-pill px-5 py-3 fw-bold"
+               style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white;">
+                <i class="bi bi-arrow-left me-2"></i>Back
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3) !important;
+            border-color: rgba(138, 43, 226, 0.3) !important;
+        }
+
+    .btn-group .btn.active {
+        background: linear-gradient(135deg, #8a2be2, #5D3FD3) !important;
+        border-color: #8a2be2 !important;
+    }
+
+    .btn-outline-light:hover {
+        background: rgba(255,255,255,0.1) !important;
+    }
+
+    .btn-glow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
+        transition: all 0.2s ease;
+    }
+
+    /* Filtering Animation */
+    .event-card {
+        transition: all 0.3s ease;
+    }
+
+        /* Status-specific styles */
+        .event-card.upcoming .card {
+            border-left: 4px solid rgba(13, 110, 253, 0.5) !important;
+        }
+
+        .event-card.ongoing .card {
+            border-left: 4px solid rgba(25, 135, 84, 0.5) !important;
+        }
+
+        .event-card.past .card {
+            border-left: 4px solid rgba(108, 117, 125, 0.5) !important;
+        }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #6a0dad, #8a2be2);
+        border-radius: 5px;
+    }
+
+    /* Responsive adjustments */
+    @* @media (max-width: 768px) {
+        .btn-group
+
+    {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+        flex: 1 0 auto;
+        min-width: 120px;
+    }
+
+    } *@
+</style>
+
+<!-- Script for filtering and animations -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize filter buttons
+        const filterButtons = document.querySelectorAll('[data-filter]');
+        const eventCards = document.querySelectorAll('.event-card');
+
+        // Add fade-in animation to cards
+        eventCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Filter functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                const filter = this.getAttribute('data-filter');
+
+                // Filter cards
+                eventCards.forEach(card => {
+                    if (filter === 'all' || card.classList.contains(filter)) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Add hover effects to cards
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 15px 30px rgba(0,0,0,0.3)';
+                this.style.borderColor = 'rgba(138, 43, 226, 0.3)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 0 15px rgba(0,0,0,0.1)';
+                this.style.borderColor = 'rgba(255,255,255,0.15)';
+            });
+        });
+
+        // Add tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+
+    });
+</script>

@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Venue Details";
     var isCurrentUserManager = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.VenueManagerId;
+    var now = DateTime.UtcNow;
 }
 
 <div class="venue-details-page" style="min-height: 100vh; background: linear-gradient(135deg, #1e3c72, #6a0dad);">
@@ -11,12 +12,12 @@
     <div class="venue-banner position-relative"
          style="height: 400px; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)),
          @if (!string.IsNullOrEmpty(Model.BannerPath))
-        {
-                        <text>url('@Model.BannerPath')</text>
+         {
+                            <text>url('@Model.BannerPath')</text>
                 }
                 else
                 {
-                        <text>linear-gradient(135deg, #6a0dad, #8a2be2)</text>
+                            <text>linear-gradient(135deg, #6a0dad, #8a2be2)</text>
                 }
 ;
                 background-size: cover;
@@ -45,31 +46,31 @@
                     <div class="d-flex justify-content-center">
                         @if (Model.IsPublic)
                         {
-                                <div class="badge px-3 py-2 rounded-pill me-2"
-                                     style="background: rgba(25, 135, 84, 0.3);
-                                            border: 1px solid rgba(25, 135, 84, 0.5);">
-                                    <i class="bi bi-eye me-1"></i>
-                                    <span class="text-white fw-medium">Public Venue</span>
-                                </div>
+                                    <div class="badge px-3 py-2 rounded-pill me-2"
+                                         style="background: rgba(25, 135, 84, 0.3);
+                                                border: 1px solid rgba(25, 135, 84, 0.5);">
+                                        <i class="bi bi-eye me-1"></i>
+                                        <span class="text-white fw-medium">Public Venue</span>
+                                    </div>
                         }
                         else
                         {
-                                <div class="badge px-3 py-2 rounded-pill me-2"
-                                     style="background: rgba(13, 110, 253, 0.3);
-                                            border: 1px solid rgba(13, 110, 253, 0.5);">
-                                    <i class="bi bi-shield-lock me-1"></i>
-                                    <span class="text-white fw-medium">Private Venue</span>
-                                </div>
+                                    <div class="badge px-3 py-2 rounded-pill me-2"
+                                         style="background: rgba(13, 110, 253, 0.3);
+                                                border: 1px solid rgba(13, 110, 253, 0.5);">
+                                        <i class="bi bi-shield-lock me-1"></i>
+                                        <span class="text-white fw-medium">Private Venue</span>
+                                    </div>
                         }
 
                         @if (isCurrentUserManager)
                         {
-                                <div class="badge px-3 py-2 rounded-pill"
-                                     style="background: rgba(255, 193, 7, 0.3);
-                                            border: 1px solid rgba(255, 193, 7, 0.5);">
-                                    <i class="bi bi-person-badge me-1"></i>
-                                    <span class="text-white fw-medium">Venue Manager</span>
-                                </div>
+                                    <div class="badge px-3 py-2 rounded-pill"
+                                         style="background: rgba(255, 193, 7, 0.3);
+                                                border: 1px solid rgba(255, 193, 7, 0.5);">
+                                        <i class="bi bi-person-badge me-1"></i>
+                                        <span class="text-white fw-medium">Venue Manager</span>
+                                    </div>
                         }
                     </div>
                 </div>
@@ -193,7 +194,7 @@
                                     <div class="mb-4">
                                         <small class="text-white-50 d-block mb-1">Availability</small>
                                         <div class="d-flex align-items-center">
-                                            
+
                                             @if (Model.IsPublic)
                                             {
                                                 <i class="bi bi-calendar-check text-success me-2"></i>
@@ -226,12 +227,218 @@
                     </div>
                 </div>
 
+                <!-- Events Section -->
+                <div class="card border-0 shadow mb-5"
+                     style="background: rgba(255,255,255,0.07);
+                            backdrop-filter: blur(12px);
+                            border-radius: 20px;
+                            border: 1px solid rgba(255,255,255,0.15);">
+                    <div class="card-body p-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="text-white fw-bold mb-0">
+                                <i class="bi bi-calendar-event me-2 text-warning"></i>Events at This Venue
+                            </h4>
+                            <span class="badge px-3 py-2 rounded-pill"
+                                  style="background: rgba(106, 13, 173, 0.3);
+                                         border: 1px solid rgba(138, 43, 226, 0.5);
+                                         color: white;">
+                                @(Model.Events?.Count() ?? 0) Events
+                            </span>
+                        </div>
+
+                        @if (Model.Events != null && Model.Events.Any())
+                        {
+                            <div class="row">
+                                @foreach (var ev in Model.Events.OrderByDescending(e => e.StartDate))
+                                {
+                                    var isPast = ev.EndDate.HasValue ? ev.EndDate.Value < now : ev.StartDate < now;
+                                    var isUpcoming = ev.StartDate > now;
+                                    var isOngoing = ev.StartDate <= now && (!ev.EndDate.HasValue || ev.EndDate.Value >= now);
+
+                                    <div class="col-lg-6 col-md-12 mb-4">
+                                        <div class="event-card rounded p-4 h-100 position-relative"
+                                             style="background: rgba(255,255,255,0.05);
+                                                            border: 1px solid rgba(255,255,255,0.1);
+                                                            transition: all 0.3s ease;">
+
+                                            <!-- Event Status Badge -->
+                                            <div class="position-absolute top-0 end-0 mt-3 me-3">
+                                                @if (isPast)
+                                                {
+                                                    <span class="badge px-3 py-2 rounded-pill"
+                                                          style="background: rgba(108, 117, 125, 0.3);
+                                                                             border: 1px solid rgba(108, 117, 125, 0.5);
+                                                                             color: white;">
+                                                        <i class="bi bi-clock-history me-1"></i>Past
+                                                    </span>
+                                                }
+                                                else if (isOngoing)
+                                                {
+                                                    <span class="badge px-3 py-2 rounded-pill"
+                                                          style="background: rgba(25, 135, 84, 0.3);
+                                                                             border: 1px solid rgba(25, 135, 84, 0.5);
+                                                                             color: white;">
+                                                        <i class="bi bi-play-circle me-1"></i>Ongoing
+                                                    </span>
+                                                }
+                                                else if (isUpcoming)
+                                                {
+                                                    <span class="badge px-3 py-2 rounded-pill"
+                                                          style="background: rgba(13, 110, 253, 0.3);
+                                                                             border: 1px solid rgba(13, 110, 253, 0.5);
+                                                                             color: white;">
+                                                        <i class="bi bi-calendar-check me-1"></i>Upcoming
+                                                    </span>
+                                                }
+                                            </div>
+
+                                            <!-- Event Title -->
+                                            <h5 class="text-white fw-bold mb-3">@ev.Title</h5>
+
+                                            <!-- Event Description -->
+                                            <p class="text-white-50 mb-4" style="font-size: 0.9rem; line-height: 1.5;">
+                                                @if (!string.IsNullOrEmpty(ev.Description) && ev.Description.Length > 150)
+                                                {
+                                                    @ev.Description.Substring(0, 150)
+                                                    <text>...</text>
+                                                }
+                                                else if (!string.IsNullOrEmpty(ev.Description))
+                                                {
+                                                    @ev.Description
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-white-50">No description available</span>
+                                                }
+                                            </p>
+
+                                            <!-- Event Details -->
+                                            <div class="mb-4">
+                                                <div class="row g-3">
+                                                    <div class="col-6">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="me-2" style="width: 30px; height: 30px; background: rgba(106, 13, 173, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                                <i class="bi bi-calendar text-white" style="font-size: 0.8rem;"></i>
+                                                            </div>
+                                                            <div>
+                                                                <small class="text-white-50 d-block">Start Date</small>
+                                                                <span class="text-white fw-medium" style="font-size: 0.9rem;">
+                                                                    @ev.StartDate.ToString("MMM dd, yyyy")
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="me-2" style="width: 30px; height: 30px; background: rgba(138, 43, 226, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                                <i class="bi bi-clock text-white" style="font-size: 0.8rem;"></i>
+                                                            </div>
+                                                            <div>
+                                                                <small class="text-white-50 d-block">Start Time</small>
+                                                                <span class="text-white fw-medium" style="font-size: 0.9rem;">
+                                                                    @ev.StartDate.ToString("hh:mm tt")
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Event Type and Capacity -->
+                                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-people me-2 text-info"></i>
+                                                    <small class="text-white-50">@ev.Attendees?.Count Interested</small>
+                                                    
+                                                </div>
+                                                <div class="badge px-3 py-1 rounded-pill"
+                                                     style="background: rgba(255,255,255,0.1); color: white;">
+                                                    @Html.DisplayFor(m => ev.Category)
+                                                </div>
+                                            </div>
+
+                                            <!-- Action Button -->
+                                            <div class="d-grid">
+                                                <a href="@Url.Action("Details", "Events", new { id = ev.Id })"
+                                                   class="btn rounded-pill py-2 fw-medium"
+                                                   style="background: linear-gradient(135deg, #6a0dad, #8a2be2);
+                                                                  border: none;
+                                                                  color: white;
+                                                                  transition: all 0.2s ease;">
+                                                    <i class="bi bi-eye me-2"></i>View Event Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-calendar-x display-4 text-white-50"></i>
+                                </div>
+                                <h5 class="text-white mb-3">No Events Found</h5>
+                                <p class="text-white-50 mb-4">This venue doesn't have any events scheduled yet.</p>
+                                @if (isCurrentUserManager || Model.IsPublic)
+                                {
+                                    <a href="#" class="btn rounded-pill px-4 py-2 fw-medium"
+                                       style="background: linear-gradient(135deg, #6a0dad, #8a2be2);
+                                                      border: none;
+                                                      color: white;">
+                                        <i class="bi bi-plus-circle me-2"></i>Create First Event
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Stats Card -->
+                @{
+                    var totalEvents = Model.Events?.Count() ?? 0;
+                    var pastEvents = Model.Events?.Count(e => e.EndDate.HasValue ? e.EndDate.Value < now : e.StartDate < now) ?? 0;
+                    var upcomingEvents = Model.Events?.Count(e => e.StartDate > now) ?? 0;
+                    var ongoingEvents = Model.Events?.Count(e => e.StartDate <= now && (!e.EndDate.HasValue || e.EndDate.Value >= now)) ?? 0;
+                }
+
+                <div class="card border-0 shadow mb-5"
+                     style="background: rgba(255,255,255,0.05);
+                            backdrop-filter: blur(12px);
+                            border-radius: 16px;
+                            border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="card-body p-4">
+                        <h5 class="text-white fw-bold mb-4 text-center">
+                            <i class="bi bi-graph-up me-2 text-success"></i>Event Statistics
+                        </h5>
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">@totalEvents</div>
+                                <small class="text-white-50">Total Events</small>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">@upcomingEvents</div>
+                                <small class="text-white-50">Upcoming Events</small>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">@ongoingEvents</div>
+                                <small class="text-white-50">Ongoing Events</small>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <div class="text-white fw-bold display-6">@pastEvents</div>
+                                <small class="text-white-50">Past Events</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
-                <div class="d-flex justify-content-center gap-3 mb-5">
+                <div class="d-flex justify-content-center gap-3 mb-5 flex-wrap">
                     @if (isCurrentUserManager)
                     {
                         <a asp-action="Edit" asp-route-id="@Model.Id"
-                           class="btn rounded-pill px-4 py-2 fw-medium"
+                           class="btn rounded-pill px-4 py-2 fw-medium mb-2"
                            style="background: linear-gradient(135deg, #6a0dad, #8a2be2);
                                       border: none;
                                       color: white;
@@ -240,17 +447,17 @@
                         </a>
 
                         <a asp-action="Delete" asp-route-id="@Model.Id"
-                           class="btn rounded-pill px-4 py-2 fw-medium"
+                           class="btn rounded-pill px-4 py-2 fw-medium mb-2"
                            style="background: linear-gradient(135deg, #dc3545, #ff6b6b);
-                      border: none;
-                      color: white;
-                      transition: all 0.2s ease;">
+                                      border: none;
+                                      color: white;
+                                      transition: all 0.2s ease;">
                             <i class="bi bi-trash me-2"></i>Delete Venue
                         </a>
                     }
 
                     <a asp-action="Index"
-                       class="btn rounded-pill px-4 py-2 fw-medium"
+                       class="btn rounded-pill px-4 py-2 fw-medium mb-2"
                        style="background: rgba(255,255,255,0.1);
                               border: 1px solid rgba(255,255,255,0.3);
                               color: white;
@@ -258,11 +465,11 @@
                         <i class="bi bi-arrow-left me-2"></i>Back to Venues
                     </a>
 
-                    <!-- Optional: Create Event Button -->
+                    <!-- Create Event Button -->
                     @if (Model.IsPublic || isCurrentUserManager)
                     {
                         <a href="#"
-                           class="btn rounded-pill px-4 py-2 fw-medium"
+                           class="btn rounded-pill px-4 py-2 fw-medium mb-2"
                            style="background: rgba(25, 135, 84, 0.2);
                                       border: 1px solid rgba(25, 135, 84, 0.4);
                                       color: white;
@@ -270,41 +477,6 @@
                             <i class="bi bi-plus-circle me-2"></i>Create Event Here
                         </a>
                     }
-                </div>
-
-                <!-- Stats Card (Optional) -->
-                <div class="card border-0 shadow"
-                     style="background: rgba(255,255,255,0.05);
-                            backdrop-filter: blur(12px);
-                            border-radius: 16px;
-                            border: 1px solid rgba(255,255,255,0.1);">
-                    <div class="card-body p-4">
-                        @{
-                            var now = DateTime.UtcNow;
-
-                            var totalEvents = Model.Events?.Count() ?? 0;
-
-                            var upcomingEvents = Model.Events?.Count(e => e.StartDate > now) ?? 0;
-
-                            var pastEvents = Model.Events?.Count(e => e.EndDate.HasValue
-                            ? e.EndDate.Value < now
-                            : e.StartDate < now) ?? 0;
-                        }
-                        <div class="row text-center">
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <div class="text-white fw-bold display-6">@totalEvents</div>
-                                <small class="text-white-50">Total Events</small>
-                            </div>
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <div class="text-white fw-bold display-6">@upcomingEvents</div>
-                                <small class="text-white-50">Upcoming Events</small>
-                            </div>
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <div class="text-white fw-bold display-6">@pastEvents</div>
-                                <small class="text-white-50">Past Events</small>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -332,6 +504,18 @@
             transform: scale(1.1);
         }
 
+    /* Event card hover effects */
+    .event-card {
+        transition: all 0.3s ease;
+    }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-color: rgba(138, 43, 226, 0.4) !important;
+            background: rgba(255,255,255,0.08) !important;
+        }
+
     /* Smooth transitions */
     .venue-banner {
         transition: background-image 0.5s ease;
@@ -352,6 +536,15 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
+    /* Event status indicator */
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
     /* Responsive banner height */
     .venue-banner {
         height: 400px;
@@ -365,6 +558,16 @@
     .mobile-banner-text {
         font-size: 2.5rem;
     }
+
+    @* /* Event card responsive adjustments */
+    @media (max-width: 768px) {
+        .event-card
+
+    {
+        margin-bottom: 1rem;
+    }
+
+    } *@
 </style>
 
 <script>
@@ -391,6 +594,24 @@
                 setTimeout(() => {
                     this.style.transform = 'translateY(-2px)';
                 }, 150);
+            });
+        });
+
+        // Add hover effects to event cards
+        const eventCards = document.querySelectorAll('.event-card');
+        eventCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+                this.style.borderColor = 'rgba(138, 43, 226, 0.4)';
+                this.style.background = 'rgba(255,255,255,0.08)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+                this.style.borderColor = 'rgba(255,255,255,0.1)';
+                this.style.background = 'rgba(255,255,255,0.05)';
             });
         });
 

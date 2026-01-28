@@ -71,7 +71,11 @@ namespace Blok34.Service.Implementation
             return _eventRepository.GetAll(
                 e => e,
                 e => e.CreatedByUserId == userId,
-                orderBy: q => q.OrderByDescending(e => e.StartDate)
+                
+                orderBy: q => q.OrderByDescending(e => e.StartDate),
+                include: q => q
+            .Include(e => e.Venue)
+            .Include(e => e.Attendees)
             ).ToList();
         }
     }
