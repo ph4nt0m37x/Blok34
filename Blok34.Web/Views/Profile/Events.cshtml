@@ -198,30 +198,40 @@
                                             <i class="bi bi-eye me-2"></i>View Details
                                         </a>
 
+                                        <!-- Edit and Delete Buttons Container -->
+                                        <div class="d-flex gap-1">
+                                            @{
+                                                var isEditable = !isPast && !isOngoing;
+                                            }
 
-                                        @{
-                                            var isEditable = !isPast && !isOngoing;
-                                        }
+                                            @if (isEditable)
+                                            {
+                                                <a asp-controller="Events" asp-action="Edit" asp-route-id="@ev.Id"
+                                                   class="btn btn-sm rounded-pill py-2 edit-btn"
+                                                   style="width: 40px; background: rgba(255, 193, 7, 0.2); border: 1px solid rgba(255, 193, 7, 0.5); color: white;"
+                                                   title="Edit Event">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <!-- Disabled Edit Button -->
+                                                <button class="btn btn-sm rounded-pill py-2"
+                                                        style="width: 40px; background: rgba(108, 117, 125, 0.2); border: 1px solid rgba(108, 117, 125, 0.5); color: #adb5bd; cursor: not-allowed;"
+                                                        title="@(isPast ? "Cannot edit past events" : "Cannot edit ongoing events")"
+                                                        disabled>
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                            }
 
-                                        @if (isEditable)
-                                        {
-                                            <a asp-controller="Events" asp-action="Edit" asp-route-id="@ev.Id"
-                                               class="btn btn-sm rounded-pill py-2"
-                                               style="width: 40px; background: rgba(255, 193, 7, 0.2); border: 1px solid rgba(255, 193, 7, 0.5); color: white;"
-                                               title="Edit Event">
-                                                <i class="bi bi-pencil"></i>
+                                            <!-- Delete Button - Direct link to your existing Delete action -->
+                                            <a asp-controller="Events" asp-action="Delete" asp-route-id="@ev.Id"
+                                               class="btn btn-sm rounded-pill py-2 delete-btn"
+                                               style="width: 40px; background: rgba(220, 53, 69, 0.2); border: 1px solid rgba(220, 53, 69, 0.5); color: white;"
+                                               title="Delete Event">
+                                                <i class="bi bi-trash"></i>
                                             </a>
-                                        }
-                                        else
-                                        {
-                                            <!-- Optional: Show disabled button or tooltip -->
-                                            <button class="btn btn-sm rounded-pill py-2"
-                                                    style="width: 40px; background: rgba(108, 117, 125, 0.2); border: 1px solid rgba(108, 117, 125, 0.5); color: #adb5bd; cursor: not-allowed;"
-                                                    title="@(isPast ? "Cannot edit past events" : "Cannot edit ongoing events")"
-                                                    disabled>
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                        }
+                                        </div>
                                     </div>
                                 </div>
 
@@ -286,6 +296,17 @@
         transition: all 0.2s ease;
     }
 
+    /* Button hover effects */
+    .edit-btn:hover {
+        background: rgba(255, 193, 7, 0.4) !important;
+        transform: translateY(-2px);
+    }
+
+    .delete-btn:hover {
+        background: rgba(220, 53, 69, 0.4) !important;
+        transform: translateY(-2px);
+    }
+
     /* Filtering Animation */
     .event-card {
         transition: all 0.3s ease;
@@ -319,21 +340,28 @@
     }
 
     /* Responsive adjustments */
-    @* @media (max-width: 768px) {
-        .btn-group
+    @@media (max-width: 768px) {
+        .d-flex.gap-2
 
     {
         flex-wrap: wrap;
+    }
+
+    .d-flex.gap-1 {
+        flex-wrap: nowrap;
+    }
+
+    .btn-sm.flex-fill {
+        flex: 1 0 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .d-flex.gap-1 {
+        width: 100%;
         justify-content: center;
     }
 
-    .btn-group .btn {
-        margin-bottom: 0.5rem;
-        flex: 1 0 auto;
-        min-width: 120px;
     }
-
-    } *@
 </style>
 
 <!-- Script for filtering and animations -->
@@ -399,12 +427,35 @@
             });
         });
 
-        // Add tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
+        // Initialize tooltips
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+
+        // Add button hover animations
+        const editButtons = document.querySelectorAll('.edit-btn');
+        editButtons.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
         });
 
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
 
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
     });
 </script>

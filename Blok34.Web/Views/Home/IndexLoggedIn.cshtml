@@ -84,6 +84,7 @@
                                            placeholder="Search events, venues, users..."
                                            style="border-color: rgba(255,255,255,0.3); padding-left: 20px;"
                                            required>
+                                           <span class="px-3"></span>
                                     <button type="submit"
                                             class="btn rounded-pill px-4"
                                             style="background: linear-gradient(135deg, #8a2be2, #5D3FD3); border: none; margin-left: -15px;">
@@ -327,7 +328,7 @@
                                             <div class="row g-3 mb-4">
                                                 @if (ev.Venue != null)
                                                 {
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <div class="d-flex align-items-center">
                                                             <div class="me-3" style="width: 32px; height: 32px; background: rgba(138, 43, 226, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                                                 <i class="bi bi-geo-alt text-white"></i>
@@ -340,7 +341,7 @@
                                                     </div>
                                                 }
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="d-flex align-items-center">
                                                         <div class="me-3" style="width: 32px; height: 32px; background: rgba(13, 110, 253, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                                             <i class="bi bi-people text-white"></i>
@@ -352,7 +353,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="d-flex align-items-center">
                                                         <div class="me-3" style="width: 32px; height: 32px; background: rgba(25, 135, 84, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                                             <i class="bi bi-tag text-white"></i>
@@ -360,14 +361,6 @@
                                                         <div>
                                                             <div class="text-white-50 small">Category</div>
                                                             <div class="text-white fw-medium">@Html.DisplayFor(modelItem => ev.Category)</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="me-3" style="width: 32px; height: 32px; background: rgba(255, 193, 7, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                            <i class="bi bi-person-circle text-white"></i>
                                                         </div>
                                                     </div>
                                                 </div>

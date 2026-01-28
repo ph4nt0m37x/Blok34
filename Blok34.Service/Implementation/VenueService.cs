@@ -71,5 +71,6 @@ namespace Blok34.Service.Implementation
                 include: q => q.Include(v => v.Events)
             ).ToList();
         }
+
     }
 }

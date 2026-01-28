@@ -33,9 +33,38 @@ namespace Blok34.Web.Controllers
         }
 
         // GET: Events
-        public IActionResult Index()
+        // Update your Index action in EventsController
+        public IActionResult Index(string searchQuery, string eventStatus)
         {
-            return View(_eventService.GetAllEvents());
+            var events = _eventService.GetAllEvents();
+
+            // Apply search if provided
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                events = _eventService.SearchEvents(searchQuery);
+            }
+
+            // Apply event status filter if provided
+            if (!string.IsNullOrEmpty(eventStatus))
+            {
+                var now = DateTime.UtcNow;
+
+                switch (eventStatus.ToLower())
+                {
+                    case "upcoming":
+                        events = events.Where(e => e.StartDate > now).ToList();
+                        break;
+                    case "ongoing":
+                        events = events.Where(e => e.StartDate <= now &&
+                                                 (!e.EndDate.HasValue || e.EndDate.Value >= now)).ToList();
+                        break;
+                    case "past":
+                        events = events.Where(e => e.EndDate.HasValue && e.EndDate.Value < now).ToList();
+                        break;
+                }
+            }
+
+            return View(events);
         }
 
         // GET: Events/Details/5

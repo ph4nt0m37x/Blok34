@@ -27,9 +27,41 @@ namespace Blok34.Web.Controllers
         }
 
         // GET: Venues
-        public IActionResult Index()
+        public IActionResult Index(string searchQuery, string venueType)
         {
-            return View(_venueService.GetAllVenues());
+            var venues = _venueService.GetAllVenues();
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                venues = _venueService.SearchVenues(searchQuery);
+            }
+
+
+
+            if (!string.IsNullOrEmpty(venueType))
+            {
+                if (venueType.ToLower() == "public")
+                {
+                    venues = venues.Where(v => v.IsPublic).ToList();
+                }
+                else if (venueType.ToLower() == "private")
+                {
+                    venues = venues.Where(v => !v.IsPublic).ToList();
+                }
+            }
+
+
+            return View(venues);
+        }
+        public IActionResult Search(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var venues = _venueService.SearchVenues(query);
+            return View("Index", venues);
         }
 
         // GET: Venues/Details/5

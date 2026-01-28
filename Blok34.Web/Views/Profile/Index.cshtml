@@ -1,28 +1,502 @@
-﻿@model Blok34.Domain.Identity.ApplicationUser
+﻿@using Blok34.Domain.DomainModels
+@model Blok34.Domain.Identity.ApplicationUser
 
-<div class="container mt-5">
-    <div class="text-center">
+@{
+    var createdEvents = ViewBag.CreatedEvents as List<Event> ?? new();
+    var attendingEvents = ViewBag.AttendingEvents as List<Event> ?? new();
+    var interestedEvents = ViewBag.InterestedEvents as List<Event> ?? new();
+}
 
-        <div class="mx-auto rounded-circle d-flex align-items-center justify-content-center overflow-hidden mb-3"
-             style="width: 120px; height: 120px; background: linear-gradient(135deg, #8a2be2, #5D3FD3);">
+<div class="d-flex align-items-start justify-content-start" style="min-height: 100vh; padding-top: 2rem; padding-bottom: 3rem;">
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="card border-0 shadow mb-4" style="border-radius: 20px; overflow: hidden; background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15);">
+            <div class="card-body p-5" style="background: linear-gradient(135deg, rgba(106,13,173,0.2), rgba(138,43,226,0.15)); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div class="row align-items-center">
+                    <!-- Avatar -->
+                    <div class="col-auto">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center overflow-hidden"
+                             style="width: 100px; height: 100px; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 8px 25px rgba(106,13,173,0.3);">
+                            @if (!string.IsNullOrEmpty(Model.AvatarPath))
+                            {
+                                <img src="@Model.AvatarPath"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center"
+                                     style="background: linear-gradient(135deg, #6a0dad, #8a2be2);">
+                                    <i class="bi bi-person-fill text-white" style="font-size: 2.5rem;"></i>
+                                </div>
+                            }
+                        </div>
+                    </div>
 
-            @if (!string.IsNullOrEmpty(Model.AvatarPath))
-            {
-                <img src="@Model.AvatarPath"
-                     class="w-100 h-100"
-                     style="object-fit: cover;" />
-            }
-            else
-            {
-                <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
-            }
+                    <!-- User Info -->
+                    <div class="col">
+                        <h3 class="mb-1 fw-bold text-white">@Model.Name</h3>
+                        @if (!string.IsNullOrEmpty(Model.Bio))
+                        {
+                            <p class="text-white-50 mb-2">@Model.Bio</p>
+                        }
+                        <div class="d-flex flex-wrap gap-3">
+                            <span class="badge rounded-pill px-3 py-2" style="background: rgba(106,13,173,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="bi bi-calendar-plus me-1"></i>
+                                @createdEvents.Count events created
+                            </span>
+                            <span class="badge rounded-pill px-3 py-2" style="background: rgba(40,167,69,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="bi bi-calendar-check me-1"></i>
+                                @attendingEvents.Count events attending
+                            </span>
+                            <span class="badge rounded-pill px-3 py-2" style="background: rgba(23,162,184,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="bi bi-star me-1"></i>
+                                @interestedEvents.Count events interested
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <h3>@Model.Name</h3>
-        @if (!string.IsNullOrEmpty(Model.AvatarPath)) {
-            <p class="text-muted">@Model.Bio</p>
-        }
+        <div class="row">
+            <!-- Created Events Sidebar -->
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0 shadow h-100" style="border-radius: 20px; background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15);">
+                    <div class="card-header border-0 pt-4 pb-3 px-4" style="background: rgba(255,255,255,0.05); border-radius: 20px 20px 0 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <h5 class="fw-bold mb-0 text-white">
+                            <i class="bi bi-calendar-plus me-2" style="color: #8a2be2;"></i>
+                            Created Events
+                        </h5>
+                        <small class="text-white-50">Events @Model.Name has organized</small>
+                    </div>
+                    <div class="card-body p-3">
+                        @if (createdEvents.Any())
+                        {
+                            <div class="list-group list-group-flush">
+                                @foreach (var evt in createdEvents.Take(5))
+                                {
+                                    <a href="@Url.Action("Details", "Events", new { id = evt.Id })"
+                                       class="list-group-item list-group-item-action border-0 py-3 px-3 mb-2 rounded"
+                                       style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1) !important; transition: all 0.3s ease;">
+                                        <div class="d-flex align-items-start">
+                                            @if (!string.IsNullOrEmpty(evt.Venue.BannerPath))
+                                            {
+                                                <div class="flex-shrink-0 me-3">
+                                                    <img src="@evt.Venue.BannerPath"
+                                                         class="rounded"
+                                                         style="width: 60px; height: 60px; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);"
+                                                         alt="@evt.Title">
+                                                </div>
+                                            }
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-1 text-white">@evt.Title</h6>
+                                                <small class="text-white-50 d-block">
+                                                    <i class="bi bi-calendar3 me-1"></i>
+                                                    @evt.StartDate.ToString("MMM dd, yyyy")
+                                                </small>
+                                                <small class="text-white-50">
+                                                    <i class="bi bi-people me-1"></i>
+                                                    @evt.Attendees?.Count attendees
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
 
+                            @if (createdEvents.Count > 5)
+                            {
+                                <div class="text-center mt-3">
+                                    <button class="btn rounded-pill px-4 py-2"
+                                            style="background: rgba(106,13,173,0.3); border: 1px solid rgba(255,255,255,0.2); color: white;"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#moreCreatedEvents">
+                                        View all @createdEvents.Count events
+                                    </button>
+                                </div>
+
+                                <div class="collapse mt-3" id="moreCreatedEvents">
+                                    <div class="list-group list-group-flush">
+                                        @foreach (var evt in createdEvents.Skip(5))
+                                        {
+                                            <a href="@Url.Action("Details", "Events", new { id = evt.Id })"
+                                               class="list-group-item list-group-item-action border-0 py-3 px-3 mb-2 rounded"
+                                               style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1) !important; transition: all 0.3s ease;">
+                                                <div class="d-flex align-items-start">
+                                                    @if (!string.IsNullOrEmpty(evt.Venue.BannerPath))
+                                                    {
+                                                        <div class="flex-shrink-0 me-3">
+                                                            <img src="@evt.Venue.BannerPath"
+                                                                 class="rounded"
+                                                                 style="width: 60px; height: 60px; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);"
+                                                                 alt="@evt.Title">
+                                                        </div>
+                                                    }
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="fw-bold mb-1 text-white">@evt.Title</h6>
+                                                        <small class="text-white-50 d-block">
+                                                            <i class="bi bi-calendar3 me-1"></i>
+                                                            @evt.StartDate.ToString("MMM dd, yyyy")
+                                                        </small>
+                                                        <small class="text-white-50">
+                                                            <i class="bi bi-people me-1"></i>
+                                                            @evt.Attendees?.Count attendees
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <i class="bi bi-calendar-x display-4 mb-3" style="color: rgba(255,255,255,0.3);"></i>
+                                <p class="text-white-50 mb-0">No events created yet</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content - Attending & Interested Events -->
+            <div class="col-lg-8">
+                <!-- Tabs Navigation -->
+                <div class="card border-0 shadow mb-4" style="border-radius: 20px; background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15);">
+                    <div class="card-header border-0 px-4 pt-4" style="background: rgba(255,255,255,0.05); border-radius: 20px 20px 0 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <ul class="nav nav-tabs nav-fill border-0" id="eventsTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active rounded-pill me-2 px-4 py-2"
+                                        id="attending-tab"
+                                        data-bs-toggle="tab"
+                                        data-bs-target="#attending"
+                                        type="button"
+                                        role="tab"
+                                        style="font-weight: 500; background: rgba(40,167,69,0.3); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                                    <i class="bi bi-calendar-check me-2"></i>
+                                    Attending (@attendingEvents.Count)
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill px-4 py-2"
+                                        id="interested-tab"
+                                        data-bs-toggle="tab"
+                                        data-bs-target="#interested"
+                                        type="button"
+                                        role="tab"
+                                        style="font-weight: 500; background: rgba(23,162,184,0.3); border: 1px solid rgba(255,255,255,0.2); color: white;">
+                                    <i class="bi bi-star me-2"></i>
+                                    Interested (@interestedEvents.Count)
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <!-- Tab Content -->
+                        <div class="tab-content" id="eventsTabContent">
+                            <!-- Attending Events Tab -->
+                            <div class="tab-pane fade show active" id="attending" role="tabpanel" aria-labelledby="attending-tab">
+                                @if (attendingEvents.Any())
+                                {
+                                    <div class="mb-4">
+                                        <h5 class="fw-bold text-white">
+                                            <i class="bi bi-check-circle-fill me-2" style="color: #28a745;"></i>
+                                            @Model.Name is attending these events
+                                        </h5>
+                                        <p class="text-white-50">Events that @Model.Name has confirmed attendance for</p>
+                                    </div>
+
+                                    <div class="row">
+                                        @foreach (var evt in attendingEvents)
+                                        {
+                                            <div class="col-md-6 mb-4">
+                                                <div class="card border-0 h-100" style="border-radius: 15px; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease;">
+                                                    <a href="@Url.Action("Details", "Events", new { id = evt.Id })" class="text-decoration-none">
+                                                        <!-- Event Image -->
+                                                        @if (!string.IsNullOrEmpty(evt.Venue?.BannerPath))
+                                                        {
+                                                            <div class="position-relative" style="height: 180px; overflow: hidden;">
+                                                                <img src="@evt.Venue.BannerPath"
+                                                                     class="w-100 h-100"
+                                                                     style="object-fit: cover;"
+                                                                     alt="@evt.Title">
+                                                                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));"></div>
+                                                                <span class="badge position-absolute top-0 end-0 m-2 px-3 py-2" style="background: rgba(40,167,69,0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                                                                    <i class="bi bi-check-circle me-1"></i>Attending
+                                                                </span>
+                                                            </div>
+                                                        }
+
+                                                        <!-- Event Details -->
+                                                        <div class="card-body p-4">
+                                                            <h6 class="fw-bold text-white mb-2">@evt.Title</h6>
+                                                            <div class="d-flex align-items-center mb-3">
+                                                                <small class="text-white-50">
+                                                                    <i class="bi bi-calendar3 me-1"></i>
+                                                                    @evt.StartDate.ToString("MMM dd, yyyy")
+                                                                </small>
+                                                                <span class="mx-2 text-white-50">•</span>
+                                                                <small class="text-white-50">
+                                                                    <i class="bi bi-clock me-1"></i>
+                                                                    @evt.StartDate.ToString("hh:mm tt")
+                                                                </small>
+                                                            </div>
+                                                            <p class="text-white-50 small mb-3" style="max-height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                                                @evt.Description
+                                                            </p>
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <small class="text-white-50">
+                                                                    <i class="bi bi-geo-alt me-1"></i>
+                                                                    @evt.Venue?.Name
+                                                                </small>
+                                                                <small class="text-white fw-medium">
+                                                                    <i class="bi bi-people me-1"></i>
+                                                                    @evt.Attendees?.Count attending
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-5">
+                                        <div class="mb-3">
+                                            <i class="bi bi-calendar-check display-4" style="color: rgba(255,255,255,0.3);"></i>
+                                        </div>
+                                        <h5 class="text-white mb-2">Not attending any events</h5>
+                                        <p class="text-white-50 mb-0">@Model.Name hasn't confirmed attendance for any events yet</p>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Interested Events Tab -->
+                            <div class="tab-pane fade" id="interested" role="tabpanel" aria-labelledby="interested-tab">
+                                @if (interestedEvents.Any())
+                                {
+                                    <div class="mb-4">
+                                        <h5 class="fw-bold text-white">
+                                            <i class="bi bi-star-fill me-2" style="color: #17a2b8;"></i>
+                                            @Model.Name is interested in these events
+                                        </h5>
+                                        <p class="text-white-50">Events that @Model.Name has shown interest in</p>
+                                    </div>
+
+                                    <div class="row">
+                                        @foreach (var evt in interestedEvents)
+                                        {
+                                            <div class="col-md-6 mb-4">
+                                                <div class="card border-0 h-100" style="border-radius: 15px; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease;">
+                                                    <a href="@Url.Action("Details", "Events", new { id = evt.Id })" class="text-decoration-none">
+                                                        <!-- Event Image -->
+                                                        @if (!string.IsNullOrEmpty(evt.Venue.BannerPath))
+                                                        {
+                                                            <div class="position-relative" style="height: 180px; overflow: hidden;">
+                                                                <img src="@evt.Venue.BannerPath"
+                                                                     class="w-100 h-100"
+                                                                     style="object-fit: cover;"
+                                                                     alt="@evt.Title">
+                                                                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));"></div>
+                                                                <span class="badge position-absolute top-0 end-0 m-2 px-3 py-2" style="background: rgba(23,162,184,0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                                                                    <i class="bi bi-star me-1"></i>Interested
+                                                                </span>
+                                                            </div>
+                                                        }
+
+                                                        <!-- Event Details -->
+                                                        <div class="card-body p-4">
+                                                            <h6 class="fw-bold text-white mb-2">@evt.Title</h6>
+                                                            <div class="d-flex align-items-center mb-3">
+                                                                <small class="text-white-50">
+                                                                    <i class="bi bi-calendar3 me-1"></i>
+                                                                    @evt.StartDate.ToString("MMM dd, yyyy")
+                                                                </small>
+                                                                <span class="mx-2 text-white-50">•</span>
+                                                                <small class="text-white-50">
+                                                                    <i class="bi bi-clock me-1"></i>
+                                                                    @evt.StartDate.ToString("hh:mm tt")
+                                                                </small>
+                                                            </div>
+                                                            <p class="text-white-50 small mb-3" style="max-height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                                                @evt.Description
+                                                            </p>
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <small class="text-white-50">
+                                                                    <i class="bi bi-geo-alt me-1"></i>
+                                                                    @evt.Venue?.Name
+                                                                </small>
+                                                                <small class="text-white fw-medium">
+                                                                    <i class="bi bi-people me-1"></i>
+                                                                    @evt.Attendees?.Count attending
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center py-5">
+                                        <div class="mb-3">
+                                            <i class="bi bi-star display-4" style="color: rgba(255,255,255,0.3);"></i>
+                                        </div>
+                                        <h5 class="text-white mb-2">No interested events</h5>
+                                        <p class="text-white-50 mb-0">@Model.Name hasn't shown interest in any events yet</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<
+
+<style>
+    /* Glassmorphism base styles */
+    .card {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3) !important;
+            border: 1px solid rgba(255,255,255,0.25) !important;
+        }
+
+    /* Tab styling */
+    .nav-tabs .nav-link {
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+
+        .nav-tabs .nav-link:hover {
+            background: rgba(255,255,255,0.15) !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, rgba(106,13,173,0.6), rgba(138,43,226,0.6)) !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            box-shadow: 0 4px 20px rgba(106,13,173,0.4);
+            backdrop-filter: blur(15px);
+        }
+
+    /* Event card styling */
+    .card a {
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .card a:hover h6 {
+            color: #8a2be2 !important;
+        }
+
+    /* Badge styling */
+    .badge {
+        backdrop-filter: blur(10px);
+        font-weight: 500;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* List group item styling */
+    .list-group-item {
+        backdrop-filter: blur(8px);
+        transition: all 0.3s ease;
+    }
+
+        .list-group-item:hover {
+            background: rgba(106,13,173,0.2) !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            transform: translateX(5px);
+        }
+
+    /* Image overlay */
+    .position-relative img + div {
+        transition: opacity 0.3s ease;
+    }
+
+    .card:hover .position-relative img + div {
+        opacity: 0.7;
+    }
+
+    /* Text colors */
+    .text-white-50 {
+        color: rgba(255,255,255,0.7) !important;
+    }
+
+    /* Gradient text effect */
+    .text-gradient {
+        background: linear-gradient(135deg, #8a2be2, #5D3FD3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Button hover effects */
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106,13,173,0.4) !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add active tab indicator animation
+        const tabLinks = document.querySelectorAll('#eventsTab .nav-link');
+
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabLinks.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+
+                // Add active class to clicked tab
+                this.classList.add('active');
+            });
+        });
+
+        // Enhanced card hover effects
+        const eventCards = document.querySelectorAll('.card');
+        eventCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+                this.style.boxShadow = '0 20px 40px rgba(106,13,173,0.3) !important';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // List item hover effects
+        const listItems = document.querySelectorAll('.list-group-item');
+        listItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(8px)';
+                this.style.boxShadow = '0 5px 15px rgba(106,13,173,0.2)';
+            });
+
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    });
+</script>

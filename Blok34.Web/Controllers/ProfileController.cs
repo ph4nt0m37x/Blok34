@@ -1,4 +1,5 @@
-﻿using Blok34.Domain.Enums;
+﻿using Blok34.Domain.DomainModels;
+using Blok34.Domain.Enums;
 using Blok34.Domain.Identity;
 using Blok34.Service.Implementation;
 using Blok34.Service.Interface;
@@ -34,6 +35,11 @@ namespace Blok34.Web.Controllers
 
             if (user == null)
                 return NotFound();
+
+            ViewBag.CreatedEvents = _eventService.GetEventsByCreator(user.Id);
+            ViewBag.AttendingEvents = _eventAttendanceService.GetAttendingEvents(user.Id);
+            ViewBag.InterestedEvents = _eventAttendanceService.GetInterestedEvents(user.Id);
+
 
             return View(user);
         }
