@@ -383,7 +383,7 @@
                                 <p class="text-white-50 mb-4">This venue doesn't have any events scheduled yet.</p>
                                 @if (isCurrentUserManager || Model.IsPublic)
                                 {
-                                    <a href="#" class="btn rounded-pill px-4 py-2 fw-medium"
+                                    <a asp-controller="Event" asp-action="Create" class="btn rounded-pill px-4 py-2 fw-medium"
                                        style="background: linear-gradient(135deg, #6a0dad, #8a2be2);
                                                       border: none;
                                                       color: white;">

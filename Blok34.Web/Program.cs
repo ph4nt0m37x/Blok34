@@ -13,11 +13,10 @@ using System.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("Blok34.Repository")
+        "name=DefaultConnection"
     ));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -36,6 +35,14 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<IEventAttendanceService, EventAttendanceService>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    if (dbContext.Database.IsRelational()) {
+        dbContext.Database.Migrate(); }
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

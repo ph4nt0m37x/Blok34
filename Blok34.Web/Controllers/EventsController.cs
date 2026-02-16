@@ -2,7 +2,6 @@
 using Blok34.Domain.Enums;
 using Blok34.Service.Implementation;
 using Blok34.Service.Interface;
-using Blok34.Web.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

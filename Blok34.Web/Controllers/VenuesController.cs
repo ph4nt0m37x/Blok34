@@ -1,7 +1,6 @@
 ﻿using Blok34.Domain.DomainModels;
 using Blok34.Service.Implementation;
 using Blok34.Service.Interface;
-using Blok34.Web.Data;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
